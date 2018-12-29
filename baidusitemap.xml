@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-tranfer-four/</loc>
+    <lastmod>2018-12-29T16:23:01.123Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-deploy/</loc>
+    <lastmod>2018-12-29T15:59:43.305Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-config-two/</loc>
+    <lastmod>2018-12-29T15:59:24.638Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-setup-one/</loc>
+    <lastmod>2018-12-29T15:59:19.496Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/%E6%A8%A1%E6%9D%BF/template/</loc>
+    <lastmod>2018-12-29T15:59:12.067Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/Git-ssh-key-set/</loc>
+    <lastmod>2018-12-29T15:51:34.829Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-deploy-three/</loc>
+    <lastmod>2018-12-29T15:50:42.405Z</lastmod>
+  </url>  <url>
     <loc>https://www.lixueduan.com/java-int-Integer/</loc>
     <lastmod>2018-12-27T16:11:42.583Z</lastmod>
-  </url>  <url>
-    <loc>https://www.lixueduan.com/hello-world/</loc>
-    <lastmod>2018-12-27T15:17:11.963Z</lastmod>
   </url>
 </urlset>
