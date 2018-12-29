@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.lixueduan.com/Hexo-blog-config-two/</loc>
+    <lastmod>2018-12-29T16:31:23.922Z</lastmod>
+  </url>  <url>
     <loc>https://www.lixueduan.com/Hexo-blog-tranfer-four/</loc>
     <lastmod>2018-12-29T16:23:01.123Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/Hexo-blog-deploy/</loc>
     <lastmod>2018-12-29T15:59:43.305Z</lastmod>
-  </url>  <url>
-    <loc>https://www.lixueduan.com/Hexo-blog-config-two/</loc>
-    <lastmod>2018-12-29T15:59:24.638Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/Hexo-blog-setup-one/</loc>
     <lastmod>2018-12-29T15:59:19.496Z</lastmod>
