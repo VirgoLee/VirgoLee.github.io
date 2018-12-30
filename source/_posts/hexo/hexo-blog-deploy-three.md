@@ -53,11 +53,11 @@ categories: [Hexo]
 ### 1.2 创建新项目
 
 - 注册好后创建一个项目用来部署个人博客，项目路径和项目名称最好和用户名一致
-- ![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Deploy-Coding1.png)
+- ![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-deploy-coding1.png)
 
 ### 1.3 开启CodingPages
 
-- ![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Deploy-Coding2.png)
+- ![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-deploy-coding2.png)
 
  点击Pages服务，然后一键开启。
 
@@ -67,7 +67,7 @@ categories: [Hexo]
 
 绑定自定义域名的时候需要在买域名的地方(我这里是阿里的万网)配置DNS解析
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Coding-DNS.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-coding-dns.png)
 
 ```java
 添加两条CNAME解析
@@ -110,7 +110,7 @@ deploy:
 
 **地址在这里：**
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Deploy-Coding3.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-deploy-coding3.png)
 
 配置好后，运行`hexo g时就可以把博客部署到Coding上了，也可以通过个性域名访问了。`
 
@@ -124,13 +124,13 @@ deploy:
 
 输入自己的网站，如`www.lixueduan.com` 协议头如果开启了`https`就选`https`
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Baidu1-add.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-baidu1-add.png)
 
 ### 3.2 网站验证
 
 然后会验证这个网站是不是你的，选CNAME验证
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Baidu2-verfication.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-baidu2-verfication.png)
 
 然后去域名哪里添加一条解析即可。
 
@@ -176,7 +176,7 @@ sitemap:
 
 `站点管理-->站点属性-->链接提交-->自动提交-->sitemap`
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Baidu3-sitemap.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-baidu3-sitemap.png)
 
 完成后就算是提交成功了，百度比较慢，要好几天才能收录。
 
@@ -231,17 +231,17 @@ deploy:
 
 然后添加资源，注意`http`和`https`
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Google-add.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-google-add.png)
 
 ### 5.2 验证所有权
 
 然后验证所有权,选择DNS供应商
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Google-verfication1.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-google-verfication1.png)
 
 
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Google-verfication2.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-google-verfication2.png)
 
 供应商选择其他，然后选择添加CNAME记录，在域名解析中添加一条记录。也是添加后不要删除。
 
@@ -249,7 +249,7 @@ deploy:
 
 验证后就可以添加站点地图了
 
-![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Hexo/2018-12-28-Google-sitemap.png)
+![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/hexo/2018-12-28-google-sitemap.png)
 
 提交成功后,我们的站点就已经被Google收录了.大概一天就能收录成功，比百度块一些。
 
