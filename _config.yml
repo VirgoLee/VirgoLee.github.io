@@ -1,0 +1,140 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+# 所有配置项和内容必须隔一个空格 title: xxx 冒号后必须加一个空格,不然无法识别
+# Site 站点相关配置-->标题 副标题 描述 关键词 作者 语言 时区(默认与电脑时区相同)
+title: 幻境云图
+subtitle: 不忘初心,方得始终
+description: "幻境云图是一个专注于Java技术分享的博客。主要涉及Java知识共享、实践教程、前沿技术共同学习等方面"
+keywords: Java开发,JavaWeb,MySQL,,Android,VirgoLee
+author: VirgoLee
+language: zh-CN
+timezone:
+
+# URL 站点连接相关-->网址 首页链接(相对前面的网址) 文章链接(相对前面的网址)
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: https://www.lixueduan.com
+root: /
+# permalink: :year/:month/:day/:title/ 层次太多 SEO不友好 改掉
+permalink: :title/
+permalink_defaults:
+
+# Directory 文件夹名字之类的
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+    - README.md
+    - CNAME
+
+# Writing 文章相关
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link: true # Open external links in new tab
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: false
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace:
+  
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: Posts displayed per page. (0 = disable pagination)
+# order_by: Posts order. (Order by date descending by default)
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+  
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Date / Time format 日期格式
+## Hexo uses Moment.js to parse and display date
+## You can customize the date format as defined in
+## http://momentjs.com/docs/#/displaying/format/
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+
+# 字数和阅读时间统计
+symbols_count_time:
+    symbols: true
+    time: true
+    total_symbols: true
+    total_time: false
+# Pagination 
+## Set per_page to 0 to disable pagination
+per_page: 10
+pagination_dir: page
+
+# Extensions 主题 
+## Plugins: https://hexo.io/plugins/
+
+# 站点地图
+Plugins:
+- hexo-generator-baidu-sitemap
+- hexo-generator-sitemap
+
+baidusitemap:
+    path: baidusitemap.xml
+sitemap:
+    path: sitemap.xml
+## Themes: https://hexo.io/themes/
+theme: next
+
+# 搜索功能
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+# Deployment 部署到云端相关配置
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+  type: git
+  repository: 
+    github: git@github.com:virgolee/virgolee.github.io.git
+    coding: git@git.coding.net:virgoleee/virgolee.git
+  branch: master
+
+
+
+
+# hexo-neat
+# 博文压缩
+neat_enable: true
+# 压缩html
+neat_html:
+  enable: true
+  exclude:
+  
+# 压缩css  跳过min.css
+neat_css:
+  enable: true
+  exclude:
+    - '**/*.min.css'
+    
+# 压缩js 跳过min.js
+neat_js:
+  enable: true
+  mangle: true
+  output:
+  compress:
+  exclude:
+    - '**/*.min.js'
+    - '**/jquery.fancybox.pack.js'
+    - '**/index.js'  
+    - '**/love.js'
+# 压缩博文配置结束
