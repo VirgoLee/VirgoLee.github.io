@@ -7,13 +7,13 @@ categories: [Hexo]
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
-> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/Hexo/Hexo-blog-setup-one/)
+> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
 >
-> [Hexo个人博客之优化（二）](https://www.lixueduan.com/Hexo/Hexo-blog-config-two/)
+> [Hexo个人博客之优化（二）](https://www.lixueduan.com/hexo/hexo-blog-config-two/)
 >
-> [Hexo个人博客之部署（三）](https://www.lixueduan.com/Hexo/Hexo-blog-deploy-three/)
+> [Hexo个人博客之部署（三）](https://www.lixueduan.com/hexo/hexo-blog-deploy-three/)
 >
-> [Hexo个人博客之转移（四）](https://www.lixueduan.com/Hexo/Hexo-blog-tranfer-four/)
+> [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
 到此为止，我们已经完成了差不多所有的步骤。
 

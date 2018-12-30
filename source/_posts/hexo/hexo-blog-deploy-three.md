@@ -7,13 +7,13 @@ categories: [Hexo]
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
-> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/Hexo/Hexo-blog-setup-one/)
+> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
 >
-> [Hexo个人博客之优化（二）](https://www.lixueduan.com/Hexo/Hexo-blog-config-two/)
+> [Hexo个人博客之优化（二）](https://www.lixueduan.com/hexo/hexo-blog-config-two/)
 >
-> [Hexo个人博客之部署（三）](https://www.lixueduan.com/Hexo/Hexo-blog-deploy-three/)
+> [Hexo个人博客之部署（三）](https://www.lixueduan.com/hexo/hexo-blog-deploy-three/)
 >
-> [Hexo个人博客之转移（四）](https://www.lixueduan.com/Hexo/Hexo-blog-tranfer-four/)	
+> [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
 本章主要记录了将自己的博客，从购买自定义域名到，部署到Github，Coding同时收录到百度，Google的具体方法和过程。
 
@@ -91,7 +91,7 @@ categories: [Hexo]
 
 具体配置方法如下：
 
-[Git 配置及SSH key](https://www.lixueduan.com/Git/Git-ssh-key-set/)
+[Git 配置及SSH key](https://www.lixueduan.com/git/git-ssh-key-set/)
 
 **修改站点配置文件**
 
@@ -202,7 +202,7 @@ sitemap:
 
 具体配置方法：
 
-[Git 配置及SSH key](https://www.lixueduan.com/Git/Git-ssh-key-set/)
+[Git 配置及SSH key](https://www.lixueduan.com/git/git-ssh-key-set/)
 
 **修改站点配置文件**
 
