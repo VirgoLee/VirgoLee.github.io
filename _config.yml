@@ -5,9 +5,9 @@
 # Site 站点相关配置-->标题 副标题 描述 关键词 作者 语言 时区(默认与电脑时区相同)
 title: 幻境云图
 subtitle: 不忘初心,方得始终
-description: "幻境云图是一个专注于Java技术分享的博客。主要涉及Java知识共享、实践教程、前沿技术共同学习等方面"
-keywords: Java开发,JavaWeb,MySQL,,Android,VirgoLee
-author: VirgoLee
+description: "一个专注于Java技术分享的博客,主要涉及Java知识共享、实践教程、前沿技术共同学习等。"
+keywords: Java开发,Java教程，JavaWeb,MySQL,,Android。
+author: illusoryCloud
 language: zh-CN
 timezone:
 
@@ -105,8 +105,8 @@ search:
 deploy:
   type: git
   repository: 
-    github: git@github.com:virgolee/virgolee.github.io.git
-    coding: git@git.coding.net:virgoleee/virgolee.git
+    github: git@github.com:illusorycloud/illusorycloud.github.io.git
+    coding: git@git.coding.net:illusorycloud/illusorycloud.git
   branch: master
 
 
