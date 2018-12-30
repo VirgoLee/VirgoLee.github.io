@@ -28,9 +28,9 @@ git config --global user.email "xueduanli@163.com"  //改成自己的
 
 ### 2.2配置SSH key
 
-![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set1.png)
+![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Git/2018-12-27-Git-ssh-key-set1.png)
 
-![](https://github.com/virgolee/virgolee.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set2.png)
+![](https://github.com/lillusory/lillusory.github.io/raw/Hexo/MyImages/Git/2018-12-27-Git-ssh-key-set2.png)
 
 
 

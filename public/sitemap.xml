@@ -2,34 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.lixueduan.com/hexo/hexo-blog-deploy-three/</loc>
-    
-    <lastmod>2018-12-30T17:07:02.478Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/git/git-ssh-key-set/</loc>
-    
-    <lastmod>2018-12-30T17:03:14.718Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/tags/index.html</loc>
-    
-    <lastmod>2018-12-30T16:49:40.051Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/categories/index.html</loc>
-    
-    <lastmod>2018-12-30T16:49:40.048Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.lixueduan.com/hexo/hexo-blog-config-two/</loc>
     
     <lastmod>2018-12-30T16:18:43.766Z</lastmod>
@@ -47,6 +19,34 @@
     <loc>https://www.lixueduan.com/hexo/hexo-blog-setup-one/</loc>
     
     <lastmod>2018-12-30T13:16:06.244Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/hexo/hexo-blog-deploy-three/</loc>
+    
+    <lastmod>2018-12-30T13:10:26.230Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/git/git-ssh-key-set/</loc>
+    
+    <lastmod>2018-12-30T12:29:47.669Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/categories/index.html</loc>
+    
+    <lastmod>2018-12-29T16:25:10.510Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/tags/index.html</loc>
+    
+    <lastmod>2018-12-29T16:24:48.364Z</lastmod>
     
   </url>
   
