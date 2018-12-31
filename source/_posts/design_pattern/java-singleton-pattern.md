@@ -11,7 +11,7 @@ categories: [design-pattern]
 
 > 设计模式系列文章
 >
-> [Java设计模式之单例模式(一)]()
+> [Java设计模式之单例模式(一)](https://www.lixueduan.com/design_pattern/java-singleton-pattern/)
 
 ## 1. 设计模式的六大原则
 
