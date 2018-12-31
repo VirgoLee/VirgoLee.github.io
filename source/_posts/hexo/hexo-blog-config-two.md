@@ -5,6 +5,10 @@ tags: [Hexo]
 categories: [Hexo]
 ---
 
+本章主要包含了博客主题优化相关内容，第三方服务和插件的配置与使用。如：炫酷头像动态背景、链接变色、鼠标点击效果、站点字数、访客数统计等。
+
+<!--more-->
+
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
 > [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
@@ -15,7 +19,7 @@ categories: [Hexo]
 >
 > [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
-### 0.选择主题
+### 0. 选择主题
 
 你可以点击这里选择你喜欢的[Themes](https://hexo.io/themes/),里面有大量美观的主题 
 
@@ -32,7 +36,7 @@ categories: [Hexo]
 - 开启主题
   - `站点配置文件`进行修改: 将`theme: landscape`修改为 `theme: next` 
 
-### 1.侧边栏头像设置
+### 1. 侧边栏头像设置
 
 新版next注意引入了该功能,直接在`主题配置文件`修改即可,如下:
 
@@ -48,7 +52,7 @@ avatar:
   rotated: true
 ```
 
-### 2.设置个人社交图标链接
+### 2. 设置个人社交图标链接
 
 直接在`主题配置文件`修改即可,如下:
 
@@ -76,7 +80,7 @@ social_icons:
   transition: false
 ```
 
-### 3.添加菜单项
+### 3. 添加菜单项
 
 1.先在`主题配置文件`修改
 
@@ -109,7 +113,7 @@ menu:
 AAA为上边的菜单项名字,XXX为中文的名字
 ```
 
-### 4.添加RSS
+### 4. 添加RSS
 
 - 1.安装插件
 
@@ -130,7 +134,7 @@ plugins: hexo-generate-feed
 - 3.修改`主题配置文件`
   - 打开主题配置文件`_config.yml`,找到`rss` 添加配置:`rss: /atom.xml` 
 
-### 5.设置酷炫动态背景
+### 5. 设置酷炫动态背景
 
 next主题提供了两种背景可以选择.
 
@@ -174,7 +178,7 @@ canvas_sphere: false
 
 **4个背景中只能开启一种背景,不然会出错**
 
-### 6.设置网站logo
+### 6. 设置网站logo
 
 把你的图片放在`themes/next/source/images`里 
 
@@ -188,7 +192,7 @@ favicon:
   safari_pinned_tab: /images/logo.svg
 ```
 
-### 7.实现点击出现桃心效果
+### 7. 实现点击出现桃心效果
 
 `themes/next/source/js/src`里面 新建一个love.js,
 
@@ -206,7 +210,7 @@ favicon:
 <script type="text/javascript" src="/js/src/love.js"></script>
 ```
 
-### 8.修改文章内链接文本样式
+### 8. 修改文章内链接文本样式
 
 鼠标移动到连接上变颜色
 
@@ -226,7 +230,7 @@ favicon:
 }
 ```
 
-### 9.设置顶部滚动加载条
+### 9. 设置顶部滚动加载条
 
 打开`next\layout\_partials\head`文件，在文件末尾添加以下代码: 
 
@@ -248,7 +252,7 @@ favicon:
 </style>
 ```
 
-### 10.在每篇文章末尾统一添加“本文结束”标记
+### 10. 在每篇文章末尾统一添加“本文结束”标记
 
 在路径 `\themes\next\layout\_macro` 中新建 `page-end-tag.swig` 文件,并添加以下内容： 
 
@@ -279,7 +283,7 @@ page_end_tag:
   enabled: true
 ```
 
-### 11.静态资源压缩
+### 11. 静态资源压缩
 
 Hexo自动生成的html中有很多空白的地方,会影响加载速度,所以最好还是压缩一下.
 
@@ -324,7 +328,7 @@ Hexo自动生成的html中有很多空白的地方,会影响加载速度,所以�
 
   - 以后再执行`hexo g`命令时就会自动压缩了
 
-### 12.主页文章添加阴影效果
+### 12. 主页文章添加阴影效果
 
 打开`\themes\next\source\css\_custom\custom.styl`,向里面加入： 
 
@@ -339,7 +343,7 @@ Hexo自动生成的html中有很多空白的地方,会影响加载速度,所以�
   }
 ```
 
-### 13.修改文章底部的的标签样式
+### 13. 修改文章底部的的标签样式
 
 打开模板文件`/themes/next/layout/_macro/post.swig`，找到`rel="tag">#`字段， 将`# 换成<i class="fa fa-tag"></i>`,其中tag是你选择标签图标的名字,也是可以自定义的 
 
@@ -379,7 +383,7 @@ symbols_count_time:
 
 到此,我们就实现了文章字数统计和预估时间的显示功能
 
-### 15.在文章底部增加版权信息
+### 15. 在文章底部增加版权信息
 
 修改`主题配置文件`,找到`creative_commons`字段
 
@@ -396,7 +400,7 @@ creative_commons:
   post: true   
 ```
 
-### 16.文章置顶
+### 16. 文章置顶
 
 打开文件：`node_modules/hexo-generator-index/lib/generator.js`,将原来的代码用下面的代码替换掉
 
@@ -440,7 +444,7 @@ password: xxx
 top: 150
 ```
 
-### 17.在网站底部加上访问量
+### 17. 在网站底部加上访问量
 
 **Next主题配置这个就比较方便了**
 
@@ -494,8 +498,6 @@ local_search:
 ```
 
 重新开启服务后即可看到效果。
-
-
 
 ### TODO开启留言评论功能
 

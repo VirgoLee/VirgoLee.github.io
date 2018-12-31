@@ -5,6 +5,10 @@ tags: [Hexo]
 categories: [Hexo]
 ---
 
+本章主要记录了如何通过使用`Github`的`分支功能`解决更换电脑后博客更新不方便的问题，让你的博客能在各个电脑上灵活切换。在也不用担心换电脑后博客配置丢失等问题了。
+
+<!--more-->
+
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
 > [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
@@ -27,7 +31,7 @@ categories: [Hexo]
 
 ​	将博客文件夹下所有文件全`push`到`Github`。这样换电脑后直接`pull`就可以了。
 
-## 1.新建分支
+## 1. 新建分支
 
 * 1.在`Github`的`lillusory.github.io`（hexo仓库）上新建一个分支，例如`Hexo`，并切换到该分支.
 
@@ -37,14 +41,14 @@ categories: [Hexo]
 
 * 4.如果按照前面的博文添加了背景，则需要删掉`站点目录\themes\next\source\lib\canvas-nest`文件夹中的`.git`目录。以后需要更新主题时，可以先克隆到本地在复制到相应目录.
 
-## 2.写博客
+## 2. 写博客
 
 在本地对博客进行修改（添加新博文、修改样式等等）后，通过下面的流程进行管理。
 
 * 依次执行`git add .`、`git commit -m "这里写备注"`、`git push origin 这里写分支名字`指令将改动推送到GitHub（此时当前分支应为hexo）。
 * 然后才执行`hexo g -d`发布网站到master分支上。
 
-## 3.博客转移
+## 3. 博客转移
 
 当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：
 
@@ -53,7 +57,7 @@ categories: [Hexo]
 * 安装插件 在前面克隆下的项目中安装插件
   * 执行命令`npm install hexo、npm install`、`npm install hexo-deployer-git`
 
-## 4.参考
+## 4. 参考
 
 [如何在多台电脑上更新博客](https://blog.csdn.net/qq_25560423/article/details/53785707)
 

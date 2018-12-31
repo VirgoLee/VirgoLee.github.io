@@ -6,3 +6,9 @@ categories: [Java,categories2]
 ---
 
 write here
+
+前面写摘要
+
+<!--more-->
+
+后面写剩下的内容

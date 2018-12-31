@@ -5,6 +5,10 @@ tags: [Hexo]
 categories: [Hexo]
 ---
 
+本文主要记录了如何搭建自己的博客。基于Hexo框架在本地搭建自己博客的全过程，包括了环境准备到Hexo初始化，再到服务的开启等。
+
+<!--more-->
+
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
 > [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
@@ -15,7 +19,7 @@ categories: [Hexo]
 >
 > [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
-## 1.环境准备
+## 1. 环境准备
 
 - Git  [Git下载地址](https://git-scm.com/downloads)
 - Node.js  [Node.js下载地址](https://nodejs.org/en/)
@@ -24,7 +28,7 @@ categories: [Hexo]
 
 都安装好后就可以开始安装Hexo啦.
 
-## 2.安装Hexo
+## 2. 安装Hexo
 
 - 1.新建一个文件夹,用于安装Hexo,以后这个就是放博客文件的.
 - 2.在此文件夹右键,`Git Bash Here`,打开Git
@@ -34,7 +38,7 @@ categories: [Hexo]
 
 到此为止,Hexo就算是安装完成了。
 
-## 3.开启服务
+## 3. 开启服务
 
 - 1.`hexo generate`或者简写`hexo g`  编译,生成静态文件,就是生成一个个html文件.
 

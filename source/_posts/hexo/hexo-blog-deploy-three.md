@@ -1,9 +1,13 @@
 ---
 title: Hexo个人博客之部署（三）
-date: 2018-12-29 12:00:00
+date: 2018-12-25 12:00:00
 tags: [Hexo]
 categories: [Hexo]
 ---
+
+本章主要记录了如何将博客部署至云端，怎么设置个性域名，怎么将自己的网站提交到百度Google。让自己的网站能够出现在各大搜索引擎的具体方法和过程，希望能对大家有帮助。  
+
+<!--more-->
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
@@ -15,13 +19,7 @@ categories: [Hexo]
 >
 > [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
-本章主要记录了将自己的博客，从购买自定义域名到，部署到Github，Coding同时收录到百度，Google的具体方法和过程。
-
-各种教程网上一搜都是一大把，不过由于时间原因，很多地方都不能用了。所以把自己部署的过程记录了下来，希望能对大家有帮助。
-
-`具体时间：2018-12-30`  
-
-## 1.购买个性域名
+## 1. 购买个性域名
 
 估计大家折腾了这么久也就是为 了拥有一个自己的个性站点,所以强烈建议大家为自己的博客站点配置一个独一无二的个性域名.我这里选择阿里旗下的[万网](https://wanwang.aliyun.com/?spm=5176.8142029.735711.62.f0586d3eFXYcmo)。我的域名是[www.lixueduan.com](https://www.lixueduan.com)
 
@@ -44,18 +42,18 @@ categories: [Hexo]
   >
   > 同时在搭建的过程中发现如果先搭建在Github上，然后再搭建Coding时会出现`DNS解析`冲突。所以需要：**先搭建Coding上的，再搭建Github上的，国外的访问则走`Github`，国内的访问会走`Coding`，完美**
 
-## 2.部署到CodingPages
+## 2. 部署到CodingPages
 
-### 1.1 注册coding账户 
+### 2.1 注册coding账户 
 
  点击这里注册Coding](https://coding.net/)
 
-### 1.2 创建新项目
+### 2.2 创建新项目
 
 - 注册好后创建一个项目用来部署个人博客，项目路径和项目名称最好和用户名一致
 - ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/hexo/2018-12-28-deploy-coding1.png)
 
-### 1.3 开启CodingPages
+### 2.3 开启CodingPages
 
 - ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/hexo/2018-12-28-deploy-coding2.png)
 
@@ -83,7 +81,7 @@ categories: [Hexo]
 
 到这里就可以通过个性域名访问啦。不过现在博客代码还没有`push`到项目里。
 
-### 1.4 Push代码到Coding
+### 2.4 Push代码到Coding
 
 **配置SSH key**
 
@@ -114,9 +112,9 @@ deploy:
 
 配置好后，运行`hexo g时就可以把博客部署到Coding上了，也可以通过个性域名访问了。`
 
-## 3.收录到百度
+## 3. 收录到百度
 
-### 3.1网站添加
+### 3.1 网站添加
 
 直接百度搜索你的域名,比如我的`www.lixueduan.com` ，如果没有收录就会提示暂未收录，点击`提交网址`。
 
@@ -180,7 +178,7 @@ sitemap:
 
 完成后就算是提交成功了，百度比较慢，要好几天才能收录。
 
-## 4.部署到GitHub
+## 4. 部署到GitHub
 
 步骤和Coding差不多的。
 
@@ -225,7 +223,7 @@ deploy:
 
 和百度差不多。
 
-### 5.1网站添加
+### 5.1 网站添加
 
 首先进入[Google站点平台](https://www.google.com/webmasters/#?modal_active=none)
 
@@ -257,7 +255,7 @@ deploy:
 
 本文主要讲了怎么将博客部署到`Coding`和`Github`和怎么让`百度`,`Google`收录我们的网站。
 
-## 参考
+## 7.参考
 
 [Hexo官方文档](https://hexo.io/zh-cn/docs/)
 

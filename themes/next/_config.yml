@@ -137,13 +137,15 @@ exturl: false
 # Value before `||` delimeter is the target link.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, question icon will be loaded.
 # External url should start with http:// or https:// .
-# 菜单项
+# 菜单项 菜单： 链接 || 图标 资源网站-->http://www.fontawesome.com.cn/icons/snowflake-o/
 menu:
   home: / || home
   #about: /about/ || user
   tags: /tags/ || tags
   categories: /categories/ || th
   archives: /archives/ || archive
+  #设计模式 钻石图标
+  designpattern: /tags/design-pattern || snowflake-o
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
@@ -222,12 +224,14 @@ avatar:
   # If true, the avatar would be rotated with the cursor.
   rotated: true
 
-# Table Of Contents in the Sidebar
+# Table Of Contents in the Sidebar 
+# 侧边栏目录
 toc:
   enable: true
 
   # Automatically add list number to toc.
-  number: true
+  #是否自动添加数字 如： 1.简介 2.内容 3.总结这种 写文章时就写了所以这里关掉
+  number: false
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
   wrap: false
@@ -272,7 +276,7 @@ sidebar:
 # ---------------------------------------------------------------
 
 # Automatically scroll page to section which is under <!-- more --> mark.
-scroll_to_more: true
+scroll_to_more: false
 # 每篇文章看到哪里了记在cookies中
 # Automatically saving scroll position on each post/page in cookies.
 save_scroll: false
@@ -282,12 +286,12 @@ excerpt_description: true
 
 # Automatically Excerpt. Not recommend.
 # Please use <!-- more --> in the post to control excerpt accurately.
-# 自动生成摘要 并显示阅读全文按钮
+# 自动生成摘要  推荐使用 <!-- more --> 在博文中分割
 auto_excerpt:
-  enable: true
+  enable: false
   length: 150
 
-# Read more button
+# Read more button 阅读全文按钮
 # If true, the read more button would be displayed in excerpt section
 read_more_btn: true
 
