@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.lixueduan.com/computer-network/two-tcp-connection/</loc>
-    <lastmod>2019-01-01T16:23:38.492Z</lastmod>
+    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
+    <lastmod>2019-01-01T16:36:56.776Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
-    <lastmod>2019-01-01T16:23:14.438Z</lastmod>
-  </url>  <url>
-    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
-    <lastmod>2019-01-01T16:22:52.483Z</lastmod>
+    <lastmod>2019-01-01T16:35:43.495Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/computer-network/five-connection-process/</loc>
-    <lastmod>2019-01-01T16:20:23.636Z</lastmod>
+    <lastmod>2019-01-01T16:34:09.968Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/computer-network/three-tcp-reliability/</loc>
-    <lastmod>2019-01-01T16:19:02.179Z</lastmod>
+    <lastmod>2019-01-01T16:32:23.338Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/computer-network/two-tcp-connection/</loc>
+    <lastmod>2019-01-01T16:30:55.015Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
     <lastmod>2019-01-01T16:00:55.576Z</lastmod>

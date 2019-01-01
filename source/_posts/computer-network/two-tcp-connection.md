@@ -13,7 +13,9 @@ categories: [计算机网络]
 >
 > 计算机网络之模型(一)
 
-### 1.三次握手
+### 1. 三次握手
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-connection-three.jpg)
 
 `step1:第一次握手`
 建立连接时，客户端发送SYN包到服务器，其中包含客户端的初始序号seq=x，并进入**SYN_SENT**状态，等待服务器确认。（其中，SYN=1，ACK=0，表示这是一个TCP连接请求数据报文；序号seq=x，表明传输数据时的第一个数据字节的序号是x）。
@@ -34,7 +36,9 @@ categories: [计算机网络]
 到此就确认完毕了。
 ```
 
-### 2.四次挥手
+### 2. 四次挥手
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-close-connection-four.jpg)
 
 `step1：第一次挥手`
 首先，客户端发送一个FIN，用来关闭客户端到服务器的数据传送，然后等待服务器的确认。其中终止标志位FIN=1，序列号seq=u。 **客户端**进入**FIN_WAIT1**状态
@@ -71,7 +75,7 @@ categories: [计算机网络]
 Client端收到FIN报文后，"就知道可以关闭连接了，所以发送ACK。但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后没有立即，而是进入TIME_WAIT状态，如果Server端没有收到ACK那么自己还可以重传。Server端收到ACK后，"就知道可以断开连接了"。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！
 ```
 
-### 3.TIME-WAIT状态详解
+### 3. TIME-WAIT状态详解
 
 为什么Client端要先进入TIME-WAIT状态，等待2MSL时间后才进入CLOSED状态？
 
@@ -95,11 +99,11 @@ Client端收到FIN报文后，"就知道可以关闭连接了，所以发送ACK�
 假设Client端发起中断连接请求，也就是发送FIN报文。Server端接到FIN报文后，意思是说"我Client端没有数据要发给你了"，但是如果你还有数据没有发送完成，则不必急着关闭Socket，可以继续发送数据。所以你先发送ACK，"告诉Client端，你的请求我收到了，但是我还没准备好，请继续你等我的消息"。这个时候Client端就进入FIN_WAIT状态，继续等待Server端的FIN报文。当Server端确定数据已发送完成，则向Client端发送FIN报文，"告诉Client端，好了，我这边数据发完了，准备好关闭连接了"。Client端收到FIN报文后，"就知道可以关闭连接了，但是他还是不相信网络，怕Server端不知道要关闭，所以发送ACK后进入TIME_WAIT状态，如果Server端没有收到ACK则可以重传。“，Server端收到ACK后，"就知道可以断开连接了"。Client端等待了2MSL后依然没有收到回复，则证明Server端已正常关闭，那好，我Client端也可以关闭连接了。Ok，TCP连接就这样关闭了！
 ```
 
-### 4.TCP 的有限状态机
+### 4. TCP 的有限状态机
 
 红色为客户端 蓝色为服务端 细箭头为异常变化
 
-![TCP](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/ComputerNetwork/2018-12-04-TCP%20%E7%9A%84%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA.png)
+![TCP](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-status-map.png)
 
 ### 5. 参考
 

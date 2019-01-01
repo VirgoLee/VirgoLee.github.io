@@ -17,7 +17,7 @@ categories: [计算机网络]
 
 ## OSI与TCP/IP模型
 
-![Model](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/ComputerNetwork/2018-12-04-OSI-TCPIP-Model.png)
+![Model](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/osi-tcp-ip-model.png)
 
 **`应用层:`通过应用进程间的交互来完成特定网络应用。**
 
@@ -28,6 +28,8 @@ categories: [计算机网络]
 **`数据链路层：`其最基本的服务是将源自网络层来的数据可靠地传输到相邻节点的目标机网络层。** 
 
 **`物理层：`利用传输介质为数据链路层提供屋里连接，实现比特流的透明传输。**
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/network/tcp-ip-model.gif)
 
 ### 1. 应用层
 
