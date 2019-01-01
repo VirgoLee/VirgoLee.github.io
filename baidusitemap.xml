@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.lixueduan.com/design_pattern/java-singleton-pattern/</loc>
-    <lastmod>2018-12-31T17:02:17.759Z</lastmod>
+    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
+    <lastmod>2019-01-01T16:36:56.776Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
+    <lastmod>2019-01-01T16:35:43.495Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/computer-network/five-connection-process/</loc>
+    <lastmod>2019-01-01T16:34:09.968Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/computer-network/three-tcp-reliability/</loc>
+    <lastmod>2019-01-01T16:32:23.338Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/computer-network/two-tcp-connection/</loc>
+    <lastmod>2019-01-01T16:30:55.015Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
+    <lastmod>2019-01-01T16:00:55.576Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/</loc>
     <lastmod>2018-12-31T16:01:50.402Z</lastmod>

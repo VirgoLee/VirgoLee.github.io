@@ -2,9 +2,51 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.lixueduan.com/design_pattern/java-singleton-pattern/</loc>
+    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
     
-    <lastmod>2018-12-31T17:02:17.759Z</lastmod>
+    <lastmod>2019-01-01T16:36:56.776Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
+    
+    <lastmod>2019-01-01T16:35:43.495Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/five-connection-process/</loc>
+    
+    <lastmod>2019-01-01T16:34:09.968Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/three-tcp-reliability/</loc>
+    
+    <lastmod>2019-01-01T16:32:23.338Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/two-tcp-connection/</loc>
+    
+    <lastmod>2019-01-01T16:30:55.015Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
+    
+    <lastmod>2019-01-01T16:00:55.576Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/about/index.html</loc>
+    
+    <lastmod>2019-01-01T15:55:42.316Z</lastmod>
     
   </url>
   
@@ -40,13 +82,6 @@
     <loc>https://www.lixueduan.com/git/git-ssh-key-set/</loc>
     
     <lastmod>2018-12-31T15:39:53.363Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/designpatterns/index.html</loc>
-    
-    <lastmod>2018-12-31T11:01:06.911Z</lastmod>
     
   </url>
   
