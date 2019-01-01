@@ -140,12 +140,12 @@ exturl: false
 # 菜单项 菜单： 链接 || 图标 资源网站-->http://www.fontawesome.com.cn/icons/snowflake-o/
 menu:
   home: / || home
-  #about: /about/ || user
-  tags: /tags/ || tags
   categories: /categories/ || th
+  tags: /tags/ || tags
   archives: /archives/ || archive
+  about: /about/ || user
   #设计模式 钻石图标
-  designpattern: /tags/design-pattern || snowflake-o
+  #designpattern: /tags/design-pattern || snowflake-o
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
