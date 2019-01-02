@@ -101,8 +101,8 @@ categories: [Hexo]
 deploy:
   type: git
   repository: 
-   github: git@github.com:lillusory/lillusory.github.io.git
-   coding: git@git.coding.net:lillusory/lillusory.git
+   github: git@github.com:illusorycloud/illusorycloud.github.io.git
+   coding: git@git.coding.net:illusorycloud/illusorycloud.git
   branch: master
 ```
 

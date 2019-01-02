@@ -59,7 +59,7 @@ avatar:
 ```yml
 # Social Links. 社交链接 前面为链接地址 后面是图标 
 social:
-  GitHub: https://github.com/lillusorycloud || github
+  GitHub: https://github.com/illusorycloud || github
   E-Mail: mailto:xueduan.li@gmail.com || envelope
   #Weibo: https://weibo.com/yourname || weibo
   #Google: https://plus.google.com/yourname || google

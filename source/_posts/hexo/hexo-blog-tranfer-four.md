@@ -53,7 +53,7 @@ categories: [Hexo]
 当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：
 
 * 克隆仓库
-  * 使用`git clone git@github.com:lillusorycloud/lillusory.github.io.git`拷贝仓库（默认分支为hexo）；//修改成自己的
+  * 使用`git clone git@github.com:illusorycloud/illusorycloud.github.io.git`拷贝仓库（默认分支为hexo）；//修改成自己的
 * 安装插件 在前面克隆下的项目中安装插件
   * 执行命令`npm install hexo、npm install`、`npm install hexo-deployer-git`
 

@@ -2,37 +2,65 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
+    <loc>https://www.lixueduan.com/about/index.html</loc>
     
-    <lastmod>2019-01-01T16:36:56.776Z</lastmod>
+    <lastmod>2019-01-02T13:06:31.784Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
+    <loc>https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/</loc>
     
-    <lastmod>2019-01-01T16:35:43.495Z</lastmod>
+    <lastmod>2019-01-02T12:59:40.990Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/hexo/hexo-blog-deploy-three/</loc>
+    
+    <lastmod>2019-01-02T12:59:12.356Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/hexo/hexo-blog-config-two/</loc>
+    
+    <lastmod>2019-01-02T12:57:35.264Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.lixueduan.com/computer-network/five-connection-process/</loc>
     
-    <lastmod>2019-01-01T16:34:09.968Z</lastmod>
+    <lastmod>2019-01-02T12:47:13.665Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/four-http-https/</loc>
+    
+    <lastmod>2019-01-02T12:47:00.903Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.lixueduan.com/computer-network/three-tcp-reliability/</loc>
     
-    <lastmod>2019-01-01T16:32:23.338Z</lastmod>
+    <lastmod>2019-01-02T12:46:23.350Z</lastmod>
     
   </url>
   
   <url>
     <loc>https://www.lixueduan.com/computer-network/two-tcp-connection/</loc>
     
-    <lastmod>2019-01-01T16:30:55.015Z</lastmod>
+    <lastmod>2019-01-02T12:45:31.705Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
+    
+    <lastmod>2019-01-02T12:44:48.559Z</lastmod>
     
   </url>
   
@@ -44,37 +72,9 @@
   </url>
   
   <url>
-    <loc>https://www.lixueduan.com/about/index.html</loc>
-    
-    <lastmod>2019-01-01T15:55:42.316Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/</loc>
-    
-    <lastmod>2018-12-31T16:01:50.402Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.lixueduan.com/hexo/hexo-blog-setup-one/</loc>
     
     <lastmod>2018-12-31T15:54:40.499Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/hexo/hexo-blog-deploy-three/</loc>
-    
-    <lastmod>2018-12-31T15:53:55.878Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/hexo/hexo-blog-config-two/</loc>
-    
-    <lastmod>2018-12-31T15:41:36.718Z</lastmod>
     
   </url>
   

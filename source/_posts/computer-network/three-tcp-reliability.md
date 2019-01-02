@@ -13,7 +13,11 @@ categories: [计算机网络]
 
 > 计算机网络系列文章
 >
-> 计算机网络之模型(一)
+> - [计算机网络(一)--OSI七层模型](https://www.lixueduan.com/computer-network/one-network-model/)
+> - [计算机网络(二)--TCP三次握手四次挥手](https://www.lixueduan.com/computer-network/two-tcp-connection/)
+> - [计算机网络(三)--TCP如何保证传输可靠性](https://www.lixueduan.com/computer-network/three-tcp-reliability/)
+> - [计算机网络(四)--HTTP与HTTPS](https://www.lixueduan.com/computer-network/four-http-https/)
+> - [计算机网络(五)--从输入URL到页面加载的过程中发生了什么](计算机网络(五)--从输入URL到页面加载的过程中发生了什么)
 
 ## 1. 主要保证方式
 
@@ -85,7 +89,7 @@ categories: [计算机网络]
 
 ​    慢开始( slow-start )、拥塞避免( congestion avoidance )、快重传( fast retransmit )和快恢复( fast recovery )。
 
-#### 慢开始和拥塞避免
+**慢开始和拥塞避免**
 
 ​    发送方维持一个拥塞窗口 cwnd ( congestion window )的状态变量。拥塞窗口的大小取决于网络的拥塞程度，并且动态地在变化。发送方让自己的发送窗口等于拥塞。
 
@@ -95,13 +99,11 @@ categories: [计算机网络]
 
 **拥塞避免算法：**让拥塞窗口cwnd缓慢地增大，即每经过一个往返时间RTT就把发送方的拥塞窗口cwnd加1，而不是加倍。这样拥塞窗口cwnd按线性规律缓慢增长，比慢开始算法的拥塞窗口增长速率缓慢得多。 
 
-#### 快重传与快恢复
+**快重传与快恢复**
 
  在 TCP/IP 中，快速重传和恢复（fast retransmit and recovery，FRR）是一种拥塞控制算法，它能快速恢复丢失的数据包。没有 FRR，如果数据包丢失了，TCP 将会使用定时器来要求传输暂停。在暂停的这段时间内，没有新的或复制的数据包被发送。有了 FRR，如果接收机接收到一个不按顺序的数据段，它会立即给发送机发送一个重复确认。如果发送机接收到三个重复确认，它会假定确认件指出的数据段丢失了，并立即重传这些丢失的数据段。有了 FRR，就不会因为重传时要求的暂停被耽误。 　当有单独的数据包丢失时，快速重传和恢复（FRR）能最有效地工作。当有多个数据信息包在某一段很短的时间内丢失时，它则不能很有效地工作。  
 
-
-
-## 7. 参考
+## 7.参考
 
 `https://blog.csdn.net/liuchenxia8/article/details/80428157`
 
