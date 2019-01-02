@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
+    <lastmod>2019-01-02T15:13:00.364Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-factory-pattern/</loc>
+    <lastmod>2019-01-02T15:12:32.896Z</lastmod>
+  </url>  <url>
     <loc>https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/</loc>
     <lastmod>2019-01-02T12:59:40.990Z</lastmod>
   </url>  <url>
@@ -24,9 +30,6 @@
   </url>  <url>
     <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
     <lastmod>2019-01-02T12:44:48.559Z</lastmod>
-  </url>  <url>
-    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
-    <lastmod>2019-01-01T16:00:55.576Z</lastmod>
   </url>  <url>
     <loc>https://www.lixueduan.com/hexo/hexo-blog-setup-one/</loc>
     <lastmod>2018-12-31T15:54:40.499Z</lastmod>

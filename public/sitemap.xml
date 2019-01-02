@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
+    
+    <lastmod>2019-01-02T15:13:00.364Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.lixueduan.com/design-pattern/java-factory-pattern/</loc>
+    
+    <lastmod>2019-01-02T15:12:32.896Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.lixueduan.com/about/index.html</loc>
     
     <lastmod>2019-01-02T13:06:31.784Z</lastmod>
@@ -61,13 +75,6 @@
     <loc>https://www.lixueduan.com/computer-network/one-network-model/</loc>
     
     <lastmod>2019-01-02T12:44:48.559Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.lixueduan.com/design-pattern/java-singleton-pattern/</loc>
-    
-    <lastmod>2019-01-01T16:00:55.576Z</lastmod>
     
   </url>
   

@@ -1,8 +1,8 @@
 ---
 title: Java设计模式之单例模式(一)
 date: 2018-10-08 22:00:00
-tags: [Java,设计模式]
-categories: [设计模式，design-pattern]
+tags: [设计模式]
+categories: [设计模式]
 ---
 
 本文主要介绍了设计模式的六大原则，并结合实例描述了各种单例模式的具体实现和性能分析测试。包括：`饿汉式`、`静态内部类`、`懒汉式`、`双重校验锁`、`枚举`等。
@@ -11,5 +11,5 @@ categories: [设计模式，design-pattern]
 
 > 设计模式系列文章
 >
-> [Java设计模式之单例模式(一)]()
+> [Java23种设计模式](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)
 
