@@ -1,5 +1,5 @@
 ---
-title: Java设计模式之单例模式(一)
+title: Java设计模式（二）--工厂模式
 date: 2018-10-10 22:00:00
 tags: [设计模式]
 categories: [设计模式]

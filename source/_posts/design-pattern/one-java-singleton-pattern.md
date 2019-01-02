@@ -1,5 +1,5 @@
 ---
-title: Java设计模式之单例模式(一)
+title: Java设计模式（一）--单例模式
 date: 2018-10-08 22:00:00
 tags: [Java,设计模式]
 categories: [设计模式]
