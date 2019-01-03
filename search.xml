@@ -137,4 +137,15 @@
         <tag>Java</tag>
       </tags>
   </entry>
+  <entry>
+    <title><![CDATA[Git 配置及SSH key及使用]]></title>
+    <url>%2Fposts%2F49894.html</url>
+    <content type="text"><![CDATA[​ 本地 Git 仓库和 GitHub 仓库之间的传输是通过 SSH 加密的，所以配置SSH key之后，上传代码到Github远程仓库时就不用输入密码了。一般是在C盘用户目录下有一个 something 和 something.pub 来命名的一对文件，这个 something 通常就是 id_dsa 或 id_rsa。有 .pub 后缀的文件就是公钥，另一个文件则是密钥。连接时必须提供一个公钥用于授权，没有的话就要生成一个。1. Git 配置配置全局用户名和密码，git提交代码时用来显示你身份和联系方式，并不是github用户名和邮箱12git config --global user.name "lillusory" //改成自己的git config --global user.email "xueduanli@163.com" //改成自己的2. 生成SSH key2.1 生成秘钥执行ssh-keygen -t rsa -C &quot;你的邮箱地址&quot; 命令 生成ssh key然后会叫你输入保存路径，直接按回车即可，保存在C盘用户目录下然后会提示输入密码和确认密码，不用输入直接按两下回车即可到这里SSH key就生成好了，接下来就是配置到github上。2.2 配置SSH key登陆Github–&gt;点击头像–&gt;Settings–&gt;SSH and GPG keys–&gt;选择SSh keys上的New SSH keys–&gt;name 随便写，key就是刚才生成的文件中的所有内容。文件默认是在C盘用户目录下，我的是C:\Users\13452\.ssh文件夹中应该会有两个文件 ：id_rsa和id_rsa.pubid_rsa.pub就是我们要的key, 一般以ssh-rsa开头，以你刚才输的邮箱结尾。2.3 测试执行ssh -T git@github.com命令验证一下。可能会提示，无法验证主机的真实性是否要建立连接，输入yes就行了。如果，看到：Hi xxx! You’ve successfully authenticated, but GitHub does not # provide shell access.恭喜你，你的设置已经成功了。3. 参考Git Book]]></content>
+      <categories>
+        <category>Git</category>
+      </categories>
+      <tags>
+        <tag>Git</tag>
+      </tags>
+  </entry>
 </search>

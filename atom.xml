@@ -290,4 +290,26 @@
     
   </entry>
   
+  <entry>
+    <title>Git 配置及SSH key及使用</title>
+    <link href="https://www.lixueduan.com/posts/49894.html"/>
+    <id>https://www.lixueduan.com/posts/49894.html</id>
+    <published>2017-07-01T04:00:00.000Z</published>
+    <updated>2019-01-03T10:29:16.247Z</updated>
+    
+    <content type="html"><![CDATA[<!-- build time:Thu Jan 03 2019 19:39:01 GMT+0800 (GMT+08:00) --><p>​ 本地 Git 仓库和 GitHub 仓库之间的传输是通过 SSH 加密的，所以配置SSH key之后，上传代码到<code>Github</code>远程仓库时就不用输入密码了。一般是在C盘用户目录下有一个 <code>something</code> 和 <code>something.pub</code> 来命名的一对文件，这个 <code>something</code> 通常就是 <code>id_dsa</code> 或 <code>id_rsa</code>。有 <code>.pub</code> 后缀的文件就是公钥，另一个文件则是密钥。连接时必须提供一个公钥用于授权，没有的话就要生成一个。</p><a id="more"></a><h2 id="1-Git-配置"><a href="#1-Git-配置" class="headerlink" title="1. Git 配置"></a>1. Git 配置</h2><p>配置全局用户名和密码，git提交代码时用来显示你身份和联系方式，并不是github用户名和邮箱</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">"lillusory"</span> <span class="comment">//改成自己的</span></span><br><span class="line">git config --global user.email <span class="string">"xueduanli@163.com"</span>  <span class="comment">//改成自己的</span></span><br></pre></td></tr></table></figure><h2 id="2-生成SSH-key"><a href="#2-生成SSH-key" class="headerlink" title="2. 生成SSH key"></a>2. 生成SSH key</h2><h3 id="2-1-生成秘钥"><a href="#2-1-生成秘钥" class="headerlink" title="2.1 生成秘钥"></a>2.1 生成秘钥</h3><ul><li>执行<code>ssh-keygen -t rsa -C &quot;你的邮箱地址&quot;</code> 命令 生成ssh key</li><li>然后会叫你输入保存路径，直接按回车即可，保存在C盘用户目录下</li><li>然后会提示输入密码和确认密码，不用输入直接按两下回车即可</li></ul><p>到这里SSH key就生成好了，接下来就是配置到github上。</p><h3 id="2-2-配置SSH-key"><a href="#2-2-配置SSH-key" class="headerlink" title="2.2 配置SSH key"></a>2.2 配置SSH key</h3><p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set1.png" alt=""></p><p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/2018-12-27-git-ssh-key-set2.png" alt=""></p><p>登陆Github–&gt;点击头像–&gt;Settings–&gt;SSH and GPG keys–&gt;选择SSh keys上的New SSH keys–&gt;name 随便写，key就是刚才生成的文件中的所有内容。</p><p>文件默认是在C盘用户目录下，我的是<code>C:\Users\13452\.ssh</code></p><p>文件夹中应该会有两个文件 ：<code>id_rsa</code>和<code>id_rsa.pub</code></p><p><code>id_rsa.pub</code>就是我们要的key, 一般以<code>ssh-rsa</code>开头，以你刚才输的邮箱结尾。</p><h3 id="2-3-测试"><a href="#2-3-测试" class="headerlink" title="2.3 测试"></a>2.3 测试</h3><p>执行<code>ssh -T git@github.com</code>命令验证一下。</p><p>可能会提示，<code>无法验证主机的真实性</code>是否要建立连接，输入<code>yes</code>就行了。</p><p>如果，看到：</p><blockquote><p>Hi xxx! You’ve successfully authenticated, but GitHub does not # provide shell access.</p></blockquote><p>恭喜你，你的设置已经成功了。</p><h2 id="3-参考"><a href="#3-参考" class="headerlink" title="3. 参考"></a>3. 参考</h2><p><a href="https://git-scm.com/book/zh/v2/%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84-Git-%E7%94%9F%E6%88%90-SSH-%E5%85%AC%E9%92%A5" target="_blank" rel="noopener">Git Book</a></p><!-- rebuild by neat -->]]></content>
+    
+    <summary type="html">
+    
+      &lt;!-- build time:Thu Jan 03 2019 19:39:01 GMT+0800 (GMT+08:00) --&gt;&lt;p&gt;​ 本地 Git 仓库和 GitHub 仓库之间的传输是通过 SSH 加密的，所以配置SSH key之后，上传代码到&lt;code&gt;Github&lt;/code&gt;远程仓库时就不用输入密码了。一般是在C盘用户目录下有一个 &lt;code&gt;something&lt;/code&gt; 和 &lt;code&gt;something.pub&lt;/code&gt; 来命名的一对文件，这个 &lt;code&gt;something&lt;/code&gt; 通常就是 &lt;code&gt;id_dsa&lt;/code&gt; 或 &lt;code&gt;id_rsa&lt;/code&gt;。有 &lt;code&gt;.pub&lt;/code&gt; 后缀的文件就是公钥，另一个文件则是密钥。连接时必须提供一个公钥用于授权，没有的话就要生成一个。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Git" scheme="https://www.lixueduan.com/categories/Git/"/>
+    
+    
+      <category term="Git" scheme="https://www.lixueduan.com/tags/Git/"/>
+    
+  </entry>
+  
 </feed>
