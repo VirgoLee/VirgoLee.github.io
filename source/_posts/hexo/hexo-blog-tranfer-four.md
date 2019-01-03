@@ -1,8 +1,11 @@
 ---
 title: Hexo个人博客之转移（四）
+tags:
+  - Hexo
+categories:
+  - Hexo
+abbrlink: 33469
 date: 2018-12-27 22:00:00
-tags: [Hexo]
-categories: [Hexo]
 ---
 
 本章主要记录了如何通过使用`Github`的`分支功能`解决更换电脑后博客更新不方便的问题，让你的博客能在各个电脑上灵活切换。在也不用担心换电脑后博客配置丢失等问题了。
@@ -11,13 +14,7 @@ categories: [Hexo]
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
-> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
->
-> [Hexo个人博客之优化（二）](https://www.lixueduan.com/hexo/hexo-blog-config-two/)
->
-> [Hexo个人博客之部署（三）](https://www.lixueduan.com/hexo/hexo-blog-deploy-three/)
->
-> [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
+> [点击阅读更多系列文章](https://www.lixueduan.com/tags/Hexo/)
 
 到此为止，我们已经完成了差不多所有的步骤。
 

@@ -1,8 +1,11 @@
 ---
 title: Hexo个人博客之优化（二）
+tags:
+  - Hexo
+categories:
+  - Hexo
+abbrlink: 58273
 date: 2018-12-22 22:00:00
-tags: [Hexo]
-categories: [Hexo]
 ---
 
 本章主要包含了博客主题优化相关内容，第三方服务和插件的配置与使用。如：炫酷头像动态背景、链接变色、鼠标点击效果、站点字数、访客数统计等。
@@ -11,13 +14,8 @@ categories: [Hexo]
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
-> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
+> [点击阅读更多系列文章](https://www.lixueduan.com/tags/Hexo/)
 >
-> [Hexo个人博客之优化（二）](https://www.lixueduan.com/hexo/hexo-blog-config-two/)
->
-> [Hexo个人博客之部署（三）](https://www.lixueduan.com/hexo/hexo-blog-deploy-three/)
->
-> [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
 
 ### 0. 选择主题
 

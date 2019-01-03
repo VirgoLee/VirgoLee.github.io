@@ -1,8 +1,11 @@
 ---
 title: Git 配置及SSH key及使用
+tags:
+  - Git
+categories:
+  - Git
+abbrlink: 49894
 date: 2017-07-01 12:00:00
-tags: [Git]
-categories: [Git]
 ---
 
 ​	本地 Git 仓库和 GitHub 仓库之间的传输是通过 SSH 加密的，所以配置SSH key之后，上传代码到`Github`远程仓库时就不用输入密码了。一般是在C盘用户目录下有一个 `something` 和 `something.pub` 来命名的一对文件，这个 `something` 通常就是 `id_dsa` 或 `id_rsa`。有 `.pub` 后缀的文件就是公钥，另一个文件则是密钥。连接时必须提供一个公钥用于授权，没有的话就要生成一个。

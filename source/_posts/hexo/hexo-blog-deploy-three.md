@@ -1,8 +1,11 @@
 ---
 title: Hexo个人博客之部署（三）
+tags:
+  - Hexo
+categories:
+  - Hexo
+abbrlink: 41257
 date: 2018-12-25 12:00:00
-tags: [Hexo]
-categories: [Hexo]
 ---
 
 本章主要记录了如何将博客部署至云端，怎么设置个性域名，怎么将自己的网站提交到百度Google。让自己的网站能够出现在各大搜索引擎的具体方法和过程，希望能对大家有帮助。  
@@ -11,13 +14,7 @@ categories: [Hexo]
 
 > 这是一个基于Hexo的个人博客的教程，包含了从博客搭建到主题优化，最后部署到云端的全过程。
 >
-> [Hexo个人博客之搭建（一）](https://www.lixueduan.com/hexo/hexo-blog-setup-one/)
->
-> [Hexo个人博客之优化（二）](https://www.lixueduan.com/hexo/hexo-blog-config-two/)
->
-> [Hexo个人博客之部署（三）](https://www.lixueduan.com/hexo/hexo-blog-deploy-three/)
->
-> [Hexo个人博客之转移（四）](https://www.lixueduan.com/hexo/hexo-blog-tranfer-four/)
+> [点击阅读更多系列文章](https://www.lixueduan.com/tags/Hexo/)
 
 ## 1. 购买个性域名
 
@@ -89,7 +86,7 @@ categories: [Hexo]
 
 具体配置方法如下：
 
-[Git 配置及SSH key](https://www.lixueduan.com/git/git-ssh-key-set/)
+[Git 配置及SSH key](https://www.lixueduan.com/categories/Git/)
 
 **修改站点配置文件**
 
@@ -200,7 +197,7 @@ sitemap:
 
 具体配置方法：
 
-[Git 配置及SSH key](https://www.lixueduan.com/git/git-ssh-key-set/)
+[Git 配置及SSH key](https://www.lixueduan.com/categories/Git/)
 
 **修改站点配置文件**
 

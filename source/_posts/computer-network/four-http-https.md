@@ -1,8 +1,12 @@
 ---
 title: 计算机网络(四)--HTTP与HTTPS
+tags:
+  - 计算机网络
+  - HTTP
+categories:
+  - 计算机网络
+abbrlink: 21307
 date: 2018-11-12 22:00:00
-tags: [计算机网络,HTTP]
-categories: [计算机网络]
 ---
 
 本文主要介绍了`HTTP`、`HTTPS`的基本概念及两者的区别，`HTTPS`的工作原理及优缺点，最后介绍了HTTP的响应状态码。

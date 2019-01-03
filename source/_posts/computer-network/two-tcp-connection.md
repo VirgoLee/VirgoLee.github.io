@@ -1,8 +1,12 @@
 ---
 title: 计算机网络(二)--TCP三次握手四次挥手
+tags:
+  - 计算机网络
+  - TCP/IP
+categories:
+  - 计算机网络
+abbrlink: 25338
 date: 2018-11-05 22:00:00
-tags: [计算机网络,TCP/IP]
-categories: [计算机网络]
 ---
 
 本文主要介绍了`TCP/IP`的三次握手和四次挥手具体步骤及其原因分析。
