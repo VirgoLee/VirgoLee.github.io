@@ -20,6 +20,8 @@ date: 2018-10-12 22:00:00
 
 > 建造者模式是将一个复杂的对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。。
 
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/three-builder.jpg)
+
 建造者模式通常包括下面几个角色：
 
 （1） `Builder`：给出一个抽象接口，以规范产品对象的各个组成成分的建造。这个接口规定要实现复杂对象的哪些部分的创建，并不涉及具体的对象部件的创建。
