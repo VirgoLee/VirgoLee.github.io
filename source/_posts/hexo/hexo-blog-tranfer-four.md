@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客之转移（四）
+title: Hexo个人博客之迁移（四）
 tags:
   - Hexo
 categories:
@@ -45,7 +45,7 @@ date: 2018-12-27 22:00:00
 * 依次执行`git add .`、`git commit -m "这里写备注"`、`git push origin 这里写分支名字`指令将改动推送到GitHub（此时当前分支应为hexo）。
 * 然后才执行`hexo g -d`发布网站到master分支上。
 
-## 3. 博客转移
+## 3. 博客迁移
 
 当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：
 

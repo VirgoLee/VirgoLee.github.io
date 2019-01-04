@@ -4,9 +4,10 @@
 # 所有配置项和内容必须隔一个空格 title: xxx 冒号后必须加一个空格,不然无法识别
 # Site 站点相关配置-->标题 副标题 描述 关键词 作者 语言 时区(默认与电脑时区相同)
 title: 幻境云图
-subtitle: 不忘初心,方得始终
-description: "一个专注于Java技术分享的博客,主要涉及Java知识共享、实践教程、前沿技术共同学习等。"
-keywords: Java开发|Java教程|Java知识分享|分布式|数据库
+# 修改后 subtitle是显示在侧边栏的
+subtitle: 勿在浮沙筑高台
+description: "幻境云图是一个专注于Java技术分享的博客,记录了一个菜鸟从0开始的Java进阶之路。主要涉及Java知识共享、实践教程、前沿技术共同学习等。包括但不限于Java基础,数据库优化,Spring框架,源码分析,分布式,微服务,并发编程等"
+keywords: Java,知识共享,分布式,微服务,SQL
 author: illusoryCloud
 language: zh-CN
 timezone:

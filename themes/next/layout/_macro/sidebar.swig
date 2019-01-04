@@ -35,9 +35,11 @@
                 alt="{{ author }}" />
             {% endif %}
               <p class="site-author-name" itemprop="name">{{ author }}</p>
-              <p class="site-description motion-element" itemprop="description">{#
-              #}{{ description }}{#
-            #}</p>
+			  
+			  <!-- 侧边栏那句话 description改为subtitle 原本显示的是网站描述，现在改成了subtitle网站副标题--> 
+            <p class="site-description motion-element" itemprop="description">{#
+              #}{{ subtitle }}{#
+            #}</p> 
           </div>
 
           {% if theme.site_state %}
