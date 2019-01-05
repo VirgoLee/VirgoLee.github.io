@@ -1,11 +1,14 @@
 ---
-title: Java设计模式（）--模式
-date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
+title: Java设计模式（）--模板方法模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: 57ae709c
+date: 2018-10-24 22:00:00
 ---
 
-本文主要介绍了Java23种设计模式中的 模式，并结合实例描述了 模式的具体实现和性能分析测试。
+本文主要介绍了Java23种设计模式中的模板方法模式，并结合实例描述了模板方法模式的具体实现和优缺点分析。
 
 <!--more-->
 
@@ -19,7 +22,9 @@ categories: [设计模式]
 
 >  准备一个抽象类，将部分逻辑以具体方法以及具体构造函数的形式实现，然后声明一些抽象方法来迫使子类实现剩余的逻辑。不同的子类可以以不同的方式实现这些抽象方法，从而对剩余的逻辑有不同的实现。
 >
-> 这就是模板方法模式的用意。
+>  这就是模板方法模式的用意。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/eleven-template.png)
 
 　　**抽象模板(Abstract Template)角色有如下责任：**
 

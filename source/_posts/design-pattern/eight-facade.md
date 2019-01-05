@@ -1,8 +1,11 @@
 ---
-title: Java设计模式（）--模式
-date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
+title: Java设计模式（）--外观模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: 22a51705
+date: 2018-10-20 22:00:00
 ---
 
 本文主要介绍了Java23种设计模式中的 模式，并结合实例描述了 模式的具体实现和性能分析测试。
@@ -16,6 +19,8 @@ categories: [设计模式]
 ## 1. 外观模式介绍
 
 > 它通过引入一个外观角色来简化客户端与子系统之间的交互，为复杂的子系统调用提供一个统一的入口，降低子系统与客户端的耦合度，且客户端调用非常方便。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/seven-proxy.png)
 
 外观模式结构：
 

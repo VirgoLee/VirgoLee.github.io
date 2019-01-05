@@ -1,8 +1,11 @@
 ---
-title: Java设计模式（）--模式
-date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
+title: Java设计模式（）--策略模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: a7982bdc
+date: 2018-10-23 22:00:00
 ---
 
 本文主要介绍了Java23种设计模式中的策略模式，并结合实例描述了策略模式的具体实现和策略模式的优缺点分析。
@@ -18,6 +21,8 @@ categories: [设计模式]
 > **策略模式是对算法的包装**
 >
 > 策略模式定义了一系列的算法，并将每一个算法封装起来，而且它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/ten-bridge.gif)
 
 　　这个模式涉及到三个角色：
 

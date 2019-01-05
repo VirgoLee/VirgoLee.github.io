@@ -1,8 +1,11 @@
 ---
-title: Java设计模式（）--模式
-date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
+title: Java设计模式（）--装饰者模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: '75903408'
+date: 2018-10-16 22:00:00
 ---
 
 本文主要介绍了Java23种设计模式中的 模式，并结合实例描述了 模式的具体实现和性能分析测试。
@@ -18,6 +21,8 @@ categories: [设计模式]
 在不必改变原类文件和使用继承的情况下，动态地扩展一个对象的功能。
 
 它是通过创建一个包装对象，也就是装饰来包裹真实的对象。是继承关系的一个替代方案。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/six-decorator.png)
 
 **装饰模式由4种角色组成：**
 （1）抽象构件（Component）角色：给出一个抽象接口，以规范准备接收附加职责的对象。

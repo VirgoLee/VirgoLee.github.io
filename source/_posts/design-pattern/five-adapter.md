@@ -1,11 +1,11 @@
 ---
-title: Java设计模式（）--模式
+title: Java设计模式（）--适配器模式
 tags:
   - 设计模式
 categories:
   - 设计模式
 abbrlink: a340063f
-date: 2018-10-08 22:00:00
+date: 2018-10-15 22:00:00
 ---
 
 本文主要介绍了Java23种设计模式之适配器模式，并结合实例描述了适配器模式的具体实现和优缺点分析。
@@ -21,6 +21,8 @@ date: 2018-10-08 22:00:00
 > 适配器模式将一个接口转换成客户希望的另外一个接口。它使得原来由于接口不兼容而不能在一起工作的那些类可以一起工作。
 >
 > **把一个类的接口变换成客户端所期待的另一种接口**
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/five-adapter.jpeg)
 
 用到的对象
 

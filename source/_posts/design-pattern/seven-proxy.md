@@ -1,8 +1,11 @@
 ---
-title: Java设计模式（）--模式
-date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
+title: Java设计模式（）--代理模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: ae2a93bd
+date: 2018-10-19 22:00:00
 ---
 
 本文主要介绍了Java23种设计模式中的 模式，并结合实例描述了 模式的具体实现和性能分析测试。
@@ -16,6 +19,8 @@ categories: [设计模式]
 ## 1. 代理模式介绍
 
 > **给某一对象提供一个代理对象，并由代理对象控制对原对象的引用**。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/seven-proxy.png)
 
 **代理模式的结构**
 
@@ -241,6 +246,6 @@ public class CglibProxy implements MethodInterceptor{
 
 
 
-## 6.参考
+## 6. 参考
 
 `https://www.cnblogs.com/xrq730/p/4907999.html`
