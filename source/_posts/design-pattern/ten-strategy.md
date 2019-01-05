@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（）--策略模式
+title: Java设计模式（十）--策略模式
 tags:
   - 设计模式
 categories:

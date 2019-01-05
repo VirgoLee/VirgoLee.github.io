@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（）--原型模式
+title: Java设计模式（四）--原型模式
 tags:
   - 设计模式
 categories:
