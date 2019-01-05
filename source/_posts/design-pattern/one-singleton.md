@@ -230,6 +230,33 @@ public class Test {
 
 * 单例模式一般没有接口，扩展很困难，若要扩展只能修改代码。
 
+**单例模式在Java中的应用**
+
+```java
+public class Runtime {
+    private static Runtime currentRuntime = new Runtime();
+
+    /**
+     * Returns the runtime object associated with the current Java application.
+     * Most of the methods of class <code>Runtime</code> are instance 
+     * methods and must be invoked with respect to the current runtime object. 
+     * 
+     * @return  the <code>Runtime</code> object associated with the current
+     *          Java application.
+     */
+    public static Runtime getRuntime() { 
+    return currentRuntime;
+    }
+
+    /** Don't let anyone else instantiate this class */
+    private Runtime() {}
+
+    ...
+}
+```
+
+
+
 ## 5. 参考
 
 [单例模式性能分析](https://blog.csdn.net/qq_22706515/article/details/74202814)

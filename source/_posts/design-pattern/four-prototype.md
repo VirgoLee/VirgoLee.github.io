@@ -1,8 +1,11 @@
 ---
 title: Java设计模式（）--模式
+tags:
+  - 设计模式
+categories:
+  - 设计模式
+abbrlink: a340063f
 date: 2018-10-08 22:00:00
-tags: [设计模式]
-categories: [设计模式]
 ---
 
 本文主要介绍了Java23种设计模式中的原型模式，并结合实例描述了原型模式的具体实现和应用场景，优缺点分析等。
@@ -170,6 +173,32 @@ public class Author implements Serializable {
 
 当一个类的实例只能有几个不同状态组合中的一种时。建立相应数目的原型并克隆它们可能比每次用合适的状态手工实例化该类更方便一些。
 
+**原型模式在Java中的应用及解读**
+
+只要是实现了Cloneable接口的类都可以算是原型模式的应用，比如ArrayList。
+
+```java
+public class ArrayList<E> extends AbstractList<E>
+        implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+{
+    ...
+    public Object clone() {
+    try {
+        ArrayList<E> v = (ArrayList<E>) super.clone();
+        v.elementData = Arrays.copyOf(elementData, size);
+        v.modCount = 0;
+        return v;
+    } catch (CloneNotSupportedException e) {
+        // this shouldn't happen, since we are Cloneable
+        throw new InternalError();
+    }
+    }
+    ...
+}
+```
+
+程序中获取到了一个ArrayList的实例arrayList，我们完全可以通过调用arrayList.clone()方法获取到原ArrayList的拷贝。
+
 ## 4. 参考
 
-`https://www.cnblogs.com/chenssy/p/3313339.html`
+`https://www.cnblogs.com/xrq730/p/4905907.html`

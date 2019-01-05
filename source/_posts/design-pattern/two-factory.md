@@ -85,7 +85,28 @@ public class FactoryTest {
 }
 ```
 
+
+
 ## 3. 工厂方法模式
+
+```java
+public interface ThreadFactory {
+
+    /**
+     * Constructs a new {@code Thread}.  Implementations may also initialize
+     * priority, name, daemon status, {@code ThreadGroup}, etc.
+     *
+     * @param r a runnable to be executed by new thread instance
+     * @return constructed thread, or {@code null} if the request to
+     *         create a thread is rejected
+     */
+    Thread newThread(Runnable r);
+}
+```
+
+> 具体的线程工厂可以implements这个接口并实现newThread(Runnable r)方法，来生产具体线程工厂想要生产的线程。
+>
+>
 
 ```java
 //抽象水果工厂
@@ -228,7 +249,34 @@ public class OrangeFactory implements AbstractFactory {
 
 抽象工厂模式：一个对象族（或是一组没有任何关系的对象）都有相同的约束，则可以使用抽象工厂模式。
 
+**工厂模式在Java中的应用**
+
+`简单工厂模式`
+
+JDK中的简单工厂模式有很多应用，比较典型的比如线程池。我们使用线程池的时候，可以使用ThreadPoolExecutor，根据自己的喜好传入corePoolSize、maximumPoolSize、keepAliveTimem、unit、workQueue、threadFactory、handler这几个参数，new出一个指定的ThreadPoolExecutor出来。
+
+`工厂方法模式`
+
+```java
+public interface ThreadFactory {
+
+    /**
+     * Constructs a new {@code Thread}.  Implementations may also initialize
+     * priority, name, daemon status, {@code ThreadGroup}, etc.
+     *
+     * @param r a runnable to be executed by new thread instance
+     * @return constructed thread, or {@code null} if the request to
+     *         create a thread is rejected
+     */
+    Thread newThread(Runnable r);
+}
+```
+
+这是一个生产线程的接口,具体的线程工厂可以implements这个接口并实现newThread(Runnable r)方法，来生产具体线程工厂想要生产的线程。
+
 ## 6. 参考
 
 `https://blog.csdn.net/d1562901685/article/details/77623237`
+
+`https://www.cnblogs.com/xrq730/p/4905578.html`
 
