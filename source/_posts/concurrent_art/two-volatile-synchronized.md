@@ -91,7 +91,9 @@ java的对象头由以下三部分组成：
 >
 > 3，数组长度（只有数组对象才有）
 
-![](C:\Users\13452\Desktop\java对象头.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/art_of_concurrent_coding/java%E5%AF%B9%E8%B1%A1%E5%A4%B4.png)
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/art_of_concurrent_coding/java-mark-work%E5%8F%98%E5%8C%96%E7%8A%B6%E6%80%81.png)
 
 ### 3.3 锁的升级与对比
 
@@ -108,12 +110,20 @@ HotSpot的作者经过研究发现，大多数情况下，锁不仅不存在多�
 
 偏向锁使用了一种等到竞争出现才释放锁的机制，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有正在执行的字节码）。它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程.
 
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/art_of_concurrent_coding/java%E5%81%8F%E5%90%91%E9%94%81.png)
+
 **轻量级锁**
 
 （1）轻量级锁加锁
 线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并将对象头中的Mark Word复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用自旋来获取锁。
 （2）轻量级锁解锁
 轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/art_of_concurrent_coding/java%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%81.png)
+
+**优缺点比较**
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/art_of_concurrent_coding/java%E9%94%81%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9%E6%AF%94%E8%BE%83.png)
 
 ## 4. 原子操作的实现原理
 
