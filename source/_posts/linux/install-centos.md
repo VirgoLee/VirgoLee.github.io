@@ -1,15 +1,18 @@
 ---
-title: 超详细的CentOS 7安装教程
+title: 超详细的CentOS7安装教程
 tags:
   - Linux
 categories:
   - Linux
+abbrlink: 4d7cca6f
 date: 2019-01-14 22:00:00
 ---
 
 这是一个十分详细的CentOS7的安装教程，对自己的安装过程做了一个记录。主要记录了如何通过VMware虚拟机安装Linux，从软件下载到虚拟机安装等等。
 
 <!--more-->
+
+> 点击阅读更多文章[我的个人博客-->幻境云图]()
 
 ## 1. 准备工作
 
@@ -27,7 +30,7 @@ date: 2019-01-14 22:00:00
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/software-install/centos7-down.png)
 
-## 2.CentOS 7安装
+## 2. CentOS 7安装
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/1-create-vm.png)
 
@@ -129,7 +132,56 @@ date: 2019-01-14 22:00:00
 
 在安装好后可以拍摄一张快照，方便恢复或者克隆虚拟机。
 
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/30-backup1.png)
+
+## 4. 网络设置
 
 
 
+首先取消自动分配IP.
+
+然后为虚拟机设置动态IP
+
+### 网络配置
+
+`vi   /etc/sysconfig/network-scripts/ifcfg-ens33`
+
+```xml
+BOOTPROTO="static"  # 手动分配ip
+ONBOOT="yes"  # 该网卡是否随网络服务启动
+IPADDR="192.168.40.111"  # 该网卡ip地址就是你要配置的固定IP
+GATEWAY="192.168.40.2"   # 网关
+NETMASK="255.255.255.0"   # 子网掩码
+DNS1="8.8.8.8"    # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地址
+
+```
+
+### 配置网络工作
+
+`vi /etc/sysconfig/network`
+
+```xml
+NETWORKING=yes # 网络是否工作，此处一定不能为no
+```
+
+### 配置公共DNS服务
+
+`vi /etc/resolv.conf`
+
+```xml
+nameserver 8.8.8.8
+```
+
+### 关闭防火墙
+
+```java
+systemctl stop firewalld # 临时关闭防火墙
+systemctl disable firewalld # 禁止开机启动
+```
+
+### 重启网络服务
+
+```xml
+service network restart
+```
 
