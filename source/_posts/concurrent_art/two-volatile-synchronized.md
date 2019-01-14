@@ -1,5 +1,5 @@
 ---
-title: 什么是上下文切换？
+title: Synchronize和Volatile底层实现原理
 tags:
   - Java
 categories:
@@ -10,9 +10,11 @@ date: 2019-01-08 22:00:00
 
 最近在看`并发编程的艺术`这本书，希望加深对并发这块的理解。毕竟并发相关还是十分重要的。本文主要是关于`第二章Java并发机制的底层实现原理`的相关笔记。主要包括`volatile`,`synchronized`,`原子操作`等实现原理的分析。
 
+> 点击阅读更多系列文章[我的个人博客-->幻境云图](https://www.lixueduan.com/categories/Java/)
+
 <!--more-->
 
-## 1.上下文切换
+## 1. 上下文切换
 
 **多线程**
 

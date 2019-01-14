@@ -12,7 +12,7 @@ date: 2019-01-14 22:00:00
 
 <!--more-->
 
-> 点击阅读更多文章[我的个人博客-->幻境云图]()
+> 点击阅读更多Linux入门系列文章[我的个人博客-->幻境云图](https://www.lixueduan.com/categories/Linux/)
 
 ## 1. 准备工作
 
@@ -136,24 +136,30 @@ date: 2019-01-14 22:00:00
 
 ## 4. 网络设置
 
-
-
 首先取消自动分配IP.
 
-然后为虚拟机设置动态IP
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/31-ip-set1.png)
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/32-ip-set2.png)
+
+然后为虚拟机设置动态IP.
 
 ### 网络配置
+
+**NAT模式下，虚拟机要和主机通信的话必须在同一个网段下。**
+
+windows命令行输入`ipconfig`查看IP  
 
 `vi   /etc/sysconfig/network-scripts/ifcfg-ens33`
 
 ```xml
 BOOTPROTO="static"  # 手动分配ip
 ONBOOT="yes"  # 该网卡是否随网络服务启动
-IPADDR="192.168.40.111"  # 该网卡ip地址就是你要配置的固定IP
-GATEWAY="192.168.40.2"   # 网关
+IPADDR="192.168.1.111"  # 该网卡ip地址就是你要配置的固定IP
+GATEWAY="192.168.1.2"   # 网关 必须和主机在同一个网段
 NETMASK="255.255.255.0"   # 子网掩码
 DNS1="8.8.8.8"    # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地址
-
+DNS2="192.168.1.2" 
 ```
 
 ### 配置网络工作
@@ -170,6 +176,7 @@ NETWORKING=yes # 网络是否工作，此处一定不能为no
 
 ```xml
 nameserver 8.8.8.8
+nameserver 192.168.1.2
 ```
 
 ### 关闭防火墙
@@ -181,7 +188,5 @@ systemctl disable firewalld # 禁止开机启动
 
 ### 重启网络服务
 
-```xml
-service network restart
-```
+`service network restart`
 

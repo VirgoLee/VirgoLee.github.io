@@ -126,7 +126,7 @@ neat_enable: true
 neat_html:
   enable: true
   exclude:
-  #这个压缩后没了 不知道为什么 先跳过 post/linux/install-centos
+  #这篇文章压缩后没了 不知道为什么 先跳过 post/linux/install-centos
   - '**/4d7cca6f.html' 
   
 # 压缩css  跳过min.css
