@@ -4,7 +4,7 @@ tags:
   - Linux
 categories:
   - Linux
-abbrlink: b0d13a6d
+abbrlink: a50e132
 date: 2019-01-15 22:00:00
 ---
 
@@ -19,6 +19,8 @@ date: 2019-01-15 22:00:00
 在安装好虚拟机后就可以正常使用了。但是在正常工作中不可能真的在服务器上操作，一般都是通过ssh客户端工具连接服务器进行操作。
 
 这里用到的客户端工具是`Xshell`,通过该工具连上服务器后就可以在自己的电脑上操作了。而且还可以开多个窗口，比较方便。
+
+![xshell](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/xshell-use.png)
 
 这里新建连接时需要输入要连接的服务器的IP和端口号，账户和密码，端口号默认是22，一般不用改。
 
@@ -48,13 +50,13 @@ NAT模式下，虚拟机会动态获取IP,虽然有自己的IP但是最终上网
 
 windows下命令行输入 `ipconfig` 即可获取到本机IP.
 
-
+![ipconfig](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/ip-query.png)
 
 然后通过VMware软件对网络进行配置。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/31-ip-set1.png)
+![vmware](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/ip-set-way.png)
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/32-ip-set2.png)
+![static ip](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/network-set/vm-ip-set.png)
 
 接着在虚拟机中配置具体网络信息。
 
@@ -106,3 +108,4 @@ systemctl disable firewalld # 禁止开机启动
 
 `service network restart`
 
+到此为止网络配置就完成了，现在虚拟机的IP重启后不会变了，也可以连上外网了，还可以和主机联通了。
