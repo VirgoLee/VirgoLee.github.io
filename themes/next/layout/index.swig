@@ -3,8 +3,7 @@
 {% import '_macro/sidebar.swig' as sidebar_template %}
 
 {% block title %}
-<!--{{ title }}{% if theme.index_with_subtitle and subtitle %} – {{ subtitle }}{% endif %}-->
-<!--首页显示网站标题+关键词-->
+
 {{ config.title }} - {{ theme.keywords }}
 {% endblock %}
 

@@ -120,13 +120,13 @@ deploy:
 
 
 # hexo-neat
-# 博文压缩
-neat_enable: true
+# 博文压缩 现在用的是gulp
+neat_enable: false
 # 压缩html
 neat_html:
   enable: true
   exclude:
-  #这篇文章压缩后没了 不知道为什么 先跳过 post/linux/install-centos network-set
+  #这篇文章压缩后没了 不知道为什么 先跳过 post/linux/install-centos network-set 换gulp压缩了
   - '**/4d7cca6f.html'
   - '**/a50e132.html'
 # 压缩css  跳过min.css
