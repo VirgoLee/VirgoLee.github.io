@@ -3,18 +3,7 @@
   <entry>
     <title><![CDATA[超详细的CentOS7安装教程]]></title>
     <url>%2Fposts%2F4d7cca6f.html</url>
-    <content type="text"><![CDATA[这是一个十分详细的CentOS7的安装教程，对自己的安装过程做了一个记录。主要记录了如何通过VMware虚拟机安装Linux，从软件下载到虚拟机安装等等。点击阅读更多Linux入门系列文章我的个人博客–&gt;幻境云图1. 准备工作1.1 VMware下载百度网盘下载（内含注册机）链接: https://pan.baidu.com/s/1wz4hdNQBikTvyUMNokSVYg提取码: yed7怎么安装就不用写了吧。1.2 CentOS下载http://mirrors.163.com/centos/7.6.1810/isos/x86_64/2. CentOS 7安装创建虚拟机，这里我们选择自定义安装类型。然后选择版本，需要注意兼容问题，一般是向下兼容，14上的虚拟机复制到15上可以用，15的复制到14上可能会用不了。这里选择稍后再安装。接着选择系统，这里是CentOS 7 64位。这个是保存的文件名字。这里一般默认的就行了,电脑配置好的可以调高点。网络这里,如果仅仅是让虚拟机能上网，两种模式都可以的，用桥接的话只要你在局域网内有合法的地址，比如你的ADSL猫是带路由功能的，如果是在单位，那就要网络管理人员给你合法IP才行。NAT模式下，虚拟机从属于主机，也就是访问外部网络必须通过主机来访问，因此虚拟机的IP只有主机才能识别。而桥接模式下，虚拟机和主机是平行关系，共享一张网卡（使用网卡的多个接口），可以直接访问外部网络。这些都默认的就行了。这个是虚拟机文件的名字。这里选择自定义硬件。选择镜像文件。到这里就结束了，点击开启虚拟机后会自动开始安装。选择安装CentOS 7语言选择调一下时间和地区。选择要安装的软件，新手还是安装一个GUI比较好。查看一下网络连接开始安装。安装过程中可以设置一下账号密码，一个root账户，一个普通账户。然后耐心等待安装完成就好了。安装完成后重启就可以登录系统了。3. 快照在安装好后可以拍摄一张快照，方便恢复或者克隆虚拟机。4. 网络设置首先取消自动分配IP.然后为虚拟机设置动态IP.网络配置NAT模式下，虚拟机要和主机通信的话必须在同一个网段下。windows命令行输入ipconfig查看IPvi /etc/sysconfig/network-scripts/ifcfg-ens331234567BOOTPROTO="static" # 手动分配ipONBOOT="yes" # 该网卡是否随网络服务启动IPADDR="192.168.1.111" # 该网卡ip地址就是你要配置的固定IPGATEWAY="192.168.1.2" # 网关 必须和主机在同一个网段NETMASK="255.255.255.0" # 子网掩码DNS1="8.8.8.8" # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地址DNS2="192.168.1.2"配置网络工作vi /etc/sysconfig/network1NETWORKING=yes # 网络是否工作，此处一定不能为no配置公共DNS服务vi /etc/resolv.conf12nameserver 8.8.8.8nameserver 192.168.1.2关闭防火墙12systemctl stop firewalld # 临时关闭防火墙systemctl disable firewalld # 禁止开机启动重启网络服务service network restart]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[超详细的CentOS 7安装教程]]></title>
-    <url>%2Fposts%2Fb0d13a6d.html</url>
-    <content type="text"><![CDATA[write here前面写摘要后面写剩下的内容]]></content>
+    <content type="text"><![CDATA[这是一个十分详细的CentOS7的安装教程，对自己的安装过程做了一个记录。主要记录了如何通过VMware虚拟机安装Linux，从软件下载到虚拟机安装等等。点击阅读更多Linux入门系列文章我的个人博客–&gt;幻境云图1. 准备工作1.1 VMware下载百度网盘下载（内含注册机）链接: https://pan.baidu.com/s/1wz4hdNQBikTvyUMNokSVYg提取码: yed7怎么安装就不用写了吧。1.2 CentOS下载http://mirrors.163.com/centos/7.6.1810/isos/x86_64/2. CentOS 7安装创建虚拟机，这里我们选择自定义安装类型。然后选择版本，需要注意兼容问题，一般是向下兼容，14上的虚拟机复制到15上可以用，15的复制到14上可能会用不了。这里选择稍后再安装。接着选择系统，这里是CentOS 7 64位。这个是保存的文件名字。这里一般默认的就行了,电脑配置好的可以调高点。网络这里,如果仅仅是让虚拟机能上网，两种模式都可以的，用桥接的话只要你在局域网内有合法的地址，比如你的ADSL猫是带路由功能的，如果是在单位，那就要网络管理人员给你合法IP才行。NAT模式下，虚拟机从属于主机，也就是访问外部网络必须通过主机来访问，因此虚拟机的IP只有主机才能识别。而桥接模式下，虚拟机和主机是平行关系，共享一张网卡（使用网卡的多个接口），可以直接访问外部网络。这些都默认的就行了。这个是虚拟机文件的名字。这里选择自定义硬件。选择镜像文件。到这里就结束了，点击开启虚拟机后会自动开始安装。选择安装CentOS 7语言选择调一下时间和地区。选择要安装的软件，新手还是安装一个GUI比较好。查看一下网络连接开始安装。安装过程中可以设置一下账号密码，一个root账户，一个普通账户。然后耐心等待安装完成就好了。安装完成后重启就可以登录系统了。3. 快照快照相当于windows中的还原点。在安装好后可以拍摄一张快照，方便恢复或者克隆虚拟机。]]></content>
       <categories>
         <category>Linux</category>
       </categories>
