@@ -32,9 +32,11 @@ return gulp.src(['./public/**/*.js', '!./public/**/*.min.js'])
 });
 
 // 执行 gulp 命令时执行的任务
+//4.0以前的写法 
 //gulp.task('default', [
   //  'minify-html', 'minify-css', 'minify-js'
 //]);
+//40以后的写法 前面的不能用了
 gulp.task('default', gulp.parallel('minify-html', 'minify-css', 'minify-js', function() {
   // Do something after a, b, and c are finished.
 }));
