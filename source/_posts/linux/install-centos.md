@@ -12,7 +12,7 @@ date: 2019-01-14 22:00:00
 
 <!--more-->
 
-> 点击阅读更多Linux入门系列文章[我的个人博客-->幻境云图](https://www.lixueduan.com/categories/Linux/)
+> 点击阅读更多Linux入门系列文章[欢迎访问我的个人博客-->幻境云图](https://www.lixueduan.com/categories/Linux/)
 
 ## 1. 准备工作
 
