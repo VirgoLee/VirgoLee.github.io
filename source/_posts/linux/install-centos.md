@@ -130,63 +130,7 @@ date: 2019-01-14 22:00:00
 
 ## 3. 快照
 
-在安装好后可以拍摄一张快照，方便恢复或者克隆虚拟机。
+快照相当于windows中的还原点。在安装好后可以拍摄一张快照，方便恢复或者克隆虚拟机。
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/30-backup1.png)
-
-## 4. 网络设置
-
-首先取消自动分配IP.
-
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/31-ip-set1.png)
-
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/linux/centos7-install/32-ip-set2.png)
-
-然后为虚拟机设置动态IP.
-
-### 网络配置
-
-**NAT模式下，虚拟机要和主机通信的话必须在同一个网段下。**
-
-windows命令行输入`ipconfig`查看IP  
-
-`vi   /etc/sysconfig/network-scripts/ifcfg-ens33`
-
-```xml
-BOOTPROTO="static"  # 手动分配ip
-ONBOOT="yes"  # 该网卡是否随网络服务启动
-IPADDR="192.168.1.111"  # 该网卡ip地址就是你要配置的固定IP
-GATEWAY="192.168.1.2"   # 网关 必须和主机在同一个网段
-NETMASK="255.255.255.0"   # 子网掩码
-DNS1="8.8.8.8"    # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地址
-DNS2="192.168.1.2" 
-```
-
-### 配置网络工作
-
-`vi /etc/sysconfig/network`
-
-```xml
-NETWORKING=yes # 网络是否工作，此处一定不能为no
-```
-
-### 配置公共DNS服务
-
-`vi /etc/resolv.conf`
-
-```xml
-nameserver 8.8.8.8
-nameserver 192.168.1.2
-```
-
-### 关闭防火墙
-
-```java
-systemctl stop firewalld # 临时关闭防火墙
-systemctl disable firewalld # 禁止开机启动
-```
-
-### 重启网络服务
-
-`service network restart`
 
