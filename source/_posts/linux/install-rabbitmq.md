@@ -193,3 +193,4 @@ init terminating in do_boot (noproc)
 Crash dump is being written to: erl_crash.dump...done
 ```
 
+这个问题网上查了一下，有的说是权限问题，也有说是erlang和rabbitmq版本对应不上，暂时没解决。
