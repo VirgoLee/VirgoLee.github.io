@@ -4,6 +4,7 @@ tags:
   - Linux
 categories:
   - Linux
+abbrlink: b84a2c6c
 date: 2019-01-21 22:00:00
 ---
 
@@ -17,40 +18,36 @@ date: 2019-01-21 22:00:00
 
 # RabbitMQ
 
-## 0. 版本问题
+## 0. 环境准备
+
+### 1.版本问题
 
 Erlang和RabbitMQ版本必须对应才行，不然可能会出错。
 
-具体信息在这里`http://www.rabbitmq.com/which-erlang.html`
-
-这里选择的版本是 `Erlang:21.2`,`RabbitMQ3.7.10`,`Linux:CentOS 7`
-
-RabbitMQ Erlang Version Requirements
-
-Introduction
-
-This guide covers Erlang/OTP version requirements, Erlang version support policy, a RabbitMQ/Erlang compatibility matrix, version-specific notes and ways of provisioning recent Erlang/OTP releases.
-
-Unsupported Versions
+**官网信息如下 RabbitMQ Erlang Version Requirements**
 
 Erlang/OTP versions **older than 20.3 are not supported** by RabbitMQ versions released in 2019.
 
 RabbitMQ **versions prior to 3.7.7 do not support Erlang/OTP 21** or newer.
 
-Supported Erlang Version Policy
+RabbitMQ version3.7.7--3.7.10 需要的Erlang版本最低为20.3.X,最高为21.X
 
-Starting in January 2019, RabbitMQ supports two most recent Erlang release series. Currently the series are 20.3.x and 21.x. When Erlang 22.0 ships, after a 3 month transition period, the supported versions will be 21.2.x and 22.x.
+| RabbitMQ version   | Minimum required Erlang/OTP | Maximum supported Erlang/OTP |
+| ------------------ | --------------------------- | ---------------------------- |
+| **3.7.7---3.7.10** | **20.3.X**                  | **21.X**                     |
+| **3.7.0--3.7.6**   | **19.3**                    | **20.3.X**                   |
 
-The table below provides an Erlang compatibility matrix of currently supported RabbitMQ release series. For RabbitMQ releases that have reached end of life, see Unsupported Series Compatibility Matrix.
+具体信息在这里`http://www.rabbitmq.com/which-erlang.html`
 
-RabbitMQ and Erlang/OTP Compatibility Matrix
+这里选择的版本是 `Erlang:21.2`,`RabbitMQ3.7.10`,`Linux:CentOS 7`
 
-| RabbitMQ version                          | Minimum required Erlang/OTP | Maximum supported Erlang/OTP | Notes                                                        |
-| :---------------------------------------- | --------------------------- | ---------------------------- | ------------------------------------------------------------ |
-| **3.7.10**,**3.7.9**,**3.7.8**,**3.7.7**  | **20.3.x**                  | **21.x**                     | Erlang/OTP 19.3.x support is discontinued as of Jan 1st, 2019For the best TLS support, the latest version of Erlang/OTP 21.x is recommendedOn Windows, Erlang/OTP 20.2 changed default cookie file location |
-| 3.7.6,3.7.5,3.7.4,3.7.3,3.7.2,3.7.1,3.7.0 | 19.3                        | 20.3.x                       | For the best TLS support, the latest version of Erlang/OTP 20.3.x is recommendedErlang versions prior to 19.3.6.4 have known bugs (e.g. ERL-430  that can prevent RabbitMQ nodes from accepting connections (including from CLI tools) and stoppingVersions prior to 19.3.6.4 are vulnerable to the ROBOT attack(CVE-2017-1000385)On Windows, Erlang/OTP 20.2 changed default cookie file location |
+### 2. 依赖下载
 
-As a rule of thumb, most recent patch versions of each supported Erlang/OTP series is recommended.
+安装`rabbitmq`需要下载以下依赖，这里可以提前下载上。
+
+`# yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel`
+
+`# yum install xmlto -y`
 
 ## 1. Erlang安装
 
@@ -68,11 +65,17 @@ As a rule of thumb, most recent patch versions of each supported Erlang/OTP seri
 
 `# tar xvf otp_src_21.2.tar.gz`  解压文件
 
+复制一份到/usr/local/opt/erlang-software
+
+`# cp otp_src_21.2  /usr/local/opt/erlang-software -r`
+
 创建erlang安装目录： /usr/local/opt/erlang  
 
 ### 1.3 编译
 
-进入到/usr/local/opt/erlang目录下
+进入到/usr/local/opt/erlang-software目录下
+
+`# cd /usr/local/opt/erlang-software`
 
 配置安装路径编译代码：`# ./configure --prefix=/usr/local/opt/erlang`
 
@@ -103,21 +106,11 @@ Eshell V10.2  (abort with ^G)
 
 ## 2. RabbitMQ安装
 
-### 2.0 依赖下载
-
-`# yum -y install make gcc gcc-c++ kernel-devel m4 ncurses-devel openssl-devel`
-
-`# yum install python -y`
-
-`# yum install xmlto -y`
-
-`# yum install python-simplejson -y`
-
 ### 2.1 下载 
 
 官网：`http://www.rabbitmq.com/releases/rabbitmq-server`
 
-这里下载的是3.7.10；`http://www.rabbitmq.com/install-generic-unix.html` 
+这里下载3.7.10 :`http://www.rabbitmq.com/install-generic-unix.html`
 
 文件：`rabbitmq-server-generic-unix-3.7.10.tar.xz`
 
@@ -151,35 +144,25 @@ Eshell V10.2  (abort with ^G)
 
 ### 2.5 配置网页插件
 
-首先创建目录，否则可能报错：mkdir /etc/rabbitmq 
+首先创建目录，否则可能报错：`# mkdir /etc/rabbitmq `
 
-启用插件：./rabbitmq-plugins enable rabbitmq_management
+启用插件：`# ./rabbitmq-plugins enable rabbitmq_management`
 
-启动mq：./rabbitmq-server -detached
+启动mq：`# ./rabbitmq-server -detached`
 
 配置linux 端口： 15672 网页管理，  5672 AMQP端口
 
-然后访问http://10.100.3.126:15672
+然后访问`http://192.168.5.154:15672/`
 
-rabbitmq默认会创建guest账号，只能用于localhost登录页面管理员
+这里是需要登录了。
 
-进入sbin
+rabbitmq默认会创建guest账号，只能用于localhost登录页面管理员，需要自己创建账号。
 
-启动mq:
+### 2.6 添加账户
 
-cd opt/rabbitmq/sbin
+查看mq用户：`# rabbitmqctl list_users  `
 
-./rabbitmq-server –detached
-
- 
-
-查看服务状态：rabbitmqctl status
-
-关闭服务：rabbitmqctl stop
-
-查看mq用户：rabbitmqctl list_users  
-
-查看用户权限：rabbitmqctl list_user_permissions guest
+查看用户权限：`# rabbitmqctl list_user_permissions guest`
 
 新增用户： `# rabbitmqctl add_user root root`  用户名root,密码root
 
