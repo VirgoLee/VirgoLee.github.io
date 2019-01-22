@@ -15,13 +15,8 @@ date: 2018-11-08 22:00:00
 
 <!--more-->
 
-> 计算机网络系列文章
+> [更多计算机网络系列文章，欢迎访问我的个人博客-->幻境云图](https://www.lixueduan.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/)
 >
-> - [计算机网络(一)--OSI七层模型](https://www.lixueduan.com/computer-network/one-network-model/)
-> - [计算机网络(二)--TCP三次握手四次挥手](https://www.lixueduan.com/computer-network/two-tcp-connection/)
-> - [计算机网络(三)--TCP如何保证传输可靠性](https://www.lixueduan.com/computer-network/three-tcp-reliability/)
-> - [计算机网络(四)--HTTP与HTTPS](https://www.lixueduan.com/computer-network/four-http-https/)
-> - [计算机网络(五)--从输入URL到页面加载的过程中发生了什么](计算机网络(五)--从输入URL到页面加载的过程中发生了什么)
 
 ## 1. 主要保证方式
 
