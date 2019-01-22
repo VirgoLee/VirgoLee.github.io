@@ -17,6 +17,41 @@ date: 2019-01-21 22:00:00
 
 # RabbitMQ
 
+## 0. 版本问题
+
+Erlang和RabbitMQ版本必须对应才行，不然可能会出错。
+
+具体信息在这里`http://www.rabbitmq.com/which-erlang.html`
+
+这里选择的版本是 `Erlang:21.2`,`RabbitMQ3.7.10`,`Linux:CentOS 7`
+
+RabbitMQ Erlang Version Requirements
+
+Introduction
+
+This guide covers Erlang/OTP version requirements, Erlang version support policy, a RabbitMQ/Erlang compatibility matrix, version-specific notes and ways of provisioning recent Erlang/OTP releases.
+
+Unsupported Versions
+
+Erlang/OTP versions **older than 20.3 are not supported** by RabbitMQ versions released in 2019.
+
+RabbitMQ **versions prior to 3.7.7 do not support Erlang/OTP 21** or newer.
+
+Supported Erlang Version Policy
+
+Starting in January 2019, RabbitMQ supports two most recent Erlang release series. Currently the series are 20.3.x and 21.x. When Erlang 22.0 ships, after a 3 month transition period, the supported versions will be 21.2.x and 22.x.
+
+The table below provides an Erlang compatibility matrix of currently supported RabbitMQ release series. For RabbitMQ releases that have reached end of life, see Unsupported Series Compatibility Matrix.
+
+RabbitMQ and Erlang/OTP Compatibility Matrix
+
+| RabbitMQ version                          | Minimum required Erlang/OTP | Maximum supported Erlang/OTP | Notes                                                        |
+| :---------------------------------------- | --------------------------- | ---------------------------- | ------------------------------------------------------------ |
+| **3.7.10**,**3.7.9**,**3.7.8**,**3.7.7**  | **20.3.x**                  | **21.x**                     | Erlang/OTP 19.3.x support is discontinued as of Jan 1st, 2019For the best TLS support, the latest version of Erlang/OTP 21.x is recommendedOn Windows, Erlang/OTP 20.2 changed default cookie file location |
+| 3.7.6,3.7.5,3.7.4,3.7.3,3.7.2,3.7.1,3.7.0 | 19.3                        | 20.3.x                       | For the best TLS support, the latest version of Erlang/OTP 20.3.x is recommendedErlang versions prior to 19.3.6.4 have known bugs (e.g. ERL-430  that can prevent RabbitMQ nodes from accepting connections (including from CLI tools) and stoppingVersions prior to 19.3.6.4 are vulnerable to the ROBOT attack(CVE-2017-1000385)On Windows, Erlang/OTP 20.2 changed default cookie file location |
+
+As a rule of thumb, most recent patch versions of each supported Erlang/OTP series is recommended.
+
 ## 1. Erlang安装
 
 ### 1.1 下载
@@ -33,9 +68,7 @@ date: 2019-01-21 22:00:00
 
 `# tar xvf otp_src_21.2.tar.gz`  解压文件
 
-创建erlang安装目录： /usr/local/opt/erlang   可以不复制
-
-`# cp -r otp_src_21.2 /usr/local/opt/erlang/`将文件复制进去
+创建erlang安装目录： /usr/local/opt/erlang  
 
 ### 1.3 编译
 
@@ -80,31 +113,29 @@ Eshell V10.2  (abort with ^G)
 
 `# yum install python-simplejson -y`
 
-
-
 ### 2.1 下载 
 
-地址：`http://www.rabbitmq.com/releases/rabbitmq-server`
+官网：`http://www.rabbitmq.com/releases/rabbitmq-server`
 
-文件：`rabbitmq-server-generic-unix-3.6.15.tar.xz`
+这里下载的是3.7.10；`http://www.rabbitmq.com/install-generic-unix.html` 
+
+文件：`rabbitmq-server-generic-unix-3.7.10.tar.xz`
 
 ### 2.2 解压
 
 文件是xz格式的，解压后得到tar格式文件。
 
-`# xz -d rabbitmq-server-generic-unix-3.6.15.tar.xz`
+`# xz -d rabbitmq-server-generic-unix-3.7.10.tar.xz`
 
-`# tar -xvf rabbitmq-server-generic-unix-3.6.15.tar`
+`# tar -xvf rabbitmq-server-generic-unix-3.7.10.tar`
 
-复制到/usr/local/opt/rabbitmq目录下`# cp -r rabbitmq_server-3.6.15/ /usr/local/opt/rabbitmq`
+复制到/usr/local/opt/rabbitmq目录下`# cp -r rabbitmq_server-3.7.10/ /usr/local/opt/rabbitmq`
 
 ### 2.3 环境变量配置
 
 配置rabbitmq环境变量,`# vi /etc/profile` 添加以下内容
 
 `export PATH=$PATH:/usr/local/opt/rabbitmq/sbin`
-
-export PATH=$PATH:/usr/local/ruby/bin:/usr/local/erlang/bin:/usr/local/rabbitmq/sbin
 
 环境变量生效：`source /etc/profile`
 
@@ -150,17 +181,17 @@ cd opt/rabbitmq/sbin
 
 查看用户权限：rabbitmqctl list_user_permissions guest
 
-新增用户： rabbitmqctl add_user admin 123456
+新增用户： `# rabbitmqctl add_user root root`  用户名root,密码root
 
 赋予管理员权限：
 
-rabbitmqctl set_user_tags admin administrator 
+`rabbitmqctl set_user_tags root administrator `
 
-rabbitmqctl set_permissions -p "/" admin ".*" ".*" ".*" 
+`rabbitmqctl set_permissions -p "/" root ".*" ".*" ".*" `
 
 
 
-## 3.问题
+## 3. 问题
 
 1.启动报错
 
@@ -194,3 +225,5 @@ Crash dump is being written to: erl_crash.dump...done
 ```
 
 这个问题网上查了一下，有的说是权限问题，也有说是erlang和rabbitmq版本对应不上，暂时没解决。
+
+以解决，确实是版本问题，erlang版本和rabbitmq的版本对应不上，最前面单独写了这个关于版本的问题。

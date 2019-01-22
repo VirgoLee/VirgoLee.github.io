@@ -62,7 +62,7 @@ windows下命令行输入 `ipconfig` 即可获取到本机IP.
 
 ### 2.3 网络配置
 
-#### 2.3.1 配置文件
+#### 2.3.1 网卡配置
 
 网络配置文件在`/etc/sysconfig/network-scripts/ifcfg-ens33`目录下，一般是叫`ifcfg-ens33`
 
@@ -82,17 +82,23 @@ DNS1="8.8.8.8"    # DNS，8.8.8.8为Google提供的免费DNS服务器的IP地
 DNS2="192.168.1.2" 
 ```
 
-#### 2.3.2 配置网络工作
+#### 2.3.2 网络配置
 
-命令：`vi /etc/sysconfig/network`
+命令：`vi /etc/sysconfig/network` 添加以下内容
 
-内容：`NETWORKING=yes # 网络是否工作，此处一定不能为no`
+```xml
+NETWORKING=yes # 网络是否工作，此处一定不能为no
+NETWORKING_IPV6=no
+HOSTNAME=localhost.localdomain
+GATEWAY=192.168.1.2
+```
 
 #### 2.3.3 配置公共DNS服务
 
 `vi /etc/resolv.conf`
 
 ```xml
+search localdomain
 nameserver 8.8.8.8
 nameserver 192.168.1.2
 ```
