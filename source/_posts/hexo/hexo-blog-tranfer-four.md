@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客之迁移（四）
+title: 基于Hexo搭建个人博客之（四）--管理篇
 tags:
   - Hexo
 categories:

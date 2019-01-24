@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客之搭建（一）
+title: 基于Hexo搭建个人博客之（一）--基础篇
 tags:
   - Hexo
 categories:

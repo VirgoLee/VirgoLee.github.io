@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客之部署（三）
+title: 基于Hexo搭建个人博客之（三）--部署篇
 tags:
   - Hexo
 categories:

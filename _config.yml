@@ -7,7 +7,7 @@ title: 幻境云图
 # 修改后 subtitle是显示在侧边栏的
 subtitle: 勿在浮沙筑高台
 description: "幻境云图是一个专注于Java技术分享的博客,记录了一个菜鸟从0开始的Java进阶之路。主要涉及Java知识共享、实践教程、前沿技术共同学习等。包括但不限于Java基础,数据库优化,Spring框架,源码分析,分布式,微服务,并发编程等"
-keywords: Java基础,Java知识共享,分布式,微服务,SQL
+keywords: Java教程,Java知识共享,源码分析,分布式,微服务,SQL
 author: illusoryCloud
 language: zh-CN
 timezone:

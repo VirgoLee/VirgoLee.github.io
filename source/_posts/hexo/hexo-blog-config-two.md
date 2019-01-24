@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客之优化（二）
+title: 基于Hexo搭建个人博客之（二）--主题优化篇
 tags:
   - Hexo
 categories:

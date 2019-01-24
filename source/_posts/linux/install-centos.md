@@ -1,5 +1,5 @@
 ---
-title: 超详细的CentOS7安装教程
+title: 超详细的VMware虚拟机安装CentOS7教程
 tags:
   - Linux
 categories:

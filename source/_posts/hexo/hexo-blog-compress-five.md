@@ -1,5 +1,5 @@
 ---
-title: Hexo个人博客优化之gulp压缩静态资源（五）
+title: 基于Hexo搭建个人博客优化之（五）--压缩篇
 tags:
   - Hexo
 categories:
