@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.lixueduan.com/posts/9a79dc9b.html</loc>
+    <lastmod>2019-01-25T13:32:04.909Z</lastmod>
+  </url>  <url>
     <loc>https://www.lixueduan.com/posts/4d7cca6f.html</loc>
     <lastmod>2019-01-24T12:24:34.379Z</lastmod>
   </url>  <url>
@@ -99,5 +102,8 @@
   </url>  <url>
     <loc>https://www.lixueduan.com/posts/49894.html</loc>
     <lastmod>2019-01-03T10:29:16.247Z</lastmod>
+  </url>  <url>
+    <loc>https://www.lixueduan.com/posts/0.html</loc>
+    <lastmod>2018-12-16T15:54:50.000Z</lastmod>
   </url>
 </urlset>

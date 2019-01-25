@@ -4,6 +4,7 @@ tags:
   - Android
 categories:
   - Android
+abbrlink: 9a79dc9b
 date: 2018-12-25 22:00:00
 ---
 
@@ -312,7 +313,7 @@ public class CheckErrorUtils {
 
 记得添加网络权限
 
-![picture](https://github.com/lillusory/EmailForAndroid/raw/master/meail_test.png)
+![picture](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/android/email-sender.png)
 
 [点击下载Demo](https://github.com/lillusory/EmailForAndroid)
 
