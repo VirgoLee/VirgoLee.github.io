@@ -11,6 +11,8 @@ date: 2019-02-02 22:00:00
 
 <!--more-->
 
+![Java运行时数据区](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/jvm/runtime-data-areas.png)
+
 **线程私有的**：`程序计数器` 、`虚拟机栈`、`本地方法栈`
 
 **线程共享的**： `堆`、`方法区 `
