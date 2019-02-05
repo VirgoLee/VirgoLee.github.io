@@ -4,6 +4,7 @@ tags:
   - Java
 categories:
   - Java
+abbrlink: 760fc833
 date: 2018-11-26 22:00:00
 ---
 
@@ -19,11 +20,11 @@ date: 2018-11-26 22:00:00
 - 业务逻辑层  Service   具体的业务操作 
 - 数据访问层   Dao  对数据库进行操作,为上层提供数据   
 
-![](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/Java/ssm/2018-12-17-3Tier.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier.png)
 
 为了更好的降低各层间的耦合度，在三层架构程序设计中，采用面向抽象编程。即上层对下层的调用，是通过接口实现的。而下层对上层的真正服务提供者，是下层接口的实现类。服务标准（接口）是相同的，服务提供者（实现类）可以更换。这就实现了层间的耦合。 
 
-![](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/Java/ssm/2018-12-17-3Tier-Interface.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier-interface.png)
 
 
 
@@ -35,7 +36,7 @@ date: 2018-11-26 22:00:00
 - **View（视图）** - 视图代表模型包含的数据的可视化。
 - **Controller（控制器）** - 控制器作用于模型和视图上。它控制数据流向模型对象，并在数据变化时更新视图。它使视图与模型分离开。
 
-![](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/Java/ssm/2018-12-17-MVC.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/mvc.png)
 
 ## 3.MVC与三层架构
 
@@ -43,7 +44,7 @@ date: 2018-11-26 22:00:00
   - 经典三层架构是一种分层思想，将开发模式分为了这三层
   - MVC是一种设计模式，目的是让HTML代码和业务逻辑代码分开，让代码看起来更加清晰，便于开发
 
-![mvc和三层架构](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/Java/ssm/2017-12-17-3Tier-MVC.jpg)
+![mvc和三层架构](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier-mvc.jpg)
 
 
 
@@ -55,7 +56,7 @@ SSM即SpringMVC、Spring、Mybatis三个框架。它们在三层架构中所处�
 - MyBatis：作为 Dao层的实现者，完成对数据库的增、删、改、查功能。
 - Spring：以整个应用大管家的身份出现。整个应用中所有的Bean的生命周期行为，均由Spring来管理。即整个应用中所有对象的创建、初始化、销毁，及对象间关联关系的维护，均由Spring进行管理。
 
- ![](https://github.com/lillusory/lillusory.github.io/raw/master/images/posts/Java/ssm/2018-12-17-3Tier-SSM.jpg)
+ ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/ssm/3tier-ssm.jpg)
 
 ## 5.SSM框架配置
 
@@ -316,7 +317,7 @@ log4j.appender.stdout.layout.ConversionPattern=%5p [%t] - %m%n
 
 ## 参考
 
-[MVC 与三层架构](https://juejin.im/post/5929259b44d90400642194f3)
+`https://juejin.im/post/5929259b44d90400642194f3`
 
  
 
