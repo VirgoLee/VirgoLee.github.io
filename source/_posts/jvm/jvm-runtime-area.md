@@ -12,11 +12,7 @@ date: 2019-02-02 22:00:00
 
 <!--more-->
 
-<<<<<<< HEAD
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
-=======
-> [更多系列文章欢迎访问我的个人博客-->幻境云图](https://www.lixueduan.com/categories/JVM/)
->>>>>>> d75e2ca0454933cff067436caeb1906e92da0582
+> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/）
 
 ![Java运行时数据区](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/jvm/runtime-data-areas.png)
 
