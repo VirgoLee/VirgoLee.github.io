@@ -12,6 +12,8 @@ date: 2019-02-02 22:00:00
 
 <!--more-->
 
+> [更多系列文章欢迎访问我的个人博客-->幻境云图](https://www.lixueduan.com/categories/JVM/)
+
 ![Java运行时数据区](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/jvm/runtime-data-areas.png)
 
 **线程私有的**：`程序计数器` 、`虚拟机栈`、`本地方法栈`
