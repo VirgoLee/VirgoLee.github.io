@@ -4,12 +4,15 @@ tags:
   - JVM
 categories:
   - JVM
+abbrlink: 9806100a
 date: 2019-02-02 22:00:00
 ---
 
 本文主要讲的是Java运行时数据区，包括线程私有的`程序计数器`，`虚拟机栈`，`本地方法栈`和线程共享的`堆`，`方法区`等。
 
 <!--more-->
+
+> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 ![Java运行时数据区](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/jvm/runtime-data-areas.png)
 

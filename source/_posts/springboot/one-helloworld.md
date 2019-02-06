@@ -1,5 +1,5 @@
 ---
-title: SpringBoot入门系列（一）之HelloWorld
+title: SpringBoot入门系列(一)--HelloWorld
 tags:
   - SpringBoot
 categories:
@@ -11,6 +11,8 @@ date: 2018-12-22 22:00:00
 本文主要介绍了SpringBoot是什么、怎么使用和为什么要用SpringBoot。使用Spring boot ，可以轻松的创建独立运行的程序，非常容易构建独立的服务组件，是实现分布式架构、微服务架构利器。Spring boot简化了第三方包的引用，通过提供的starter，简化了依赖包的配置。
 
 <!--more-->
+
+>  更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 ## 1. SpringBoot介绍
 

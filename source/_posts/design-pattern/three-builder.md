@@ -12,9 +12,7 @@ date: 2018-10-12 22:00:00
 
 <!--more-->
 
-> 设计模式系列文章
->
-> [Java23种设计模式](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)
+> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 ## 1. 建造者模式介绍
 

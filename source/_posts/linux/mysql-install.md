@@ -12,7 +12,7 @@ date: 2019-01-16 22:00:00
 
 <!-- more-->
 
-> 点击阅读更多Linux入门系列文章[欢迎访问我的个人博客-->幻境云图](https://www.lixueduan.com/categories/Linux/)
+> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 软件统一放在`/usr/software`下 解压后放在单独的文件夹下`/usr/local/java`/`/usr/local/mysql`
 
