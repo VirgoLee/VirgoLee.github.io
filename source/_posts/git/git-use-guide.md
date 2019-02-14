@@ -24,7 +24,7 @@ Git(读音为/gɪt/。)是一个开源的分布式版本控制系统，可以有
 
 Git本地有四个工作区域：`工作目录（Working Directory`）、`暂存区(Stage/Index`)、`版本库(Repository或Commit History)`、`远程仓库(Remote Directory)`。文件在这四个区域之间的转换关系如下：
 
-
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-work-tree.png)
 
 * **Working Directory**： 工作区，就是你平时存放项目代码的地方，大概就是一个文件夹。
 
@@ -54,7 +54,7 @@ GIT不关心文件两个版本之间的具体差别，而是关心文件的整�
 
 SHA-1算法计算文件的校验和。
 
-![img](https://img2018.cnblogs.com/blog/1090617/201810/1090617-20181008212040668-1339848607.png)
+![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-file-status.png)
 
 **Untracked:**   未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.
 
@@ -72,17 +72,19 @@ SHA-1算法计算文件的校验和。
 
  下面的图很好的解释了这四种状态的转变：
 
-![img](https://img2018.cnblogs.com/blog/1090617/201810/1090617-20181008212245877-52530897.png)
+![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-status-change.png)
 
-新建文件--->Untracked
+>  新建文件--->Untracked
+>
+> 使用add命令将新建的文件加入到暂存区--->Staged
+>
+> 使用commit命令将暂存区的文件提交到本地仓库--->Unmodified
+>
+> 如果对Unmodified状态的文件进行修改---> modified
+>
+> 如果对Unmodified状态的文件进行remove操作--->Untracked
 
-使用add命令将新建的文件加入到暂存区--->Staged
 
-使用commit命令将暂存区的文件提交到本地仓库--->Unmodified
-
-如果对Unmodified状态的文件进行修改---> modified
-
-如果对Unmodified状态的文件进行remove操作--->Untracked
 
 ## 2. 使用
 

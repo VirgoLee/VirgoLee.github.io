@@ -164,7 +164,7 @@ public class Singleton {
 }
 ```
 
-这种方式实现的单例：实现了`lazy loading` 使用时才创建实例。`synchronized`保证了线程安全，`volatile`禁止指令重排序保证了多线程获取时不为空，但要JDK1.5以上才行。详细信息请阅读[volatile关键字在单例模式(双重校验锁)中的作用](www.lixueduan.com)
+这种方式实现的单例：实现了`lazy loading` 使用时才创建实例。`synchronized`保证了线程安全，`volatile`禁止指令重排序保证了多线程获取时不为空，但要JDK1.5以上才行。详细信息请阅读[volatile关键字在单例模式(双重校验锁)中的作用](https://www.lixueduan.com/posts/e7cef119.html)
 
 #### 5. 枚举
 
