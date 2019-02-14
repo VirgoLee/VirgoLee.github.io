@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（二）--工厂模式
+title: Java设计模式(二)--工厂模式
 tags:
   - 设计模式
 categories:

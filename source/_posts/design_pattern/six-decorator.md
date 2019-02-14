@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（六）--装饰者模式
+title: Java设计模式(六)--装饰者模式
 tags:
   - 设计模式
 categories:

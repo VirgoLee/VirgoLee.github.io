@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（十一）--模板方法模式
+title: Java设计模式(十一)--模板方法模式
 tags:
   - 设计模式
 categories:

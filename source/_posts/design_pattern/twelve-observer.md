@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（十二）--观察者模式
+title: Java设计模式(十二)--观察者模式
 tags:
   - 设计模式
 categories:

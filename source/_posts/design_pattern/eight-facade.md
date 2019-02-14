@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（八）--外观模式
+title: Java设计模式(八)--外观模式
 tags:
   - 设计模式
 categories:
@@ -18,7 +18,7 @@ date: 2018-10-20 22:00:00
 
 > 它通过引入一个外观角色来简化客户端与子系统之间的交互，为复杂的子系统调用提供一个统一的入口，降低子系统与客户端的耦合度，且客户端调用非常方便。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/seven-proxy.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/eight-facade.jpg)
 
 外观模式结构：
 

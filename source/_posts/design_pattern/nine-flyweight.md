@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（九）--享元模式
+title: Java设计模式(九)--享元模式
 tags:
   - 设计模式
 categories:

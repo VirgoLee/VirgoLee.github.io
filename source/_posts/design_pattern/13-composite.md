@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（十三）--组合模式
+title: Java设计模式(十三)--组合模式
 tags:
   - 设计模式
 categories:

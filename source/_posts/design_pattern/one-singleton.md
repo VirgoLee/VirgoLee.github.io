@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（一）--单例模式
+title: Java设计模式(一)--单例模式
 tags:
   - Java
   - 设计模式
@@ -162,15 +162,9 @@ public class Singleton {
         return singleton;
     }
 }
-//singleton = new Singleton(); 非原子操作 分为三步
-// 1.给singleton分配内存
-// 2.调用 Singleton 的构造函数来初始化成员变量
-// 3.将给singleton对象指向分配的内存空间（此时singleton才不为null）
-// 指令重排序-->执行命令时虚拟机可能会对以上3个步骤交换位置 最后可能是132这种 分配内存并修改指针后未初始化 多线程获取时可能会出现问题。
-//volatile关键字会禁止指令重排序 即可避免这种问题。
 ```
 
-这种方式实现的单例：实现了`lazy loading` 使用时才创建实例。`synchronized`保证了线程安全，`volatile`禁止指令重排序保证了多线程获取时不为空。但要JDK1.5以上才行。
+这种方式实现的单例：实现了`lazy loading` 使用时才创建实例。`synchronized`保证了线程安全，`volatile`禁止指令重排序保证了多线程获取时不为空，但要JDK1.5以上才行。详细信息请阅读[volatile关键字在单例模式(双重校验锁)中的作用](www.lixueduan.com)
 
 #### 5. 枚举
 

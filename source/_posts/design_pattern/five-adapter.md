@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（五）--适配器模式
+title: Java设计模式(五)--适配器模式
 tags:
   - 设计模式
 categories:

@@ -230,7 +230,7 @@ toc:
   enable: true
 
   # Automatically add list number to toc.
-  #是否自动添加数字 如： 1.简介 2.内容 3.总结这种 写文章时就写了所以这里关掉
+  #是否自动添加标题的标号 如： 1.简介 2.内容 3.总结这种 写文章时就写了所以这里关掉
   number: false
 
   # If true, all words will placed on next lines if header width longer then sidebar width.
@@ -689,7 +689,7 @@ rating:
 
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
-#leancloud 阅读统计
+#leancloud 阅读次数统计
 leancloud_visitors:
   enable: true
   app_id: syp1rgTolLpo5KQ8nDc2bWVB-gzGzoHsz

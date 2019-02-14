@@ -1,5 +1,5 @@
 ---
-title: Java设计模式（七）--代理模式
+title: Java设计模式(七)--代理模式
 tags:
   - 设计模式
 categories:
