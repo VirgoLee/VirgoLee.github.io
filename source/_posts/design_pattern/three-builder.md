@@ -32,164 +32,355 @@ date: 2018-10-12 22:00:00
 
 ## 2. 建造者模式实例
 
+### 2.1 写法一
+
 以创建一个Person为例：
 
 Product（要创建的对象）：
 
 ```java
-//首先创建一个Person对象，简单的一些属性和get，set方法
-public class Person {
-    private String name;
-    private String address;
-    private int age;
 
-    public String getName() {
-        return name;
+/**
+ * 构建的消息对象
+ * 普通对象
+ *
+ * @author illusoryCloud
+ */
+public class Message {
+    /** 标题 */
+    private String Title;
+    /** 内容 */
+    private String Content;
+    /** 发送者 */
+    private String From;
+    /** 接收者 */
+    private String To;
+    /** 时间 */
+    private Date Time;
+
+    public String getTitle() {
+        return Title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        Title = title;
     }
 
-    public String getAddress() {
-        return address;
+    public String getContent() {
+        return Content;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setContent(String content) {
+        Content = content;
     }
 
-    public int getAge() {
-        return age;
+    public String getFrom() {
+        return From;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setFrom(String from) {
+        From = from;
     }
 
+    public String getTo() {
+        return To;
+    }
+
+    public void setTo(String to) {
+        To = to;
+    }
+
+    public Date getTime() {
+        return Time;
+    }
+
+    public void setTime(Date time) {
+        Time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "Title='" + Title + '\'' +
+                ", Content='" + Content + '\'' +
+                ", From='" + From + '\'' +
+                ", To='" + To + '\'' +
+                ", Time=" + Time +
+                '}';
+    }
 }
 ```
 
 Builder（给出一个抽象接口，以规范产品对象的各个组成成分的建造 ）
 
 ```java
-//然后创建一个接口 建造对象的标准
+
+/**
+ * Builder接口 建造对象的标准
+ */
 public interface Builder {
-    void builderName();
-
-    void builderAddress();
-
-    void builderAge();
-
-    Person builderPerson();
+    void setTitle();
+    void setContent();
+    void setFrom();
+    void setTo();
+    void setTime();
+    Message build();
 }
+
 ```
 
 ConcreteBuilder（实现Builder接口，针对不同的商业逻辑，具体化复杂对象的各部分的创建）
 
 ```java
-//接着创建一个构造具体对象的类，实现前面的标准（接口）
-public class BuildMe implements Builder {
-    Person person;
+/**
+ * 具体的建造对象类 实现了Builder接口
+ * 可以根据不同需求有不同的实现
+ * @author illusoryCloud
+ */
+public class CommonMessageBuilder implements Builder {
+    private Message message;
 
-    //构造方法创建一个对象
-    public BuildMe() {
-        person = new Person();
-    }
-
-    //然后为对象添加各种属性
-    @Override
-    public void builderName() {
-        person.setName("lillusory");
+    public CommonMessageBuilder() {
+        this.message = new Message();
     }
 
     @Override
-    public void builderAddress() {
-        person.setAddress("重庆");
+    public void setTitle() {
+        message.setTitle("常见的标题");
     }
 
     @Override
-    public void builderAge() {
-        person.setAge(22);
+    public void setContent() {
+        message.setContent("普通的内容");
     }
 
-    //最后返回该对象
     @Override
-    public Person builderPerson() {
-        return person;
+    public void setFrom() {
+        message.setFrom("未知的发送者");
+    }
+
+    @Override
+    public void setTo() {
+        message.setTo("未知的接收者");
+    }
+
+    @Override
+    public void setTime() {
+        message.setTime(new Date());
+    }
+
+    @Override
+    public Message build() {
+        return this.message;
     }
 }
 
-//这里可以根据不同的逻辑或需求，实现不同的（产品）
-public class BuildZhangSan implements Builder {
-    Person person;
-
-    public BuildZhangSan() {
-        person = new Person();
-    }
-
-    @Override
-    public void builderName() {
-        person.setName("张三");
-    }
-
-    @Override
-    public void builderAddress() {
-        person.setAddress("北京");
-    }
-
-    @Override
-    public void builderAge() {
-        person.setAge(20);
-    }
-
-    @Override
-    public Person builderPerson() {
-        return person;
-    }
-}
 ```
+
+
+
+```java
+/**
+ * 具体的建造对象类 实现了Builder接口
+ * 可以根据不同需求有不同的实现
+ * @author illusoryCloud
+ */
+public class OthersMessageBuilder implements Builder {
+    private Message message;
+
+    public OthersMessageBuilder() {
+        this.message = new Message();
+    }
+
+    @Override
+    public void setTitle() {
+        message.setTitle("不寻常的标题");
+    }
+
+    @Override
+    public void setContent() {
+        message.setContent("奇怪的内容");
+    }
+
+    @Override
+    public void setFrom() {
+        message.setFrom("神秘的发送者");
+    }
+
+    @Override
+    public void setTo() {
+        message.setTo("诡异的接收者");
+    }
+
+    @Override
+    public void setTime() {
+        message.setTime(new Date());
+    }
+
+    @Override
+    public Message build() {
+        return this.message;
+    }
+}
+
+```
+
+
 
 Director（调用具体建造者来创建复杂对象的各个部分，在指导者中不涉及具体产品的信息，只负责保证对象各部分完整创建 ）
 
 ```java
-//最后创建一个Director指导者？类来创建对象
-//只负责保证对象各部分完整创建 不知道具体细节
-public class Director {
-    public Person construcPerson(Builder builder) {
-        builder.builderName();
-        builder.builderAddress();
-        builder.builderAge();
-        return builder.builderPerson();
+/** 指导者
+ *只负责保证对象各部分完整创建
+ * @author illusoryCloud
+ */
+public class Dreator {
+    /**
+     *
+     * @param builder 参数是只要实现了Builder接口的类都可以
+     * @return
+     */
+    public Message createMessage(Builder builder) {
+        builder.setTitle();
+        builder.setContent();
+        builder.setFrom();
+        builder.setTo();
+        builder.setTime();
+        return builder.build();
     }
 }
+
 ```
 
 测试
 
 ```java
-public class FactoryTest {
-    public static void main(String[] args) {
-        Director director = new Director();
-        Person person = director.construcPerson(new BuildMe());
-        System.out.println(person.getName());
-        System.out.println(person.getAddress());
-        System.out.println(person.getAge());
-
-        cPerson zhangSan = director.construcPerson(new BuildZhangSan());
-        System.out.println(zhangSan.getName());
-        System.out.println(zhangSan.getAddress());
-        System.out.println(zhangSan.getAge());
+public class Test {
+    @org.junit.jupiter.api.Test
+    public void testBuilder() {
+        Message commonMessage = new Dreator().createMessage(new CommonMessageBuilder());
+        Message othersMessage = new Dreator().createMessage(new OthersMessageBuilder());
+        System.out.println(commonMessage);
+        System.out.println(othersMessage);
     }
 }
-//输出
-        lillusory
-        重庆
-        22
-        张三
-        北京
-        20
 ```
+
+### 2.2 写法二
+
+静态内部类方式
+
+```java
+package Builder.Second;
+
+import java.util.Date;
+
+/**
+ * 构建的消息对象
+ *有个静态内部类
+ * @author illusoryCloud
+ */
+public class Message {
+    /**标题*/
+    private String Title;
+    /**内容*/
+    private String Content;
+    /**发送者*/
+    private String From;
+    /**接收者*/
+    private String To;
+    /**时间*/
+    private Date Time;
+
+    public Message(Builder builder) {
+        Title=builder.Title;
+        Content=builder.Content;
+        From=builder.From;
+        To=builder.To;
+        Time=builder.Time;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "Title='" + Title + '\'' +
+                ", Content='" + Content + '\'' +
+                ", From='" + From + '\'' +
+                ", To='" + To + '\'' +
+                ", Time=" + Time +
+                '}';
+    }
+
+    /**
+     * 静态内部类 Builder
+     */
+    public static class Builder {
+        //设置默认值
+        private String Title = "未命名";
+        private String Content = "暂无内容";
+        private String From = "unknow";
+        private String To = "unknow";
+        private Date Time = new Date();
+
+        /**
+         * 设置消息标题
+         *
+         * @param title 要设置的标题
+         * @return 返回Builder对象 以达到链式调用
+         */
+        public Builder setTitle(String title) {
+            this.Title = title;
+            return this;
+        }
+
+        public Builder setContent(String content) {
+            this.Content = content;
+            return this;
+        }
+
+        public Builder setFrom(String from) {
+            this.From = from;
+            return this;
+        }
+
+        public Builder setTo(String to) {
+            this.To = to;
+            return this;
+        }
+
+        public Builder setTime(Date time) {
+            this.Time = time;
+            return this;
+        }
+
+        public Message Build(){
+            return new Message(this);
+        }
+
+    }
+}
+
+```
+
+测试类
+
+```java
+public class Test {
+    @org.junit.jupiter.api.Test
+    private void testBuilder(){
+        Message build = new Message.Builder().setTitle("这是消息标题")
+                .setContent("这是消息内容")
+                .setFrom("这是消息发送者")
+                .setTo("这是消息接收者")
+                .setTime(new Date())
+                .Build();
+        System.out.println(build.toString());
+    }
+}
+
+```
+
+
 
 ## 3. 总结
 
