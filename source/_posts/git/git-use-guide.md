@@ -1,14 +1,14 @@
 ---
-title: Git入门教程详细版
+title: Git入门教程
 tags:
   - Git
 categories:
   - Git
-abbrlink: 410e3cfa
-date: 2018-12-22 22:00:00
+abbrlink: 498941
+date: 2019-02-16 12:00:00
 ---
 
-本文主要记录了Git常用的一些命令，和Git基本使用教学，包括了版本库的创建、代码提交、推送、拉去、版本回回退、撤销等操作。
+​	本文主要记录了Git常用的一些命令，和Git基本使用教学，包括了版本库的创建、代码提交、推送、拉取、版本回退、撤销等操作。
 
 <!--more-->
 
@@ -26,15 +26,10 @@ Git本地有四个工作区域：`工作目录（Working Directory`）、`暂存
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-work-tree.png)
 
-
-
-* **Working Directory**： 工作区，就是你平时存放项目代码的地方，大概就是一个文件夹。
-
-* **Index / Stage**： 暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息
-
-* **Repository**： 仓库区（或版本库），就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中HEAD指向最新放入仓库的版本
-
-* **Remote**： 远程仓库，托管代码的服务器，可以简单的认为是你项目组中的一台电脑用于远程数据交换
+- **Working Directory**： 工作区，就是你平时存放项目代码的地方，大概就是一个文件夹。
+- **Index / Stage**： 暂存区，用于临时存放你的改动，事实上它只是一个文件，保存即将提交到文件列表信息
+- **Repository**： 仓库区（或版本库），就是安全存放数据的位置，这里面有你提交到所有版本的数据。其中HEAD指向最新放入仓库的版本
+- **Remote**： 远程仓库，托管代码的服务器，可以简单的认为是你项目组中的一台电脑用于远程数据交换
 
 ### 1.3 工作流程
 
@@ -58,8 +53,6 @@ SHA-1算法计算文件的校验和。
 
 ![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-file-status.png)
 
-
-
 **Untracked:**   未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.
 
  **Unmodify:**   文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致. 这种类型的文件有两种去处, 如果它被修改, 而变为Modified.
@@ -78,9 +71,7 @@ SHA-1算法计算文件的校验和。
 
 ![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-status-change.png)
 
-
-
->  新建文件后 --->Untracked
+> 新建文件后 --->Untracked
 >
 > 使用add命令将新建的文件加入到暂存区--->Staged
 >
@@ -355,17 +346,10 @@ git config -l
 
 最后附上一张网上找到的`Git常用命令速查表`
 
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-comand-fast-select.png)
 
-
-## 4.参考
+## 4. 参考
 
 `http://www.runoob.com/git/git-basic-operations.html`
 
 `https://www.cnblogs.com/qdhxhz/p/9757390.html`
-
-
-
- 
-
-
-
