@@ -1,9 +1,9 @@
 ---
-title: Git入门教程
+title: Git入门教程详细版
 tags:
-  - Hexo
+  - Git
 categories:
-  - Hexo
+  - Git
 abbrlink: 410e3cfa
 date: 2018-12-22 22:00:00
 ---
@@ -25,6 +25,8 @@ Git(读音为/gɪt/。)是一个开源的分布式版本控制系统，可以有
 Git本地有四个工作区域：`工作目录（Working Directory`）、`暂存区(Stage/Index`)、`版本库(Repository或Commit History)`、`远程仓库(Remote Directory)`。文件在这四个区域之间的转换关系如下：
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-work-tree.png)
+
+
 
 * **Working Directory**： 工作区，就是你平时存放项目代码的地方，大概就是一个文件夹。
 
@@ -56,6 +58,8 @@ SHA-1算法计算文件的校验和。
 
 ![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-file-status.png)
 
+
+
 **Untracked:**   未跟踪, 此文件在文件夹中, 但并没有加入到git库, 不参与版本控制. 通过git add 状态变为Staged.
 
  **Unmodify:**   文件已经入库, 未修改, 即版本库中的文件快照内容与文件夹中完全一致. 这种类型的文件有两种去处, 如果它被修改, 而变为Modified.
@@ -74,7 +78,9 @@ SHA-1算法计算文件的校验和。
 
 ![img](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/git/git-status-change.png)
 
->  新建文件--->Untracked
+
+
+>  新建文件后 --->Untracked
 >
 > 使用add命令将新建的文件加入到暂存区--->Staged
 >
