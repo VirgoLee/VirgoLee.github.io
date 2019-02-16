@@ -353,7 +353,7 @@ git reflog
 git config -l
 ```
 
-git命令速查表
+最后附上一张网上找到的`Git常用命令速查表`
 
 
 
