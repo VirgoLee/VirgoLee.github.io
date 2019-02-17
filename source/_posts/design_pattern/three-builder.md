@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(三)--建造者模式
+title: Java设计模式(三)---建造者模式
 tags:
   - 设计模式
 categories:
@@ -13,6 +13,8 @@ date: 2018-10-12 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> demo下载--> [github](https://github.com/illusorycloud/design-pattern)
 
 ## 1. 建造者模式介绍
 
@@ -397,3 +399,7 @@ public class Test {
 工厂模式注重的是整体对象的创建方法，只为了获取对象，关注整体
 
 建造者模式注重的是部件构建的过程，旨在通过一步一步地精确构造创建出一个复杂的对象，关注细节。建造者模式一般用来创建**更为复杂的对象**
+
+## 4. 参考
+
+`https://blog.csdn.net/zhuhuitao_struggle/article/details/80489572`

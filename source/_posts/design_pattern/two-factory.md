@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(二)--工厂模式
+title: Java设计模式(二)---工厂模式
 tags:
   - 设计模式
 categories:
@@ -13,16 +13,18 @@ date: 2018-10-10 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> demo下载--> [github](https://github.com/illusorycloud/design-pattern)
 
 ## 1. 工厂模式介绍
 
 工厂模式可以分为普通工厂模、工厂方法模式和抽象工厂模式。
 
-**简单工厂模式：**建立一个工厂类，根据传入的参数对实现了同一接口的一些类进行实例的创建。
+**简单工厂模式**：建立一个工厂类，根据传入的参数对实现了同一接口的一些类进行实例的创建。如果传入的字符串错误就不能正确创建对象。
 
-**工厂方法模式：**是对普通工厂方法模式的改进，提供多个工厂方法，分别创建对象。
+**工厂方法模式**：是对普通工厂方法模式的改进，提供多个工厂方法，分别创建对象。
 
-**抽象工厂模式：**创建多个工厂类，这样一旦需要增加新的功能，直接增加新的工厂类就可以了，不需要修改之前的代码。
+**抽象工厂模式**：创建多个工厂类，这样一旦需要增加新的功能，直接增加新的工厂类就可以了，不需要修改之前的代码。
 
 **工厂模式优点：**
 
@@ -43,42 +45,76 @@ date: 2018-10-10 22:00:00
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-factory-static.png)
 
 ```java
+/**
+ * 抽象产品类 水果
+ */
 public interface Fruit {
-    void eat();
+    void show();
 }
 
+/**
+ * 具体产品类
+ * 苹果  实现了水果接口
+ * @author illusoryCloud
+ */
 public class Apple implements Fruit {
     @Override
-    public void eat() {
-        System.out.println("Apple");
+    public void show() {
+        System.out.println("This is Apple");
     }
 }
+/**
+ * 具体产品类
+ * 橘子 实现了水果接口
+ * @author illusoryCloud
+ */
 public class Orange implements Fruit {
     @Override
-    public void eat() {
-        System.out.println("Orange");
+    public void show() {
+        System.out.println("This is Orange");
     }
 }
-//水果工厂 根据不同参数创建不同的水果对象
+/**
+ * 工厂类   水果工厂
+ * 负责生产各种产品
+ *
+ * @author illusoryCloud
+ */
 public class FruitFactory {
- public static Fruit creatFruit(String fruit){
-     if (fruit.equals("Apple")) {
-         return new Apple();
-     } else if (fruit.equals("Orange")) {
-         return new Orange();
-     } else {
-         System.out.println("error unknow fruit ~");
-         return null;
-     }
- }
+    public static final String FRUIT_APPLE = "Apple";
+    public static final String FRUIT_ORANGE = "Orange";
+
+    public static Fruit creatFruit(String fruit) {
+        if (FRUIT_APPLE.equals(fruit)) {
+            return new Apple();
+        } else if (FRUIT_ORANGE.equals(fruit)) {
+            return new Orange();
+        } else {
+            System.out.println("error unknown fruit ~");
+            return null;
+        }
+    }
 }
 
 
-public class FactoryTest {
+
+/**
+ * 简单工厂模式 测试
+ *
+ * @author illusoryCloud
+ *
+ */
+public class EasyFactoryTest {
     @Test
-    public void testFactory() {
-        Fruit apple = FruitFactory.creatFruit("Apple");
-        apple.eat();
+    public void testEasyFactory() {
+        Fruit apple = FruitFactory.creatFruit(FruitFactory.FRUIT_APPLE);
+        if (apple != null) {
+            apple.show();
+        }
+        Fruit orange = FruitFactory.creatFruit(FruitFactory.FRUIT_ORANGE);
+        if (orange != null) {
+            orange.show();
+        }
     }
 }
 ```
@@ -87,149 +123,185 @@ public class FactoryTest {
 
 ## 3. 工厂方法模式
 
-```java
-public interface ThreadFactory {
-
-    /**
-     * Constructs a new {@code Thread}.  Implementations may also initialize
-     * priority, name, daemon status, {@code ThreadGroup}, etc.
-     *
-     * @param r a runnable to be executed by new thread instance
-     * @return constructed thread, or {@code null} if the request to
-     *         create a thread is rejected
-     */
-    Thread newThread(Runnable r);
-}
-```
-
-> 具体的线程工厂可以implements这个接口并实现newThread(Runnable r)方法，来生产具体线程工厂想要生产的线程。
->
->
+简单工厂模式中，如果创建对象时传入的字符串出现错误则不能正确创建产品。工厂方法模式为每种产品创建一个工厂，则不会出现这样的问题。
 
 ```java
-//抽象水果工厂
+/**
+ *  抽象产品工厂类
+ * @author illusoryCloud
+ */
 public interface FruitFactory {
-    Fruit creatFruit();
+    Fruit create();
 }
-//苹果工厂
-public class AppleFactory implements FruitFactory{
-
+/**
+ * 具体产品工厂 实现接口
+ * 苹果工厂
+ * @author illusoryCloud
+ */
+public class AppleFactory implements FruitFactory {
     @Override
-    public Fruit creatFruit() {
+    public Fruit create() {
         return new Apple();
     }
 }
-//橘子工厂
-public class OrangeFactory implements FrutiFactory {
-
+/**
+ * 具体产品工厂 实现接口
+ * 苹果工厂
+ * @author illusoryCloud
+ */
+public class AppleFactory implements FruitFactory {
     @Override
-    public Fruit creatFruit() {
-        return new Orange();
+    public Fruit create() {
+        return new Apple();
     }
 }
-//测试
-public class FactoryTest {
+/**
+ * 工厂方法模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class FactoryMethodTest {
     @Test
-    public void testFactory() {
-        AppleFactory appleFactory = new AppleFactory();
-        Fruit apple = appleFactory.creatFruit();
-        apple.eat();
-        OrangeFactory orangeFactory = new OrangeFactory();
-        Fruit orange = orangeFactory.creatFruit();
-        orange.eat();
+    public void factoryMethodTest() {
+        Fruit apple = new AppleFactory().create();
+        apple.show();
+        Fruit orange = new OrangeFactory().create();
+        orange.show();
     }
 }
 ```
 
 ## 4. 抽象工厂模式
 
+网上找的一个类图：
+
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-factory-abstract.gif)
 
 > 工厂方法模式有一个问题就是，类的创建依赖工厂类，也就是说，如果想要拓展程序，必须对工厂类进行修改，这违背了闭包原则，所以，从设计角度考虑，有一定的问题，如何解决？就用到抽象工厂模式，创建多个工厂类，这样一旦需要增加新的功能，直接增加新的工厂类就可以了，不需要修改之前的代码。
 
 ```java
-//两个接口 Fruit Juice
-public interface Fruit {
-    void eat();
-}
+/**
+ * 抽象产品类 果汁
+ *
+ * @author illusoryCloud
+ */
 public interface Juice {
-    void drink();
+    void show();
 }
-//四个对象 苹果 橘子 苹果汁 橘子汁
-public class Apple implements Fruit {
-    @Override
-    public void eat() {
-        System.out.println("Apple");
-    }
-}
-
-public class Orange implements Fruit {
-    @Override
-    public void eat() {
-        System.out.println("Orange");
-    }
-}
-
+/**
+ * 具体产品类
+ * 苹果汁
+ *
+ * @author illusoryCloud
+ */
 public class AppleJuice implements Juice {
     @Override
-    public void drink() {
+    public void show() {
         System.out.println("AppleJuice");
     }
 }
 
+/**
+ * 具体产品类
+ * 橘子汁
+ *
+ * @author illusoryCloud
+ */
 public class OrangeJuice implements Juice {
     @Override
-    public void drink() {
+    public void show() {
         System.out.println("OrangeJuice");
     }
 }
 
-//抽象工厂 生产水果和果汁
+/**
+ * 抽象工厂类
+ *
+ * @author illusoryCloud
+ */
 public interface AbstractFactory {
-     Fruit creatFruit();
+    /**
+     * 创建水果
+     *
+     * @return 水果
+     */
+    Fruit createFruit();
 
-     Juice creatJuice();
+    /**
+     * 创建果汁
+     *
+     * @return 果汁
+     */
+    Juice createJuice();
 }
-//具体工厂 生产苹果相关产品
+
+/**
+ * 具体工厂类
+ * 苹果工厂 生产苹果和苹果汁
+ *
+ * @author illusoryCloud
+ */
 public class AppleFactory implements AbstractFactory {
     @Override
-    public Fruit creatFruit() {
+    public Fruit createFruit() {
         return new Apple();
     }
 
     @Override
-    public Juice creatJuice() {
+    public Juice createJuice() {
         return new AppleJuice();
     }
 }
-//具体工厂 生产橘子相关产品
+
+/**
+ * 具体工厂类
+ * 橘子工厂 生产橘子和橘子汁
+ *
+ * @author illusoryCloud
+ */
 public class OrangeFactory implements AbstractFactory {
     @Override
-    public Fruit creatFruit() {
+    public Fruit createFruit() {
         return new Orange();
     }
 
     @Override
-    public Juice creatJuice() {
+    public Juice createJuice() {
         return new OrangeJuice();
     }
 }
 
-//测试
+/**
+ * 抽象工厂模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class AbstractFactoryTest {
     @Test
-    public void testFactory(){
-        AppleFactory appleFactory=new AppleFactory();
-        Fruit apple =  appleFactory.creatFruit();
-        Juice appleJuice=  appleFactory.creatJuice();
-        apple.eat();
-        appleJuice.drink();
-        OrangeFactory orangeFactory=new OrangeFactory();
-        Fruit orange=  orangeFactory.creatFruit();
-        Juice orangeJuice=  orangeFactory.creatJuice();
-        orange.eat();
-        orangeJuice.drink();
+    public void abstractFactoryTest() {
+        //苹果产品簇
+        AbstractFactory appleFactory = new AppleFactory();
+        Fruit apple = appleFactory.createFruit();
+        Juice appleJuice = appleFactory.createJuice();
+        //橘子产品簇
+        AbstractFactory orangeFactory = new OrangeFactory();
+        Fruit orange = orangeFactory.createFruit();
+        Juice orangeJuice = orangeFactory.createJuice();
+
+        apple.show();
+        appleJuice.show();
+        orange.show();
+        orangeJuice.show();
     }
+
+}
 ```
+
+**优点**：当一个产品族中的多个对象被设计成一起工作时，它能保证客户端始终只使用同一个产品族中的对象。
+
+**缺点**：产品族扩展非常困难，要增加一个系列的某一产品，既要在抽象的 工厂里加代码，又要在具体的工厂里面加代码。要增加一个新的系列时比较简单。
+
+例如上面例子中在苹果系列增加一个苹果派就很困难得修改苹果工厂和抽象工厂，但是若增加一个菠萝系列就很简单，只需要添加一个菠萝工厂就行了。
 
 ## 5. 总结
 
