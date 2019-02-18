@@ -15,7 +15,7 @@ date: 2018-10-08 22:00:00
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 >
-> demo下载--> [github](https://github.com/illusorycloud/design-pattern)
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
 ## 1. 设计模式的六大原则
 

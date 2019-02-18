@@ -14,9 +14,9 @@ date: 2018-10-10 22:00:00
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 >
-> demo下载--> [github](https://github.com/illusorycloud/design-pattern)
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 工厂模式介绍
+## 1. 简介
 
 工厂模式可以分为普通工厂模、工厂方法模式和抽象工厂模式。
 
@@ -42,7 +42,7 @@ date: 2018-10-10 22:00:00
 
 ## 2. 简单工厂模式
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-factory-static.png)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-easy-factory.png)
 
 ```java
 /**
@@ -125,6 +125,8 @@ public class EasyFactoryTest {
 
 简单工厂模式中，如果创建对象时传入的字符串出现错误则不能正确创建产品。工厂方法模式为每种产品创建一个工厂，则不会出现这样的问题。
 
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-factory-method.png)
+
 ```java
 /**
  *  抽象产品工厂类
@@ -175,7 +177,7 @@ public class FactoryMethodTest {
 
 网上找的一个类图：
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-factory-abstract.gif)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/two-abstract-factory.jpg)
 
 > 工厂方法模式有一个问题就是，类的创建依赖工厂类，也就是说，如果想要拓展程序，必须对工厂类进行修改，这违背了闭包原则，所以，从设计角度考虑，有一定的问题，如何解决？就用到抽象工厂模式，创建多个工厂类，这样一旦需要增加新的功能，直接增加新的工厂类就可以了，不需要修改之前的代码。
 

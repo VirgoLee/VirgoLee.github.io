@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(六)--装饰者模式
+title: Java设计模式(六)---装饰者模式
 tags:
   - 设计模式
 categories:
@@ -13,6 +13,8 @@ date: 2018-10-16 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
 ## 1. 装饰者模式介绍
 

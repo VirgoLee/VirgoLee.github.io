@@ -1,10 +1,10 @@
 ---
-title: Java设计模式(四)--原型模式
+title: Java设计模式(四)---原型模式
 tags:
   - 设计模式
 categories:
   - 设计模式
-abbrlink: a340063f
+abbrlink: 24b6c0e4
 date: 2018-10-14 22:00:00
 ---
 
@@ -13,8 +13,10 @@ date: 2018-10-14 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 原型模式介绍
+## 1. 简介
 
 ### 1.1 原型模式
 
@@ -28,7 +30,7 @@ date: 2018-10-14 22:00:00
 * ConcretePrototype：具体原型类。实现克隆的具体操作。 
 * Client：客户类。让一个原型克隆自身，从而获得一个新的对象。
 
-### 1.2 克隆
+### 1.2 Java中的克隆
 
 我们需要知道，Java中的对象克隆分为浅克隆和深克隆。
 
@@ -40,113 +42,123 @@ date: 2018-10-14 22:00:00
 
 
 
-## 2. 原型模式实现
+## 2. 实现
 
 ```java
-//实现Cloneable接口浅复制，Serializable接口深复制
-public class Book implements Cloneable, Serializable {
-    private String title;
-    private int page;
-    private Author author;
+//实现Cloneable接口浅克隆，Serializable接口深克隆
+/**
+ * 构建的消息对象
+ * 普通对象
+ *
+ * @author illusoryCloud
+ */
+public class Message implements Serializable, Cloneable {
+    /**
+     * 标题
+     */
+    private String Title;
+    /**
+     * 内容
+     */
+    private String Content;
+    /**
+     * 发送者
+     */
+    private User From;
+    /**
+     * 接收者
+     */
+    private User To;
+    /**
+     * 时间
+     */
+    private Date Time;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
-    public Book clone() {
-        Book book = null;
+    /**
+     * 浅克隆
+     *
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
         try {
-            book = (Book) super.clone();
+            return super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
+            return null;
         }
-        return book;
     }
 
-    public Book deepClone() throws IOException, ClassNotFoundException {
+    /**
+     * 深克隆
+     *
+     * @return Message对象
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public Message deepClone() throws IOException, ClassNotFoundException {
         // 写入当前对象的二进制流
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(this);
         // 读出二进制流产生的新对象
+
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         ObjectInputStream ois = new ObjectInputStream(bis);
-        return (Book) ois.readObject();
-
+        return (Message) ois.readObject();
+    }
+			//省略Getter、Setter、toString、构造函数等
     }
 
-}
-//Author类 Book中引用
-public class Author implements Serializable {
+//User类 Message类中引用 
+/**
+ * 用户类 被消息类引用
+ * 主类实现深克隆 则被引用类也得实现Serializable接口
+ * @author illusoryCloud
+ */
+public class User implements Serializable {
     private String name;
     private int age;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
+	//省略Getter、Setter、toString、构造函数等
 }
 //测试
-    public class FactoryTest {
-        public static void main(String[] args) {
-            try {
-                Author author = new Author();
-                author.setAge(22);
-                author.setName("illusoryCloud");
-                Book book = new Book();
-                book.setAuthor(author);
-                book.setPage(222);
-                book.setTitle("MyBook");
-                Book clone = book.clone();
-                Book deepClone = book.deepClone();
-                //深浅克隆的对象和原型都不是同一个对象
-                //浅克隆对象的引用类型和原型相同，浅克隆，指向原来的地址
-                System.out.println(book == clone);  // false
-                System.out.println(book.getPage() == clone.getPage());   // true
-                System.out.println(book.getTitle() == clone.getTitle());  // true
-                System.out.println(book.getAuthor() == clone.getAuthor()); // true
-                System.out.println("--------------------------------------");
-                //深复制对象的引用类型和原型不相同，创建了新的引用对象
-                System.out.println(book == deepClone);  // false
-                System.out.println(book.getPage() == deepClone.getPage());   // true
-                System.out.println(book.getTitle() == deepClone.getTitle());   // false
-                System.out.println(book.getAuthor() == deepClone.getAuthor());   // false
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+  /**
+ * 原型模式测试类
+ *
+ * @author illusoryCloud
+ */
+public class PrototypeTest {
+    @Test
+    public void prototypeTest() {
+        User zhangsan = new User("张三", 22);
+        User lisi = new User("李四", 23);
+        Message message = new Message();
+        message.setTitle("hello");
+        message.setContent("how are you~");
+        message.setFrom(zhangsan);
+        message.setTo(lisi);
+        message.setTime(new Date());
+        Message cloneOne = null;
+        Message cloneTwo = null;
+        try {
+            cloneOne = (Message) message.clone();
+            cloneTwo = message.deepClone();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        //false  克隆实现的是一个(和原对象相似的)新对象
+        System.out.println(message == cloneOne);
+        //false
+        System.out.println(message == cloneTwo);
+        //true 浅克隆 引用对象指向的还是原对象
+        System.out.println(message.getFrom()==cloneOne.getFrom());
+        //false 深克隆 引用对象也重新创建
+        System.out.println(message.getFrom()==cloneTwo.getFrom());
+
     }
+
+}
 ```
 
 ## 3. 总结
@@ -157,7 +169,7 @@ public class Author implements Serializable {
 
 深克隆保存对象状态，实现撤销恢复功能。
 
-**缺点：**
+**缺点**：
 
 在实现深克隆时需要编写复杂的代码。
 

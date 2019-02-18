@@ -1,10 +1,10 @@
 ---
-title: Java设计模式(五)--适配器模式
+title: Java设计模式(五)---适配器模式
 tags:
   - 设计模式
 categories:
   - 设计模式
-abbrlink: a340063f
+abbrlink: f444ac9
 date: 2018-10-15 22:00:00
 ---
 
@@ -13,8 +13,10 @@ date: 2018-10-15 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 适配器模式介绍
+## 1. 简介
 
 > 适配器模式将一个接口转换成客户希望的另外一个接口。它使得原来由于接口不兼容而不能在一起工作的那些类可以一起工作。
 >
@@ -24,17 +26,18 @@ date: 2018-10-15 22:00:00
 
 用到的对象
 
-	 Target
-	 — 定义Client使用的与特定领域相关的接口。
-	 Client
-	 — 与符合Target接口的对象协同。
-	 Adaptee
-	 — 定义一个已经存在的接口，这个接口需要适配。
-	 Adapter
-	 — 对Adaptee的接口与Target接口进行适配
+* **Target**
+   ---定义Client使用的与特定领域相关的接口。
+* **Client**
+   ---与符合Target接口的对象协同。
+* **Adaptee**
+   ---定义一个已经存在的接口，这个接口需要适配。
+* **Adapter**
+   ---对Adaptee的接口与Target接口进行适配
+
 ## 2. 类适配器模式
 
-原理：
+**原理**：
 
 > 通过继承来实现适配器功能。
 
@@ -43,37 +46,59 @@ date: 2018-10-15 22:00:00
 在这种情况下，我们可以定义一个适配器p来进行中转，这个适配器p要继承我们访问类A，这样我们就能继续访问当前类A中的方法（虽然它目前不是我们的菜），然后再实现接口B，这样我们可以在适配器P中访问接口B的方法了。
 
 ```java
-//目标接口 需要方法B
+/**
+ * 目标类
+ *
+ * @author illusoryCloud
+ */
 public interface Target {
-     void B();
+    void Target();
 }
 
-//被适配类 只有A方法 但是Client需要B方法
+/**
+ * 被适配类
+ * 只有Adaptee方法 但是目标接口要Target方法
+ *
+ * @author illusoryCloud
+ */
 public class Adaptee {
-    public void A() {
-        System.out.println("Function A");
+    public void Adaptee() {
+        System.out.println("这是现有的方法");
     }
 }
 
-//适配类 继承被适配类的同时实现目标接口
+/**
+ * 适配器类
+ * 继承Adaptee类 使得此类保留了Adaptee方法
+ * 实现Target接口 使得此类同时也拥有Target方法
+ * 适配完成
+ *
+ * @author illusoryCloud
+ */
 public class Adapter extends Adaptee implements Target {
     @Override
-    public void B() {
-        System.out.println("Function B");
+    public void Target() {
+        System.out.println("这是目标方法");
     }
 }
 
-//测试
-public class FactoryTest {
-    public static void main(String[] args) {
+/**
+ * 类适配器模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class ClassAdapterTest {
+    @Test
+    public void classAdapterTest() {
+        //Target类型的对象 同时拥有Target()和Adaptee()方法
         Target target = new Adapter();
-        ((Adapter) target).A();
-        target.B();
+        //这是目标方法
+        target.Target();
+        //这是现有的方法
+        ((Adapter) target).Adaptee();
     }
 }
-//输出
- Function A
- Function B
+
 ```
 
 ## 3. 对象适配器模式
@@ -83,19 +108,16 @@ public class FactoryTest {
 > 基本思路和类的适配器模式相同，只是将 Adapter 类作修改，这次不继承 Adaptee 类，而是持有 Adaptee 类的实例，以达到解决兼容性的问题。
 
 ```java
-//目标接口 需要方法B
-public interface Target {
-     void B();
-}
+//-------Target和Adaptee与上面一样----------
 
-//被适配类 只有A方法 但是Client需要B方法
-public class Adaptee {
-    public void A() {
-        System.out.println("Function A");
-    }
-}
-
-//适配类 传入被适配类对象，实现目标接口
+/**
+ * 适配器类 持有Adaptee对象来代替继承Adaptee类
+ * 传入Adaptee对象 使得此类同样拥有Adaptee方法
+ * 实现Target接口 使得此类同时也拥有Target方法
+ * 适配完成
+ *
+ * @author illusoryCloud
+ */
 public class Adapter implements Target {
     private Adaptee adaptee;
 
@@ -104,40 +126,44 @@ public class Adapter implements Target {
     }
 
     @Override
-    public void B() {
-        System.out.println("Function B");
+    public void Target() {
+        System.out.println("这是目标方法");
     }
 
-    public void A() {
-        adaptee.A();
+    public void Adaptee() {
+        adaptee.Adaptee();
     }
 }
 
-//测试
-    public class FactoryTest {
-        public static void main(String[] args) {
-            Adaptee adaptee = new Adaptee();
-            Target target = new Adapter(adaptee);
-            ((Adapter) target).A();
-            target.B();
-        }
+/**
+ * 对象适配器模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class ObjectAdapterTest {
+    @Test
+    public void objectAdapterTest() {
+        Target target = new Adapter(new Adaptee());
+        //这是目标方法
+        target.Target();
+        //这是现有的方法
+        ((Adapter) target).Adaptee();
+
     }
-//输出
- Function A
- Function B
+}
 ```
 
 ## 4. 总结
 
 **适配器模式优点**
 
-1、有更好的复用性。系统需要使用现有的类，但此类接口不符合系统需要，通过适配器模式让这些功能得到很好的复用
+1、**有更好的复用性**。系统需要使用现有的类，但此类接口不符合系统需要，通过适配器模式让这些功能得到很好的复用
 
-2、有更好的扩展性。实现适配器，可以调用自己开发的功能
+2、**有更好的扩展性**。实现适配器，可以调用自己开发的功能
 
 **缺点**
 
-过多使用适配器会使得系统非常凌乱，明明调用的是A接口，内部却被适配成了B接口。因此除非必要，不推荐使用适配器，而是直接对系统重构
+过多使用适配器会使得系统非常凌乱，明明调用的是A接口，内部却被适配成了B接口。因此除非必要，不推荐使用适配器，而是作为一种补救措施，条件允许的情况下推荐直接对系统重构。
 
 **适配器模式在JDK中的应用**
 

@@ -14,9 +14,9 @@ date: 2018-10-12 22:00:00
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 >
-> demo下载--> [github](https://github.com/illusorycloud/design-pattern)
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 建造者模式介绍
+## 1. 简介
 
 > 建造者模式是将一个复杂的对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。。
 
@@ -32,9 +32,9 @@ date: 2018-10-12 22:00:00
 
 （4）`Product`：要创建的复杂对象
 
-## 2. 建造者模式实例
+## 2. 实现
 
-### 2.1 写法一
+### 2.1 常见写法
 
 以创建一个Person为例：
 
@@ -268,9 +268,9 @@ public class Test {
 }
 ```
 
-### 2.2 写法二
+### 2.2 静态内部类方式
 
-静态内部类方式
+网上看到的一种静态内部类方式写法，不知道算不算建造者模式。
 
 ```java
 package Builder.Second;
