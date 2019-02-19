@@ -131,14 +131,22 @@ public class StrongMan extends Decorator {
 public class DecoratorTest {
     @Test
     public void decoratorTest() {
+        //普通对象
         Human man = new Man();
         man.run();
         System.out.println("--------------------");
+        //装饰后的对象
         Human flyMan = new FlyMan(man);
         flyMan.run();
         System.out.println("--------------------");
-        Human weakMan = new StrongMan(man);
-        weakMan.run();
+        //装饰后的对象
+        Human strongMan = new StrongMan(man);
+        strongMan.run();
+        System.out.println("--------------------");
+        //装饰后的对象再次装饰
+        Human strongFlyMan = new StrongMan(flyMan);
+        strongFlyMan.run();
+
     }
 
 }
@@ -150,7 +158,11 @@ public class DecoratorTest {
 变成飞人了，速度加快了~
 --------------------
 男人在跑
-变得强壮了，耐力提升了
+变得强壮了，耐力提升了~
+--------------------
+男人在跑
+变成飞人了，速度加快了~
+变得强壮了，耐力提升了~
 ```
 
 ## 3. 总结
