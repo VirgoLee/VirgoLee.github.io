@@ -13,8 +13,10 @@ date: 2018-10-19 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 代理模式介绍
+## 1. 简介
 
 > **给某一对象提供一个代理对象，并由代理对象控制对原对象的引用**。
 
@@ -45,192 +47,234 @@ date: 2018-10-19 22:00:00
 ```
 
 ```java
-//代理类和被代理类需要实现的接口
-public interface Person {
-    public void sayHello(String str);
+/**
+ * 抽象对象角色
+ *
+ * @author illusoryCloud
+ */
+public interface Human {
+    void work();
 }
 
-//学生 被代理类
-public class Student implements Person {
+/**
+ * 目标对象角色
+ *
+ * @author illusoryCloud
+ */
+public class Singer implements Human {
     @Override
-    public void sayHello(String str) {
-        System.out.println(str);
+    public void work() {
+        System.out.println("歌手在唱歌~");
     }
 }
 
-//代理类
-public class PersonProxy implements Person {
-    //被代理的对象
-    private Person person;
+/**
+ * 代理对象角色
+ *
+ * @author illusoryCloud
+ */
+public class ProxyMan implements Human {
+    /**
+     * 持有目标对象的引用
+     */
+    private Human human;
 
-    //通过构造方法赋值
-    public PersonProxy(Person person) {
-        this.person = person;
+    /**
+     * 通过构造方法注入
+     *
+     * @param human 目标对象
+     */
+    public ProxyMan(Human human) {
+        this.human = human;
     }
 
     @Override
-    public void sayHello(String str) {
-        //在执行代理方法前后可以执行其他的方法 代理模式的一个很大的优点
-        System.out.println("Before");
-        //在代理类的方法中 间接访问被代理对象的方法
-        person.sayHello(str);
-        System.out.println("After");
-
+    public void work() {
+        System.out.println("经纪人为歌手安排好时间~");
+        human.work();
+        System.out.println("经纪人为歌手联系下一场演出~");
     }
 }
 
-      //测试代码
-            public class ProxyTest {
-                public static void main(String[] args) {
-                    //被代理的对象
-                    Student student = new Student();
-                    //将被代理对象传递给代理对象
-                    PersonProxy personProxy = new PersonProxy(student);
-                    //代理对象调用方法
-                    personProxy.sayHello("hello proxy");
-                }
-            }
+      /**
+ * 静态代理模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class StaticProxyTest {
+    @Test
+    public void staticProxyTest() {
+        Human singer = new ProxyMan(new Singer());
+        singer.work();
+    }
+}
    //输出结果
-            Before
-            hello proxy
-            After
+经纪人为歌手安排好时间~
+歌手在唱歌~
+经纪人为歌手联系下一场演出~
 ```
 
 ## 3. JDK动态代理
 
-> 代理类在程序运行时创建的代理方式被成为动态代理。
+>  代理类在程序运行时创建的代理方式被成为动态代理。
+
+### 1. 具体实现
 
 ```java
-public class JDKProxy implements InvocationHandler{
-	//引入被增强类的实例
-	private UserDao userDao;
-	public JDKProxy (UserDao userDao) {
-		this.userDao=userDao;
-	}
-	public UserDao createProxy() {
-		UserDao userDaoProxy=(Demo.UserDao) Proxy.newProxyInstance(userDao.getClass().getClassLoader(),
-				userDao.getClass().getInterfaces(), this);//直接用当前类实现InvocationHandler接口
-		return userDaoProxy;
-	}
-	////调用被代理对象的任何方法都相当于在调用这个方法
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		if ("想要增强的方法".equals(method.getName())) {//判断是不是想要增强的方法
-			//是想增强的方法 则对方法进行增强
-			System.out.println("before");
-			method.invoke(UserDao, args);
-			System.out.println("after");
-		}
-		//普通方法就正常执行
-		return method.invoke(UserDao, args);
-	}
+/**
+ * 回调方法
+ *
+ * @author illusoryCloud
+ */
+public class MyInvocationHandler implements InvocationHandler {
+    public static final String PROXY_METHOD = "work";
+    /**
+     * 持有一个被代理对象的引用
+     */
+    private Human human;
+
+    public MyInvocationHandler(Human human) {
+        this.human = human;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // 判断是否是需要代理的方法
+        if (PROXY_METHOD.equals(method.getName())) {
+            System.out.println("经纪人为歌手安排好时间~");
+            Object invoke = method.invoke(human, args);
+            System.out.println("经纪人为歌手联系下一场演出~");
+            return invoke;
+        } else {
+            return null;
+        }
+    }
+}
+/**
+ * JDK动态代理 测试类
+ *
+ * @author illusoryCloud
+ */
+public class JDKProxyTest {
+    @Test
+    public void JDKProxyTest() {
+        Singer singer = new Singer();
+        //参数1：类加载器 参数2：被代理类实现的接口 参数3：回调 由自己实现
+        Human human = (Human) Proxy.newProxyInstance(singer.getClass().getClassLoader()
+                , singer.getClass().getInterfaces()
+                , new MyInvocationHandler(singer));
+        human.work();
+    }
 }
 
+```
 
-//比较重要的两个地方 
-1..InvocationHandler
-InvocationHandler 是一个接口，官方文档解释说，每个代理的实例都有一个与之关联的 InvocationHandler 实现类，如果代理的方法被调用，那么代理便会通知和转发给内部的 InvocationHandler 实现类，由它决定处理。
+### 2. InvocationHandler
 
+`InvocationHandler`是一个接口，官方文档解释说，每个代理的实例都有一个与之关联的 `InvocationHandler `实现类，如果代理的方法被调用，那么代理便会通知和转发给内部的 `InvocationHandler` 实现类，由它决定处理。
+
+```java
 public interface InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args)
         throws Throwable;
 }
-InvocationHandler 内部只是一个 invoke() 方法，正是这个方法决定了怎么样处理代理传递过来的方法调用。
-//对代理对象的增强就在这里进行 实现该接口 重写此方法 可以用匿名内部类或者直接用生成代理的那个类实现该接口
--proxy 代理对象
--method 代理对象调用的方法
--args 调用的方法中的参数
-因为，Proxy 动态产生的代理会调用 InvocationHandler 实现类，所以 InvocationHandler 是实际执行者。
-需要创建一个类实现InvocationHandler接口
-
- 2..生成代理对象
-    Proxy.newProxyInstance(classLoader, interfaces, dynamicInvocationHandler);
-第三个参数就要用到InvocationHandler接口的实现类
-//参数1  类加载器  增强哪个对象就写哪个类的类加载器 myCar.getClass().getClassLoader();
-//	告诉虚拟机用哪个字节码加载器加载内存中创建出来的字节码文件 一般是application类加载器
-
-//参数2 字节码数组 被代理类实现的所有接口的字节码数组 
-//   告诉虚拟机内存中正在你被创建的字节码文件中应该有哪些方法
-
-//参数3 一个InvocationHandler对象，表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上  、
-//  告诉虚拟机字节码上的那些方法如何处理 （用户自定义增强操作等 写在实现InvocationHandler接口的那个类中）
 ```
 
-同样是上边的Person接口 和Student被代理类
+接口内部只是一个 `invoke()` 方法，正是这个方法决定了怎么样处理代理传递过来的方法调用。对代理对象的增强就在这里进行。实现该接口 重写此方法 可以用匿名内部类或者直接用生成代理的那个类实现该接口。
 
-```java
- //测试代码
-            public class DynamicTest {
-                public static void main(String[] args) {
-                //创建一个实例对象，这个对象是被代理的对象
-                Student studentB = new Student();
-                //获取被代理对实现的所有接口的字节码
-                Class[] interfaces = Student.class.getInterfaces;
-                //创建一个与代理对象相关联的InvocationHandler 将被代理对象传过去
-                DynamicInvocationHandler dynamicInvocationHandler = new DynamicInvocationHandler(studentB);
-				//获取被代理对象的类加载器
-                ClassLoader classLoader = StudentB.getClass().getClassLoader();
-         //生成代理对象 返回的时Object类型 只能强转为接口类型（Person） 不能强转为子类类型(Student)
-                Person person = (Person) Proxy.newProxyInstance(classLoader, interfaces, dynamicInvocationHandler);//这里需要创建一个类实现InvocationHandler接口 重写invoke方法
-                //代理对象调用方法
-                person.sayHello("hello Dynamic");
-                }
-            }            
+**方法参数**
 
-   //输出结果
-            Before
-            hello Dynamic
-            After
-```
+* 1.proxy 代理对象
+
+* 2.method 代理对象调用的方法
+
+* 3.args 调用的方法中的参数
+
+**因为`Proxy `动态产生的代理会调用` InvocationHandler`实现类，所以` InvocationHandler`是实际执行者**。
+
+ ### 3. 生成代理对象
+ `   Proxy.newProxyInstance(classLoader, interfaces, dynamicInvocationHandler);`
+
+**方法参数**
+
+* 1.classLoader 类加载器,**告诉虚拟机用哪个字节码加载器加载内存中创建出来的字节码文件** 一般是application类加载器.(增强哪个对象就写哪个类的类加载器)
+* 2.interfaces  字节码数组 **告诉虚拟机内存中正在你被创建的字节码文件中应该有哪些方法**(被代理类实现的所有接口的字节码数组 )
+* 3.一个InvocationHandler对象,表示的是当我这个动态代理对象在调用方法的时候，会关联到哪一个InvocationHandler对象上,**告诉虚拟机字节码上的那些方法如何处理 （用户自定义增强操作等 写在实现InvocationHandler接口的那个类中**.
 
 **小结：** 
 
-```java
- 1.通过 Proxy.newProxyInstance(classLoader, interfaces, dynamicInvocationHandler);生成代理对象，
- 2.创建InvocationHandler接口实现类 重写invoke方法 实现具体的方法增强
- 3.调用对象的方法最后都是调用InvocationHandler接口的invoke方法
- 4.只能增强接口中有的方法
-```
+* 1.通过 `Proxy.newProxyInstance(classLoader, interfaces, dynamicInvocationHandler);`生成代理对象
+* 2.创建`InvocationHandler`接口实现类 重写invoke方法 实现具体的方法增强
+* 3.调用对象的方法最后都是调用InvocationHandler接口的invoke方法
+* 4.只能增强接口中有的方法
 
 ## 4. CGLIB动态代理
 
-> JDK代理要求被代理的类必须实现接口，有很强的局限性。
+JDK代理要求被代理的类必须实现接口，有很强的局限性。
+
+而CGLIB动态代理则没有此类强制性要求。简单的说，**CGLIB会让生成的代理类继承被代理类，并在代理类中对代理方法进行强化处理(前置处理、后置处理等)**。在CGLIB底层，其实是借助了ASM这个非常强大的Java字节码生成框架。
+
+**cglib原理**
+
+**通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。由于是通过子类来代理父类，因此不能代理被final字段修饰的方法。**
+
+>  需要引入两个jar包
 >
-> 而CGLIB动态代理则没有此类强制性要求。简单的说，CGLIB会让生成的代理类继承被代理类，并在代理类中对代理方法进行强化处理(前置处理、后置处理等)。在CGLIB底层，其实是借助了ASM这个非常强大的Java字节码生成框架。
+> cglib-3.2.10.jar  //cglib包
 >
-> cglib原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。由于是通过子类来代理父类，因此不能代理被final字段修饰的方法。
+> asm-7.0.jar    //底层用到的asm包
 
 ```java
-public class CglibProxy implements MethodInterceptor{
-	//引入被增强类的实例
-	private UserDao userDao;
-	public CglibProxy (UserDao userDao) {
-		this.userDao=userDao;
-	}
-	
-	public UserDao createProxy() {
-		//1.创建Cglib的核心类对象
-		Enhancer enhancer=new Enhancer();
-		//2.设置父类 Cglib采用继承方式实现代理  所以需要设置父类
-		enhancer.setSuperclass(userDao.getClass());
-		//3.设置回调(类似于invocationhandler)
-		enhancer.setCallback(this);//还是直接用当前类去实现MethodInterceptor接口 
-		//4.创建代理对象
-		UserDao proxy = (UserDao) enhancer.create();
-		return proxy;
-		
-	}
-	//类似于JDK动态代理的invoke方法 在这里对方法实现增强
-	//调用被代理对象的任何方法都相当于在调用这个方法
-	public Object intercept(Object Proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-		if ("save".equals(method.getName())) {//判断是不是想要增强的方法
-			//是想增强的方法 则对方法进行增强
-			System.out.println("before");
-			methodProxy.invoke(Proxy, args);
-			System.out.println("after");
-		}
-		return methodProxy.invoke(Proxy, args);
-		
-	}
+/**
+ * 被代理类 没有实现接口 无法使用JDK动态代理
+ *
+ * @author illusoryCloud
+ */
+public class Dancer {
+    public void dance() {
+        System.out.println("跳舞者翩翩起舞~");
+    }
+}
+/**
+ * @author illusoryCloud
+ */
+public class MyMethodInterceptor implements MethodInterceptor {
+    public static final String PROXY_METHOD = "work";
+
+    /**
+     * @param o           cglib生成的代理对象
+     * @param method      目标对象的方法
+     * @param objects     方法入参
+     * @param methodProxy 代理方法
+     * @return 返回值
+     * @throws Throwable 异常
+     */
+    @Override
+    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        System.out.println("经纪人为舞蹈演员安排好时间~");
+        //注意 这里是invokeSuper  若是invoke则会循环调用最终堆栈溢出
+        Object o1 = methodProxy.invokeSuper(o, objects);
+        System.out.println("经纪人为舞蹈演员联系下一场演出~");
+        return o1;
+
+    }
+}
+/**
+ * CGLib动态代理 测试类
+ *
+ * @author illusoryCloud
+ */
+public class CglibProxyTest {
+    @Test
+    public void cglibProxyTest(){
+        Enhancer enhancer=new Enhancer();
+        //设置父类 即被代理类 cglib是通过生成子类的方式来代理的
+        enhancer.setSuperclass(Dancer.class);
+        //设置回调
+        enhancer.setCallback(new MyMethodInterceptor());
+        Dancer dancer= (Dancer) enhancer.create();
+        dancer.dance();
+    }
 }
 ```
 
