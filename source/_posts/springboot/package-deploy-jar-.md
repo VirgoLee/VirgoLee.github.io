@@ -1,9 +1,10 @@
 ---
-title: idea打包SpringBoot项目并部署到服务器
+title: idea下打包SpringBoot项目并部署到Linux服务器
 tags:
   - SpringBoot
 categories:
   - SpringBoot
+abbrlink: 144a69f9
 date: 2019-02-22 22:00:00
 ---
 
@@ -79,9 +80,7 @@ public class HelloApplication {
 
 然后用maven打包。
 
-![]()
-
-哎，现在学编程的基本都不会教历史了，也没人有兴趣去钻研。总体来说吧，很多年前，Sun 还在世的那个年代，在度过了早期用 C++写 Html 解析器的蛮荒时期后，有一批最早的脚本程序进入了 cgi 时代，此时的 Sun 决定进军这个领域，为了以示区别并显得自己高大上，于是研发了 servlet 标准，搞出了最早的 jsp。并给自己起了个高大上的称号 JavaEE （ Java 企业级应用标准，我呸，不就是一堆服务器以 http 提供服务吗，吹逼）。既然是企业级标准那自然得有自己的服务器标准。于是 Servlet 标准诞生，以此标准实现的服务器称为 Servle 容器服务器，Tomcat 就是其中代表，被 Sun 捐献给了 Apache 基金会，那个时候的 Web 服务器还是个高大上的概念，当时的 Java Web 程序的标准就是 War 包(其实就是个 Zip 包)，这就是 War 包的由来。后来随着服务器领域的屡次进化，人们发现我们为什么要这么笨重的 Web 服务器，还要实现一大堆 Servlet 之外的管理功能，简化一下抽出核心概念 servlet 不是更好吗，最早这么干的似乎是 Jetty，出现了可以内嵌的 Servelet 服务器。去掉了一大堆非核心功能。后来 tomcat 也跟进了，再后来，本来很笨重的传统 JavaEE 服务器 Jboss 也搞了个 undertow 来凑热闹。正好这个时候微服务的概念兴起，“ use Jar，not War ”。要求淘汰传统 Servlet 服务器的呼声就起来了 
+![SpringBoot打包](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/project-package.png)
 
 ```java
 [INFO] --- maven-jar-plugin:3.1.1:jar (default-jar) @ hello ---
@@ -102,6 +101,8 @@ public class HelloApplication {
 #### 3. 测试
 
 SpringBoot内置了一个Tomcat，可以直接`java -jar jarName`运行。
+
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/springboot/jar-run.png)
 
 浏览器访问`http://localhost:8080/hello`出现`hello illusoryCloud`说明运行起来了。
 
@@ -225,7 +226,7 @@ public class HelloApplication extends SpringBootServletInitializer {
 
 [Linux下JDK的安装及配置点这里](https://www.lixueduan.com/posts/54978294.html)
 
-##### 1. 前台运行
+#### 1. 前台运行
 
 ```shell
 $ java -jar hello-0.0.1-SNAPSHOT.jar
@@ -233,7 +234,7 @@ $ java -jar hello-0.0.1-SNAPSHOT.jar
 
 但是这样运行的话是在前台运行，当前窗口关闭后就停止了,或者是运行时没法切出去执行其他任务.
 
-##### 2. 后台运行
+#### 2. 后台运行
 
 ```shell
 $ nohup java -jar hello-0.0.1-SNAPSHOT.jar >temp.txt &
@@ -244,7 +245,7 @@ $ nohup java -jar hello-0.0.1-SNAPSHOT.jar >temp.txt &
 //& 表示后台运行
 ```
 
-##### 3. 问题
+#### 3. 问题
 
 执行以上命令后出现下面的提示
 
@@ -281,7 +282,7 @@ Linux下还有一个特殊的文件`/dev/null`，它就像一个无底洞，所�
 // 成功启动 pid为22804
 ```
 
-##### 4. 测试
+#### 4. 测试
 
 首先查看服务器的IP
 
@@ -312,7 +313,7 @@ Linux下还有一个特殊的文件`/dev/null`，它就像一个无底洞，所�
 
 **记得关闭防火墙或者开放8080端口**
 
-##### 5. 相关Linux命令
+#### 5. 相关Linux命令
 
 * jobs命令和 fg命令
 
@@ -343,7 +344,7 @@ war包运行和在windows上运行其实一样的，也是**先将war包copy到T
 
 [Linux下Tomcat安装及配置点这里](https://www.lixueduan.com/posts/54978294.html)
 
-**启动Tomcat**
+#### 启动Tomcat
 
 进入`Tomcat\bin`目录执行`./startup.sh`即可
 
