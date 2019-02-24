@@ -4,7 +4,8 @@ tags:
   - 源码分析
 categories:
   - 源码分析
-date: 2019-02-24 22:00:00
+abbrlink: ef6a0c58
+date: 2019-02-24 16:00:00
 ---
 
 本文主要对`ReentrantLock`的源码进行了简单的分析，具体包括`ReentrantLock`的初始化(公平锁和非公平锁)，加锁过程和解锁过程等。
@@ -13,11 +14,9 @@ date: 2019-02-24 22:00:00
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
-# ReentrantLock源码分析
+## 1. AbstractQueuedSynchronizer
 
 `ReentrantLock`的实现依赖于`AbstractQueuedSynchronizer`所以需要了解一下`AQS`。
-
-## 1. AbstractQueuedSynchronizer
 
 ### 1.1 简介
 
@@ -25,8 +24,8 @@ date: 2019-02-24 22:00:00
 
 AQS定义两种资源共享方式：
 
-* Exclusive: 独占，只有一个线程能执行,如ReentrantLock
-* Share: 共享，多个线程可同时执行，如Semaphore/CountDownLatch
+- Exclusive: 独占，只有一个线程能执行,如ReentrantLock
+- Share: 共享，多个线程可同时执行，如Semaphore/CountDownLatch
 
 ### 1.2 AQS的4个属性
 
@@ -599,7 +598,6 @@ protected final boolean tryRelease(int releases) {
 `1.2  unparkSuccessor(h)`
 
 ```java
-
 /**
  * Wakes up node's successor, if one exists.
  * 唤醒后继节点 如果有的话
