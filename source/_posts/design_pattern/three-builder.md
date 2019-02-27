@@ -270,37 +270,37 @@ public class Test {
 
 ### 2.2 静态内部类方式
 
-网上看到的一种静态内部类方式写法，不知道算不算建造者模式。
+静态内部类写法。
 
 ```java
-package Builder.Second;
-
-import java.util.Date;
-
 /**
  * 构建的消息对象
- *有个静态内部类
+ * 有个静态内部类
+ *
  * @author illusoryCloud
  */
 public class Message {
-    /**标题*/
+    /**
+     * 标题
+     */
     private String Title;
-    /**内容*/
+    /**
+     * 内容
+     */
     private String Content;
-    /**发送者*/
+    /**
+     * 发送者
+     */
     private String From;
-    /**接收者*/
+    /**
+     * 接收者
+     */
     private String To;
-    /**时间*/
+    /**
+     * 时间
+     */
     private Date Time;
 
-    public Message(Builder builder) {
-        Title=builder.Title;
-        Content=builder.Content;
-        From=builder.From;
-        To=builder.To;
-        Time=builder.Time;
-    }
 
     @Override
     public String toString() {
@@ -313,8 +313,13 @@ public class Message {
                 '}';
     }
 
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     /**
-     * 静态内部类 Builder
+     * 静态内部类 builder
      */
     public static class Builder {
         //设置默认值
@@ -355,22 +360,32 @@ public class Message {
             return this;
         }
 
-        public Message Build(){
-            return new Message(this);
+        public Message Build() {
+            Message message = new Message();
+            message.Title = Title;
+            message.Content = Content;
+            message.From = From;
+            message.To = To;
+            message.Time = Time;
+            return message;
         }
 
     }
 }
-
 ```
 
 测试类
 
 ```java
+/**
+ * 建造者模式 测试类
+ *
+ * @author illusoryCloud
+ */
 public class Test {
     @org.junit.jupiter.api.Test
-    private void testBuilder(){
-        Message build = new Message.Builder().setTitle("这是消息标题")
+    public void testBuilder() {
+        Message build = Message.newBuilder().setTitle("这是消息标题")
                 .setContent("这是消息内容")
                 .setFrom("这是消息发送者")
                 .setTo("这是消息接收者")
@@ -379,7 +394,6 @@ public class Test {
         System.out.println(build.toString());
     }
 }
-
 ```
 
 

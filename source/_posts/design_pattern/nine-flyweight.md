@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(九)--享元模式
+title: Java设计模式(九)---享元模式
 tags:
   - 设计模式
 categories:
@@ -13,6 +13,8 @@ date: 2018-10-22 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
 ## 1. 享元模式介绍
 
@@ -26,7 +28,7 @@ date: 2018-10-22 22:00:00
 
 围棋中的黑棋和白棋可以是共享的对象，不用每次都创建一个新的对象。这样就只需要创建黑棋和白棋两个对象了。颜色是不会变得，所以是内部状态。落下得位置是随机的，所以作为外部状态。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight.jpg)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight-only.png)
 
 ## 2. 单纯享元模式
 
@@ -41,99 +43,118 @@ date: 2018-10-22 22:00:00
 　　**●　　享元工厂(FlyweightFactory)角色** ：本角色负责创建和管理享元角色。本角色必须保证享元对象可以被系统适当地共享。当一个客户端对象调用一个享元对象的时候，享元工厂角色会检查系统中是否已经有一个符合要求的享元对象。如果已经有了，享元工厂角色就应当提供这个已有的享元对象；如果系统中没有一个适当的享元对象的话，享元工厂角色就应当创建一个合适的享元对象。
 
 ```java
-//围棋棋子类：抽象享元类  
-abstract class IgoChessman {  
-    public abstract String getColor();  
-    public void display(Coordinates coord){  
-        System.out.println("棋子颜色：" + this.getColor() + "，棋子位置：" + coord.getX() + "，" + coord.getY() );    
-    }  
-}  
-//黑色棋子类：具体享元角色A
-class BlackIgoChessman extends IgoChessman {  
-    public String getColor() {  
-        return "黑色";  
-    }     
-}  
-//白色棋子类：具体享元角色B 
-class WhiteIgoChessman extends IgoChessman {  
-    public String getColor() {  
-        return "白色";  
-    }  
-}  
-//围棋棋子工厂类：享元端角色，享元工厂类 使用单例模式进行设计  
-class IgoChessmanFactory {  
-    private static IgoChessmanFactory instance = new IgoChessmanFactory();  
-    private static Hashtable ht; //使用Hashtable来存储享元对象，充当享元池
-    private IgoChessmanFactory() {  
-        ht = new Hashtable();  
-        IgoChessman black,white;  
-        black = new BlackIgoChessman();  
-        ht.put("b",black);  
-        white = new WhiteIgoChessman();  
-        ht.put("w",white);  
-    }  
-    //返回享元工厂类的唯一实例  
-    public static IgoChessmanFactory getInstance() {  
-        return instance;  
-    }   
-    //通过key来获取存储在Hashtable中的享元对象  
-    public static IgoChessman getIgoChessman(String color) {  
-        return (IgoChessman)ht.get(color);    
-    }  
-}  
-//坐标类
-class Coordinates {  
-    private int x;  
-    private int y;  
-    public Coordinates(int x,int y) {  
-        this.x = x;  
-        this.y = y;  
-    }  
-    public int getX() {  
-        return this.x;  
-    }  
-    public void setX(int x) {  
-        this.x = x;  
-    }  
-    public int getY() {  
-        return this.y;  
-    }  
-    public void setY(int y) {  
-        this.y = y;  
-    }  
-}   
-//测试代码
-class Client {  
-    public static void main(String args[]) {  
-        IgoChessman black1,black2,black3,white1,white2;  
-        IgoChessmanFactory factory;  
-        //获取享元工厂对象  
-        factory = IgoChessmanFactory.getInstance();  
-        //通过享元工厂获取三颗黑子  
-        black1 = factory.getIgoChessman("b");  
-        black2 = factory.getIgoChessman("b");  
-        black3 = factory.getIgoChessman("b");  
-        System.out.println("判断两颗黑子是否相同：" + (black1==black2));  
-        //通过享元工厂获取两颗白子  
-        white1 = factory.getIgoChessman("w");  
-        white2 = factory.getIgoChessman("w");  
-        System.out.println("判断两颗白子是否相同：" + (white1==white2));  
-        //显示棋子，同时设置棋子的坐标位置  
-        black1.display(new Coordinates(1,2));  
-        black2.display(new Coordinates(3,4));  
-        black3.display(new Coordinates(1,3));  
-        white1.display(new Coordinates(2,5));  
-        white2.display(new Coordinates(2,4));  
-    }  
-}  
+/**
+ * 单纯享元模式 抽象享元角色
+ *
+ * @author illusoryCloud
+ */
+public interface Ball {
+    /**
+     * 简单的show方法
+     * 根据传入的参数(外蕴状态)不同而产生不同的表现
+     *
+     * @param color 外蕴状态
+     */
+    void show(String color);
+}
+
+/**
+ * 单纯享元模式 具体享元角色
+ * 内蕴状态为type 即球的类型 由构造方法传入
+ * 外蕴状态为color 即球的颜色 作为show()方法的参数传入
+ *
+ * @author illusoryCloud
+ */
+public class ConcreteBall implements Ball {
+    private String type;
+
+    public ConcreteBall(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public void show(String color) {
+        System.out.println("这是一个：" + color + "的" + type);
+    }
+} 
+
+/**
+ * 单纯享元模式 享元工厂角色
+ *
+ * @author illusoryCloud
+ */
+public class BallFactory {
+    /**
+     * 将对象存在map中
+     */
+    private static Map<String, Ball> factory = new HashMap<>();
+
+    /**
+     * 获取单纯享元角色
+     *
+     * @param type 内蕴状态
+     * @return 具体享元角色
+     */
+    public Ball getBall(String type) {
+        Ball ball = factory.get(type);
+        if (ball == null) {
+            //如果对象不存在则创建一个新的对象
+            ball = new ConcreteBall(type);
+            //把这个新的Flyweight对象添加到缓存中
+            factory.put(type, ball);
+        }
+        return ball;
+    }
+
+    /**
+     * 静态内部类 单例模式
+     */
+    private BallFactory() {
+    }
+
+    private static class SingletonHolder {
+        private static final BallFactory INSTANCE = new BallFactory();
+    }
+
+    public  static BallFactory getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}
+/**
+ * 单纯享元模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class PureTest {
+    /**
+     * 当客户端需要单纯享元对象的时候，需要调用享元工厂的factory()方法，
+     * 并传入所需的单纯享元对象的内蕴状态，由工厂方法产生所需要的享元对象。
+     */
+    @Test
+    public void flyWeightTest() {
+        BallFactory ballFactory = BallFactory.getInstance();
+        Ball basketball = ballFactory.getBall("篮球");
+        Ball football = ballFactory.getBall("足球");
+        basketball.show("红色");
+        basketball.show("黄色");
+        football.show("黑色");
+        football.show("白色");
+        Ball basketball2 = ballFactory.getBall("篮球");
+        Ball football2 = ballFactory.getBall("足球");
+        //true 都是同一个对象
+        System.out.println(basketball.equals(basketball2));
+        //true
+        System.out.println(football.equals(football2));
+
+    }
+}
 //输出
-判断两颗黑子是否相同：true
-判断两颗白子是否相同：true
-棋子颜色：黑色，棋子位置：1，2
-棋子颜色：黑色，棋子位置：3，4
-棋子颜色：黑色，棋子位置：1，3
-棋子颜色：白色，棋子位置：2，5
-棋子颜色：白色，棋子位置：2，4
+这是一个：红色的篮球
+这是一个：黄色的篮球
+这是一个：黑色的足球
+这是一个：白色的足球
+true
+true
 ```
 
 ## 3. 复合享元模式
@@ -151,132 +172,149 @@ class Client {
 　　**●　  享元工厂(FlyweightFactory)角色** ：本角 色负责创建和管理享元角色。本角色必须保证享元对象可以被系统适当地共享。当一个客户端对象调用一个享元对象的时候，享元工厂角色会检查系统中是否已经有 一个符合要求的享元对象。如果已经有了，享元工厂角色就应当提供这个已有的享元对象；如果系统中没有一个适当的享元对象的话，享元工厂角色就应当创建一个 合适的享元对象。
 
 ```java
-//抽象享元角色类
-public interface Flyweight {
-    //一个示意性方法，参数state是外部状态
-    public void operation(String state);
-}
-//具体享元角色类
-public class ConcreteFlyweight implements Flyweight {
-    private Character intrinsicState = null;
+/**
+ * 复合享元模式 复合享元角色
+ *
+ * @author illusoryCloud
+ */
+public class CompositeBall implements Ball {
     /**
-     * 构造函数，内部状态作为参数传入
-     * @param state
+     * 复合享元角色内部包含多个单纯享元角色
      */
-    public ConcreteFlyweight(Character state){
-        this.intrinsicState = state;
+    private Map<String, Ball> composite = new HashMap<>();
+
+    /**
+     * 增加一个新的单纯享元对象到集合中
+     */
+    public void add(String type, Ball ball) {
+        composite.put(type, ball);
     }
 
-
     /**
-     * 外部状态作为参数传入方法中，改变方法的行为，
-     * 但是并不改变对象的内部状态。
+     * 遍历的方式挨个调用内部单纯享元角色的show方法
+     *
+     * @param color 外蕴状态
      */
     @Override
-    public void operation(String state) {
-        System.out.println("Intrinsic State = " + this.intrinsicState);
-        System.out.println("Extrinsic State = " + state);
+    public void show(String color) {
+        Set<String> strings = composite.keySet();
+        for (String type : strings) {
+            Ball ball = composite.get(type);
+            ball.show(color);
+        }
     }
-
 }
-//复合享元角色
-public class ConcreteCompositeFlyweight implements Flyweight {
 
-    private Map<Character,Flyweight> files = new HashMap<Character,Flyweight>();
+/**
+ * 复合享元模式 复合工厂角色
+ *
+ * @author illusoryCloud
+ */
+public class CompositeFactory {
+    private Map<String, Ball> factory = new HashMap<String, Ball>();
+
     /**
-     * 增加一个新的单纯享元对象到聚集中
+     * 获取复合享元
+     *
+     * @param types 类型集合
+     * @return 复合享元对象 包含多个单纯享元对象
      */
-    public void add(Character key , Flyweight fly){
-        files.put(key,fly);
-    }
-    /**
-     * 外部状态作为参数传入到方法中
-     */
-    @Override
-    public void operation(String state) {
-        Flyweight fly = null;
-        for(Object o : files.keySet()){
-            fly = files.get(o);
-            fly.operation(state);
+    public Ball getComposite(List<String> types) {
+        CompositeBall composteBall = new CompositeBall();
+
+        for (String type : types) {
+            composteBall.add(type, getPure(type));
         }
 
+        return composteBall;
     }
 
-}
-//工厂类
-public class FlyweightFactory {
-    private Map<Character,Flyweight> files = new HashMap<Character,Flyweight>();
     /**
-     * 复合享元工厂方法
+     * 获取单纯享元角色
+     *
+     * @param type 内蕴状态
+     * @return 具体享元角色
      */
-    public Flyweight factory(List<Character> compositeState){
-        ConcreteCompositeFlyweight compositeFly = new ConcreteCompositeFlyweight();
-
-        for(Character state : compositeState){
-            compositeFly.add(state,this.factory(state));
-        }
-
-        return compositeFly;
-    }
-    /**
-     * 单纯享元工厂方法
-     */
-    public Flyweight factory(Character state){
-        //先从缓存中查找对象
-        Flyweight fly = files.get(state);
-        if(fly == null){
-            //如果对象不存在则创建一个新的Flyweight对象
-            fly = new ConcreteFlyweight(state);
+    public Ball getPure(String type) {
+        Ball ball = factory.get(type);
+        if (ball == null) {
+            //如果对象不存在则创建一个新的对象
+            ball = new ConcreteBall(type);
             //把这个新的Flyweight对象添加到缓存中
-            files.put(state, fly);
+            factory.put(type, ball);
         }
-        return fly;
+        return ball;
+    }
+
+    /**
+     * 静态内部类 单例模式
+     */
+    private CompositeFactory() {
+    }
+
+    private static class SingletonHolder {
+        private static final CompositeFactory INSTANCE = new CompositeFactory();
+    }
+
+    public static CompositeFactory getInstance() {
+        return CompositeFactory.SingletonHolder.INSTANCE;
     }
 }
-//测试代码
-public class Client {
 
-    public static void main(String[] args) {
-        List<Character> compositeState = new ArrayList<Character>();
-        compositeState.add('a');
-        compositeState.add('b');
-        compositeState.add('c');
-        compositeState.add('a');
-        compositeState.add('b');
-
-        FlyweightFactory flyFactory = new FlyweightFactory();
-        Flyweight compositeFly1 = flyFactory.factory(compositeState);
-        Flyweight compositeFly2 = flyFactory.factory(compositeState);
-        compositeFly1.operation("Composite Call");
-
-        System.out.println("---------------------------------");
-        System.out.println("复合享元模式是否可以共享对象：" + (compositeFly1 == compositeFly2));
-
-        Character state = 'a';
-        Flyweight fly1 = flyFactory.factory(state);
-        Flyweight fly2 = flyFactory.factory(state);
-        System.out.println("单纯享元模式是否可以共享对象：" + (fly1 == fly2));
+/**
+ * 单纯享元模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class CompositeTest {
+    /**
+     * 当客户端需要单纯享元对象的时候，需要调用享元工厂的factory()方法，
+     * 并传入所需的单纯享元对象的内蕴状态，由工厂方法产生所需要的享元对象。
+     */
+    @Test
+    public void flyWeightTest() {
+        CompositeFactory compositeFactory = CompositeFactory.getInstance();
+        Ball pure = compositeFactory.getPure("篮球");
+        Ball pure2 = compositeFactory.getPure("篮球");
+        pure.show("红色");
+        List<String> types = Arrays.asList("篮球", "足球", "排球");
+        Ball composite = compositeFactory.getComposite(types);
+        Ball composite2 = compositeFactory.getComposite(types);
+        composite.show("蓝色");
+        //false 复合享元角色不相同
+        System.out.println(composite.equals(composite2));
+        //true 单纯享元角色相同
+        System.out.println(pure.equals(pure2));
     }
 }
+//输出
+这是一个：红色的篮球
+这是一个：蓝色的足球
+这是一个：蓝色的篮球
+这是一个：蓝色的排球
+false
+true
 ```
 
 ## 4. 总结
 
-**优点：**
+**享元模式的核心在于享元工厂类，享元工厂类的作用在于提供一个用于存储享元对象的享元池，用户需要对象时，首先从享元池中获取，如果享元池中不存在，则创建一个新的享元对象返回给用户，并在享元池中保存该新增对象。**
+
+**优点**：
 
 节约系统的开销，可以少创建对象。
 外部状态不会影响内部状态，可以在不同环境下进行共享哦。
-**缺点：**
+**缺点**：
 
 享元模式使逻辑变得更加复杂，需要将享元对象分出内部状态和外部状态。
 
 并且为了使对象可以共享，外部状态在很多情况下是必须有的，当读取外部状态时明显会增加运行时间。
 
-**享元模式使用的场景：**
+**享元模式使用的场景**：
 
 当我们项目中创建很多对象，而且这些对象存在许多相同模块，这时，我们可以将这些相同的模块提取出来采用享元模式生成单一对象，再使用这个对象与之前的诸多对象进行配合使用，这样无疑会节省很多空间。
 
-**与单例模式的区别：**
+**与单例模式的区别**：
 
 享元模式的目的是共享，避免多次创建耗费资源，减少不会要额内存消耗 。
 

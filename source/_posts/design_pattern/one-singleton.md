@@ -80,18 +80,31 @@ Java 中一般认为有 23 种设计模式，总体来说设计模式分为三�
 #### 1. 饿汉式
 
 ```java
-public class Singleton {  
-    //类变量在类准备阶段就初始化了然后放在<clinit>构造方法中
-    //一旦外部调用了静态方法，那么就会初始化完成。
-    //一个类的<clinit>只会执行一次
-    private static Singleton instance = new Singleton();  
+/**
+ *  饿汉式
+ * @author illusoryCloud
+ */
+public class FirstSingleton {
+    /**
+     * 类变量在类准备阶段就初始化了然后放在<clinit>构造方法中
+     * 一旦外部调用了静态方法，那么就会初始化完成。
+     * 一个类的<clinit>只会执行一次 保证多线程情况下不会创建多个实例
+     */
+    private static final FirstSingleton INSTANCE =new FirstSingleton();
 
-    private Singleton (){}  
+    /**
+     *
+     * 构造函数私有化
+     */
+    private FirstSingleton(){}
 
-    public static Singleton getInstance() {  
-   　　 return instance;  
-    }  
-
+    /**
+     *  提供公共方法以获取实例对象
+     * @return instance 实例对象
+     */
+    public static FirstSingleton getInstance(){
+        return INSTANCE ;
+    }
 }
 ```
 
@@ -100,19 +113,26 @@ public class Singleton {
 #### 2. 静态内部类
 
 ```java
-public class Singleton {  
-    private static class SingletonHolder {  
+/**
+ * 静态内部类方式
+ *
+ * @author illusoryCloud
+ */
+public class SecondSingleton {
 
-    private static final Singleton INSTANCE = new Singleton();  
+    private static class SingletonHolder {
+        /**
+         * 静态变量类加载时才会被创建 且只会创建一次
+         */
+        private static final SecondSingleton INSTANCE = new SecondSingleton();
+    }
 
-    }  
+    private SecondSingleton() {
+    }
 
-    private Singleton (){}  
-
-    public static final Singleton getInstance() {  
-    　　return SingletonHolder.INSTANCE;  
-    }  
-
+    public static SecondSingleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
 }
 ```
 
@@ -127,17 +147,29 @@ public class Singleton {
 #### 3. 懒汉式
 
 ```java
-public class Singleton {  
-    private static Singleton instance;  
+/**
+ * 懒汉式
+ *
+ * @author illusoryCloud
+ */
+public class ThirdSingleton {
 
-    private Singleton (){}  
+    private static ThirdSingleton instance;
 
-    public static synchronized Singleton getInstance() {  
-    if (instance == null) {  
-        instance = new Singleton();  
-    }  
-   　　 return instance;  
-    }  
+    private ThirdSingleton() {
+    }
+
+    /**
+     * synchronized 保证线程安全 但效率低
+     *
+     * @return instance单例对象
+     */
+    public static synchronized ThirdSingleton getInstance() {
+        if (instance == null) {
+            instance = new ThirdSingleton();
+        }
+        return instance;
+    }
 
 }
 ```
@@ -147,21 +179,38 @@ public class Singleton {
 #### 4. 双重校验锁
 
 ```java
-public class Singleton {
-    private static volatile Singleton singleton;
+/**
+ * 双重校验锁式
+ *
+ * @author illusoryCloud
+ */
+public class FourSingleton {
+    /**
+     * volatile关键字禁止指令重排序
+     * 保证多线程下不会获取到未完全初始化的实例
+     * 详细请阅读：https://www.lixueduan.com/posts/e7cef119.html
+     */
+    private static volatile FourSingleton instance;
 
-    private Singleton() {
+    private FourSingleton() {
     }
 
-    public static Singleton singleton() {
-        if (singleton == null) {
-            synchronized (Singleton.class) {
-                if (singleton == null) {
-                    singleton = new Singleton();//非原子操作
+    /**
+     * 双重if校验 缩小synchronized代码块范围
+     * 若instance不为空 就可直接return
+     *
+     * @return instance 实例对象
+     */
+    public static FourSingleton getInstance() {
+        if (instance == null) {
+            synchronized (FourSingleton.class) {
+                if (instance == null) {
+                    //非原子操作
+                    instance = new FourSingleton();
                 }
             }
         }
-        return singleton;
+        return instance;
     }
 }
 ```
@@ -171,13 +220,18 @@ public class Singleton {
 #### 5. 枚举
 
 ```java
-public enum Singleton {
-	 //定义一个枚举的元素，它就是 Singleton 的一个实例
-    INSTANCE;  
-    
-    public void doSomeThing() {  
-	     System.out.println("枚举方法实现单例");
-    }  
+/**
+ * 枚举式
+ * 序列化及反序列化安全
+ * @author illusoryCloud
+ */
+public enum FiveSingleton {
+    //定义一个枚举的元素，它就是 singleton 的一个实例
+    INSTANCE;
+    public void doSomeThing(FiveSingleton instance) {
+        System.out.println("枚举方式实现单例");
+    }
+
 }
 public class Test {
 
@@ -189,7 +243,11 @@ public class Test {
 }
 ```
 
-这种方式也是《Effective Java 》以及《Java与模式》的作者推荐的方式，不过工作中却很少看到用。
+这种方式也是《Effective Java 》以及《Java与模式》的作者推荐的方式。
+
+`静态内部类`和`双重校验锁`已经这么优秀了为什么还要有第五种`枚举式`呢？
+
+因为前面4种都有一个问题：序列化和反序列化时有问题。
 
 ## 3. 性能测试
 
