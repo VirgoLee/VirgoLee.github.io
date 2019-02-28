@@ -247,7 +247,7 @@ public class Test {
 
 `静态内部类`和`双重校验锁`已经这么优秀了为什么还要有第五种`枚举式`呢？
 
-因为前面4种都有一个问题：序列化和反序列化时有问题。
+**因为前面4种都存在一个序列化和反序列化时的安全问题。将单例对象序列化后，在反序列化时会重新创建一个单例对象，违背了单例模式的初衷**。而枚举式单例则没有这个问题，具体信息查看：[枚举式单例模式与序列化](https://www.lixueduan.com)
 
 ## 3. 性能测试
 
@@ -310,5 +310,7 @@ public class Runtime {
 
 
 ## 5. 参考
+
+`http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html`
 
 `https://blog.csdn.net/qq_22706515/article/details/74202814`

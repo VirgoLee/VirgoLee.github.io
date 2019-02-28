@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(十)--策略模式
+title: Java设计模式(十)---策略模式
 tags:
   - 设计模式
 categories:
@@ -13,57 +13,87 @@ date: 2018-10-23 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 策略模式介绍
+## 1. 简介
 
 > **策略模式是对算法的包装**
 >
 > 策略模式定义了一系列的算法，并将每一个算法封装起来，而且它们还可以相互替换。策略模式让算法独立于使用它的客户而独立变化。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/ten-bridge.gif)
+![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/ten-strategy.png)
 
 　　这个模式涉及到三个角色：
 
-　　●　　环境(Context)角色：持有一个Strategy的引用。
+　　●　　**环境(Context)角色**：持有一个Strategy的引用。
 
-　　●　　抽象策略(Strategy)角色：这是一个抽象角色，通常由一个接口或抽象类实现。此角色给出所有的具体策略类所需的接口。
+　　●　　**抽象策略(Strategy)角色**：这是一个抽象角色，通常由一个接口或抽象类实现。此角色给出所有的具体策略类所需的接口。
 
-　　●　　具体策略(ConcreteStrategy)角色：包装了相关的算法或行为。
+　　●　　**具体策略(ConcreteStrategy)角色**：包装了相关的算法或行为。
 
-## 2. 策略模式实现
+## 2. 代码实现
 
 ```java
-//定义一个接口抽象策略 定义一个两个整数间的计算方法
+/**
+ * 策略模式 抽象策略角色
+ * 定义一个两个整数间的计算方法
+ *
+ * @author illusoryCloud
+ */
 public interface Strategy {
-    public abstract int calculate(int a, int b);
+    /**
+     * 两个整数间的计算方法
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    int calculate(int a, int b);
 }
-
-//具体策略A 加法
-public class ConcreteStrategyA implements Strategy {
+/**
+ * 策略模式 具体策略角色
+ * 加法
+ *
+ * @author illusoryCloud
+ */
+public class AddStrategy implements Strategy {
     @Override
     public int calculate(int a, int b) {
         return a + b;
     }
 }
-
-//具体策略B 减法
-public class ConcreteStrategyB implements Strategy {
+/**
+ * 策略模式 具体策略角色
+ * 减法
+ *
+ * @author illusoryCloud
+ */
+public class SubtractionStrategy implements Strategy {
     @Override
     public int calculate(int a, int b) {
         return a - b;
     }
 }
-
-//具体策略C 乘法
-public class ConcreteStrategyC implements Strategy {
+/**
+ * 策略模式 具体策略角色
+ * 乘法
+ *
+ * @author illusoryCloud
+ */
+public class MultiplyStrategy implements Strategy {
     @Override
     public int calculate(int a, int b) {
         return a * b;
     }
 }
-
-//具体策略D 除法
-public class ConcreteStrategyD implements Strategy {
+/**
+ * 策略模式 具体策略角色
+ * 除法
+ *
+ * @author illusoryCloud
+ */
+public class DivisionStrategy implements Strategy {
     @Override
     public int calculate(int a, int b) {
         if (b != 0) {
@@ -71,22 +101,33 @@ public class ConcreteStrategyD implements Strategy {
         } else {
             throw new RuntimeException("除数不能为零");
         }
+
     }
 }
-//定义具体的环境角色，持有Strategy接口的引用
-// 并且有get和set方法可以完成策略更换
-// 在环境角色中调用接口的方法完成动作。
+/**
+ * 策略模式 环境角色
+ *
+ * @author illusoryCloud
+ */
 public class Context {
+    /**
+     * 持有Strategy的引用
+     */
     private Strategy strategy;
 
     public Context(Strategy strategy) {
+        super();
         this.strategy = strategy;
     }
+
 
     public Strategy getStrategy() {
         return strategy;
     }
 
+    /**
+     * set方法可以完成策略更换
+     */
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
@@ -95,35 +136,38 @@ public class Context {
         return strategy.calculate(a, b);
     }
 }
-//测试
-    public class StrategyTest {
+/**
+ * 策略模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class StrategyTest {
+    @Test
+    public void strategyTest() {
 
-        public static void main(String[] args) {
-            //加
-            Context contextA = new Context(new ConcreteStrategyA());
-            System.out.println(contextA.calculate(10, 2));
-            //减
-            Context contextB = new Context(new ConcreteStrategyB());
-            System.out.println(contextB.calculate(10, 2));
-            //乘
-            Context contextC = new Context(new ConcreteStrategyC());
-            System.out.println(contextC.calculate(10, 2));
-            //除
-            Context contextD = new Context(new ConcreteStrategyD());
-            System.out.println(contextD.calculate(10, 2));
-        }
-
+        //加法
+        Context context = new Context(new AddStrategy());
+        System.out.println(context.calculate(5, 5));
+        //减法
+        Context context2 = new Context(new SubtractionStrategy());
+        System.out.println(context2.calculate(5, 5));
+        //乘法
+        Context context3 = new Context(new MultiplyStrategy());
+        System.out.println(context3.calculate(5, 5));
+        //除法
+        Context context4 = new Context(new DivisionStrategy());
+        System.out.println(context4.calculate(5, 5));
     }
-    //输出
-    12
-    8
-    20
-    5
+}
 ```
 
 ## 3. 总结
 
 **策略模式的重心不是如何实现算法**（就如同工厂模式的重心不是工厂中如何产生具体子类一样），而是如何组织、调用这些算法，从而让程序结构更灵活，具有更好的维护性和扩展性。
+
+**策略模式与状态模式**
+
+策略模式与状态模式及其相似，但是二者有其内在的差别，策略模式将具体策略类暴露出去，调用者需要具体明白每个策略的不同之处以便正确使用。而状态模式状态的改变是由其内部条件来改变的，与外界无关，二者在思想上有本质区别。
 
 **优点**
 

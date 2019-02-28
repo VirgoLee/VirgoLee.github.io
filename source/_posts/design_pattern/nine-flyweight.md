@@ -28,7 +28,7 @@ date: 2018-10-22 22:00:00
 
 围棋中的黑棋和白棋可以是共享的对象，不用每次都创建一个新的对象。这样就只需要创建黑棋和白棋两个对象了。颜色是不会变得，所以是内部状态。落下得位置是随机的，所以作为外部状态。
 
-![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight-only.png)
+![pure](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight-pure.png)
 
 ## 2. 单纯享元模式
 
@@ -160,6 +160,8 @@ true
 ## 3. 复合享元模式
 
 　　在单纯享元模式中，所有的享元对象都是单纯享元对象，也就是说都是可以直接共享的。还有一种较为复杂的情况，将一些单纯享元使用合成模式加以复合，形成复合享元对象。这样的复合享元对象本身不能共享，但是它们可以分解成单纯享元对象，而后者则可以共享。
+
+![composite](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/nine-flyweight-composite.png)
 
 　　复合享元角色所涉及到的角色如下：
 

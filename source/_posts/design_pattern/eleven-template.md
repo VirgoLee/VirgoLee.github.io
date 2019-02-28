@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(十一)--模板方法模式
+title: Java设计模式(十一)---模板方法模式
 tags:
   - 设计模式
 categories:
@@ -13,8 +13,10 @@ date: 2018-10-24 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 模板方法模式介绍
+## 1. 简介
 
 **模板方法模式是类的行为模式。**
 
@@ -36,60 +38,150 @@ date: 2018-10-24 22:00:00
 
 * 每一个抽象模板角色都可以有任意多个具体模板角色与之对应，而每一个具体模板角色都可以给出这些抽象方法（也就是顶级逻辑的组成步骤）的不同实现，从而使得顶级逻辑的实现各不相同。
 
-## 2. 模板方法模式实现
+## 2. 代码实现
 
 ```java
-假设炒菜有三个步骤，A下菜，B炒菜，C起锅。
-那么可以写一个抽象类，因为所有的菜都可以看成这三个步骤。
-然后炒菜和起锅这两个步骤也是一样的，当然炒菜可能也不一样╮(╯▽╰)╭。在抽象类中可以直接实现，然后下菜这个步骤应为是不同的菜所以不同。写成抽象类，等子类去实现。
-//抽象类
-public  abstract class Abstract Class {  
-   //模板方法，用来控制炒菜的流程 （炒菜的流程是一样的-复用）
-    //申明为final，不希望子类覆盖这个方法，防止更改流程的执行顺序
-   public final void cookProcess(){
-       this.MethodA();
-       this.MethodB();
-       this.MethodC();
+假设泡茶喝咖啡都需有四个步骤：1.烧水 2.泡茶/冲咖啡 3.倒入杯子 4.添加调味品
+那么可以写一个抽象类，因为大多数饮料都可以看成这四个步骤。
+然后烧水和倒入杯子这两个步骤都是相同的，那么在抽象类中可以直接实现，然后其他特殊操作则由子类具体实现。
+/**
+ * 模板方法模式
+ * 抽象模板角色
+ *
+ * @author illusoryCloud
+ */
+public abstract class BaseCreatDrink {
+    /**
+     * 按顺序调用其他方法
+     */
+    public void doCreate() {
+        boilWater();
+        brew();
+        pourInCup();
+        if (isNeedCondiments())
+        {
+            addCondiments();
+        }
     }
 
-    //第一步：下菜是不一样的，由子类实现
-   public abstract void  MethodA();
-    //第二步：是一样的，所以直接实现
-    public void MethodB(){
-        System.out.println("炒啊炒啊炒~");
+    /**
+     * 烧开水
+     * 通用的方法 直接实现
+     */
+    private void boilWater() {
+        System.out.println("烧开水~");
     }
 
-    //步骤C 起锅
-  public  void MethodC(){
-        System.out.println("菜炒好了，起锅~");
+    /**
+     * 特殊操作，在子类中具体实现
+     */
+    public abstract void brew();
+
+
+    /**
+     * 倒入杯中
+     * 通用的方法 直接实现
+     */
+    private void pourInCup() {
+        System.out.println("倒入杯中~");
+    }
+
+    /**
+     * 添加调味品 茶里面加柠檬 咖啡中加糖等等
+     * 特殊操作
+     * 具体由子类实现
+     */
+    public abstract void addCondiments();
+
+    /**
+     * 钩子方法，决定某些算法步骤是否挂钩在算法中
+     * 子类可以重写该类来改变算法或者逻辑
+     */
+    public boolean isNeedCondiments() {
+        return true;
     }
 }
-//具体实现类继承抽象类
-//炒白菜
-public class ConcreteClass_BaiCai extends test{
+/**
+ * 具体模板角色
+ * 纯茶
+ *
+ * @author illusoryCloud
+ */
+public class CreatTea extends BaseCreatDrink {
+    @Override
+    public void brew() {
+        System.out.println("泡茶~");
+    }
 
     @Override
-   public void MethodA() {
-        System.out.println("往锅里加的是白菜~");
+    public void addCondiments() {
+        System.out.println("加柠檬~");
     }
 }
-//炒肉
-public class ConcreteClass_Meat extends test{
+/**
+ * 具体模板角色
+ * 茶
+ *
+ * @author illusoryCloud
+ */
+public class CreatPureTea extends BaseCreatDrink {
+    @Override
+    public void brew() {
+        System.out.println("泡茶~");
+    }
 
     @Override
-  public  void MethodA() {
-        System.out.println("往锅里加的是肉~");
+    public void addCondiments() {
+        System.out.println("加柠檬~");
+    }
+
+    /**
+     * 通过重写钩子方法来改变算法
+     * 返回true则添加调味品
+     * 返回false则不加
+     * 默认为true
+     *
+     * @return isNeedCondiments
+     */
+    @Override
+    public boolean isNeedCondiments() {
+        return false;
     }
 }
-public class Template Method{
-    public static void main(String[] args){
+/**
+ * 具体模板角色
+ * 咖啡
+ *
+ * @author illusoryCloud
+ */
+public class CreatCoffee extends BaseCreatDrink {
+    @Override
+    public void brew() {
+        System.out.println("冲咖啡~");
+    }
 
-//炒 - 白菜
-        ConcreteClass_BaoCai BaiCai = new ConcreteClass_BaoCai();
-        BaiCai.cookProcess();
-//炒 - 肉
-        ConcreteClass_ Meat  meat= new ConcreteClass_Meat();
-        meat.cookProcess();
+    @Override
+    public void addCondiments() {
+        System.out.println("加糖~");
+    }
+}
+/**
+ * 模板方法模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class TemplateTest {
+    @Test
+    public void templateTest() {
+        System.out.println("-------茶-------");
+        CreatTea tea = new CreatTea();
+        tea.doCreate();
+        System.out.println("-------咖啡-------");
+        CreatCoffee coffee = new CreatCoffee();
+        coffee.doCreate();
+        System.out.println("-------纯茶-------");
+        CreatPureTea pureTea = new CreatPureTea();
+        pureTea.doCreate();
     }
 }
 //输出
@@ -120,3 +212,5 @@ public class Template Method{
 ## 4. 参考
 
 `https://www.cnblogs.com/qiumingcheng/p/5219664.html`
+
+`https://www.cnblogs.com/yanlong300/p/8446261.html`
