@@ -1,5 +1,5 @@
 ---
-title: Java设计模式(十二)--观察者模式
+title: Java设计模式(十二)---观察者模式
 tags:
   - 设计模式
 categories:
@@ -13,8 +13,10 @@ date: 2018-10-25 22:00:00
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 
-## 1. 观察者模式介绍
+## 1. 简介
 
 > 让多个观察者对象同时监听某一个主题对象，这个主题对象在状态上发生变化时，会通知所有观察者对象，使他们能够自动更新自己。
 > 在对象之间定义了一对多的依赖，这样一来，当一个对象改变状态，依赖它的对象会收到通知并自动更新。其实就是发布订阅模式，发布者发布信息，订阅者获取信息，订阅了就能收到信息，没订阅就收不到信息。
@@ -28,114 +30,221 @@ date: 2018-10-25 22:00:00
 - **具体被观察者角色**：也就是一个具体的主题，在集体主题的内部状态改变时，所有登记过的观察者发出通知。
 - **具体观察者角色**：实现抽象观察者角色所需要的更新接口，一边使本身的状态与制图的状态相协调。
 
-## 2. 观察者模式实现
+## 2. 代码实现
 
 ```java
-/***
- * 抽象观察者
+/**
+ * 抽象观察者角色
  * 定义了一个update()方法，当被观察者调用notifyObservers()方法时，观察者的update()方法会被回调。
  *
+ * @author illusoryCloud
  */
 public interface Observer {
-     void update(String message);
+    /**
+     * 更新消息 由被观察者调用
+     *
+     * @param o       被观察者 即消息来源
+     * @param message 收到的消息
+     */
+    void update(Observable o, Message message);
 }
-
-/***
+/**
  * 抽象被观察者接口
  * 声明了添加、删除、通知观察者方法
+ *
+ * @author illusoryCloud
  */
-public interface Observerable {
-     void registerObserver(Observer o);
+public class Observable {
+    /**
+     * 被观察者是否有变化
+     * 在通知观察者时做判断 若没有发生变化则不通知
+     */
+    private boolean changed = false;
+    /**
+     * Vector集合 线程安全的
+     * 用于存放已注册的观察者
+     */
+    private Vector<Observer> obs;
 
-     void removeObserver(Observer o);
+    public Observable() {
+        obs = new Vector<>();
+    }
 
-     void notifyObserver();
+    /**
+     * 注册观察者
+     *
+     * @param o 需要注册的观察者
+     */
+    public synchronized void addObserver(Observer o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (!obs.contains(o)) {
+            obs.addElement(o);
+        }
+    }
+
+    /**
+     * 移除观察者
+     *
+     * @param o 被移除的观察者
+     */
+    public synchronized void deleteObserver(java.util.Observer o) {
+        obs.removeElement(o);
+    }
+
+    /**
+     * 发通知
+     */
+    public void notifyObservers() {
+        notifyObservers(null);
+    }
+
+    /**
+     * 循环遍历 通知注册的所有的观察者
+     *
+     * @param message 发送的消息
+     */
+    public void notifyObservers(Message message) {
+        Object[] arrLocal;
+
+        synchronized (this) {
+            //判断若没有变化则直接返回
+            if (!changed) {
+                return;
+            }
+            arrLocal = obs.toArray();
+            clearChanged();
+        }
+
+        for (int i = arrLocal.length - 1; i >= 0; i--) {
+            ((Observer) arrLocal[i]).update(this, message);
+        }
+    }
+
+    /**
+     * 移除所有观察者
+     */
+    public synchronized void deleteObservers() {
+        obs.removeAllElements();
+    }
+
+    /**
+     * set clear has 设置 清除 获取
+     * 观察者状态是否变化 true/false
+     */
+    protected synchronized void setChanged() {
+        changed = true;
+    }
+
+    protected synchronized void clearChanged() {
+        changed = false;
+    }
+
+    public synchronized boolean hasChanged() {
+        return changed;
+    }
+
+    /**
+     * 已注册观察者的个数
+     *
+     * @return count
+     */
+    public synchronized int countObservers() {
+        return obs.size();
+    }
+
 }
-
 /**
- * 具体观察者
+ * 具体观察者角色
  * 实现update方法
+ *
+ * @author illusoryCloud
  */
-public class User implements Observer {
-    private String name;
-    private int age;
+public class Client implements Observer {
+    private String clientName;
+    private int id;
 
-    public User(String name, int age) {
-        this.name = name;
-        this.age = age;
+    public Client(String clientName, int id) {
+        this.clientName = clientName;
+        this.id = id;
     }
+
 
     @Override
-    public void update(String message) {
-        System.out.println(age + "岁的" + name + "收到推送的消息：" + message);
+    public void update(Observable o, Message message) {
+        System.out.println(id + "号" + clientName + "收到<" + ((Server)o).getName() + ">推送的消息：" + message.toString());
     }
 }
-
 /**
- * 具体被观察者
- * 实现了Observerable接口，对Observerable接口的三个方法进行了具体实现
+ * 具体被观察者角色
+ *
+ * @author illusoryCloud
  */
-public class MyServer implements Observerable {
-    private List<Observer> observerList;
-    private String message;
+public class Server extends Observable {
 
-    public MyServer() {
-        observerList = new ArrayList<Observer>();
+    /**
+     * 被观察者name 用于区分多个被观察者
+     */
+    private String name;
+
+    public Server(String name) {
+        this.name = name;
     }
 
     @Override
-    public void registerObserver(Observer o) {
-        observerList.add(o);
+    public void notifyObservers(Message message) {
+        //发送消息
+        super.notifyObservers(message);
+        //发送后取消change标志
+        clearChanged();
     }
-
-    @Override
-    public void removeObserver(Observer o) {
-        if (!observerList.isEmpty()) {
-            observerList.remove(o);
-        }
-    }
-
-    @Override
-    public void notifyObserver() {
-        for (int i = 0; i < observerList.size(); i++) {
-            Observer observer = observerList.get(i);
-            observer.update(message);
-        }
-    }
-
-    public void PushMessage(String message) {
-        this.message = message;
-        System.out.println("推送消息：" + message);
-        notifyObserver();
+    public String getName(){
+        return this.name;
     }
 }
-
-//测试
-public class Test {
-
-    public static void main(String[] args) {
-        MyServer myServer = new MyServer();
-        User lillusory = new User("lillusory", 22);
-        User Az = new User("Az", 17);
-        myServer.registerObserver(lillusory);
-        myServer.registerObserver(Az);
-        myServer.PushMessage("第一条推送消息");
-        System.out.println("-------------------------------");
-        myServer.removeObserver(Az);//Az取消注册后就收不到消息
-        User yiqixing = new User("意琦行", 999);
-        myServer.registerObserver(yiqixing);//新增的观察者只能收到后面的消息
-        myServer.PushMessage("第二条推送消息");
-
+/**
+ * 观察者模式 测试类
+ *
+ * @author illusoryCloud
+ */
+public class ObserverTest {
+    @Test
+    void observerTest() {
+        //发送的消息对象
+        Message message = null;
+        //1个被观察者
+        Server s1 = new Server("幻境");
+        Server s2 = new Server("云图");
+        //4个观察者
+        Client c1 = new Client("大佬", 1);
+        Client c2 = new Client("萌新", 2);
+        Client c3 = new Client("菜鸟", 3);
+        Client c4 = new Client("咸鱼", 4);
+        //将4个观察者分别注册到两个被观察者上
+        s1.addObserver(c1);
+        s1.addObserver(c2);
+        s2.addObserver(c3);
+        s2.addObserver(c4);
+        message = Message.newBuilder().setTitle("欢迎")
+                .setContent("欢迎关注 <幻境云图>")
+                .build();
+        //消息变化后 将被观察者设置为已变化状态
+        s1.setChanged();
+        s2.setChanged();
+        //发送消息
+        s1.notifyObservers(message);
+        s2.notifyObservers(message);
+        //再次发送消息无效 因为change=false
+        s1.notifyObservers(message);
+        s2.notifyObservers(message);
     }
 }
 //输出
-        推送消息：第一条推送消息
-                22岁的lillusory收到推送的消息：第一条推送消息
-                17岁的Az收到推送的消息：第一条推送消息
-                -------------------------------
-                推送消息：第二条推送消息
-                22岁的lillusory收到推送的消息：第二条推送消息
-                999岁的意琦行收到推送的消息：第二条推送消息
+2号萌新收到<幻境>推送的消息：Message{title='欢迎', content='欢迎关注 <幻境云图>'}
+1号大佬收到<幻境>推送的消息：Message{title='欢迎', content='欢迎关注 <幻境云图>'}
+4号咸鱼收到<云图>推送的消息：Message{title='欢迎', content='欢迎关注 <幻境云图>'}
+3号菜鸟收到<云图>推送的消息：Message{title='欢迎', content='欢迎关注 <幻境云图>'}
 ```
 
 ## 3. 总结
@@ -154,7 +263,7 @@ public class Test {
 
 **观察者模式在Java中的应用及解读**
 
-JDK是有直接支持观察者模式的，就是java.util.Observer这个接口：
+JDK是有直接支持观察者模式的，就是`java.util.Observer`这个接口：
 
 ```java
 public interface Observer {
@@ -177,35 +286,61 @@ public interface Observer {
 ```java
 public class Observable {
     private boolean changed = false;
-    private Vector obs;
-   
-    /** Construct an Observable with zero Observers. */
+    private Vector<Observer> obs;
 
     public Observable() {
-    obs = new Vector();
+        obs = new Vector<>();
     }
-
-    /**
-     * Adds an observer to the set of observers for this object, provided 
-     * that it is not the same as some observer already in the set. 
-     * The order in which notifications will be delivered to multiple 
-     * observers is not specified. See the class comment.
-     *
-     * @param   o   an observer to be added.
-     * @throws NullPointerException   if the parameter o is null.
-     */
     public synchronized void addObserver(Observer o) {
         if (o == null)
             throw new NullPointerException();
-    if (!obs.contains(o)) {
-        obs.addElement(o);
+        if (!obs.contains(o)) {
+            obs.addElement(o);
+        }
     }
+
+    public synchronized void deleteObserver(Observer o) {
+        obs.removeElement(o);
     }
-    ...
+    public void notifyObservers() {
+        notifyObservers(null);
+    }
+    public void notifyObservers(Object arg) {
+ 
+        Object[] arrLocal;
+
+        synchronized (this) {
+            if (!changed)
+                return;
+            arrLocal = obs.toArray();
+            clearChanged();
+        }
+
+        for (int i = arrLocal.length-1; i>=0; i--)
+            ((Observer)arrLocal[i]).update(this, arg);
+    }
+
+    public synchronized void deleteObservers() {
+        obs.removeAllElements();
+    }
+    protected synchronized void setChanged() {
+        changed = true;
+    }
+
+    protected synchronized void clearChanged() {
+        changed = false;
+    }
+    public synchronized boolean hasChanged() {
+        return changed;
+    }
+    public synchronized int countObservers() {
+        return obs.size();
+    }
 }
+
 ```
 
-这是被观察者的父类，也就是主题对象。
+这是被观察者的父类，也就是主题对象，用的`Vector`集合,方法也加了`synchronized`关键字，是多线程安全的。
 
 ## 4. 参考
 
