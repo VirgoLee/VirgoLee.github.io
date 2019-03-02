@@ -42,6 +42,10 @@ Product（要创建的对象）：
 
 ```java
 
+package builder.first;
+
+import java.util.Date;
+
 /**
  * 构建的消息对象
  * 普通对象
@@ -49,65 +53,75 @@ Product（要创建的对象）：
  * @author illusoryCloud
  */
 public class Message {
-    /** 标题 */
-    private String Title;
-    /** 内容 */
-    private String Content;
-    /** 发送者 */
-    private String From;
-    /** 接收者 */
-    private String To;
-    /** 时间 */
-    private Date Time;
+    /**
+     * 标题
+     */
+    private String title;
+    /**
+     * 内容
+     */
+    private String content;
+    /**
+     * 发送者
+     */
+    private String from;
+    /**
+     * 接收者
+     */
+    private String to;
+    /**
+     * 时间
+     */
+    private Date time;
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
 
     public String getContent() {
-        return Content;
+        return content;
     }
 
     public void setContent(String content) {
-        Content = content;
+        this.content = content;
     }
 
     public String getFrom() {
-        return From;
+        return from;
     }
 
     public void setFrom(String from) {
-        From = from;
+        this.from = from;
     }
 
     public String getTo() {
-        return To;
+        return to;
     }
 
     public void setTo(String to) {
-        To = to;
+        this.to = to;
     }
 
     public Date getTime() {
-        return Time;
+        return time;
     }
 
     public void setTime(Date time) {
-        Time = time;
+        this.time = time;
     }
 
     @Override
     public String toString() {
         return "Message{" +
-                "Title='" + Title + '\'' +
-                ", Content='" + Content + '\'' +
-                ", From='" + From + '\'' +
-                ", To='" + To + '\'' +
-                ", Time=" + Time +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", time=" + time +
                 '}';
     }
 }
@@ -137,6 +151,7 @@ ConcreteBuilder（实现Builder接口，针对不同的商业逻辑，具体化�
 /**
  * 具体的建造对象类 实现了Builder接口
  * 可以根据不同需求有不同的实现
+ *
  * @author illusoryCloud
  */
 public class CommonMessageBuilder implements Builder {
@@ -176,15 +191,16 @@ public class CommonMessageBuilder implements Builder {
         return this.message;
     }
 }
-
 ```
 
 
 
 ```java
+
 /**
  * 具体的建造对象类 实现了Builder接口
  * 可以根据不同需求有不同的实现
+ *
  * @author illusoryCloud
  */
 public class OthersMessageBuilder implements Builder {
@@ -273,6 +289,8 @@ public class Test {
 静态内部类写法。
 
 ```java
+
+
 /**
  * 构建的消息对象
  * 有个静态内部类
@@ -283,33 +301,33 @@ public class Message {
     /**
      * 标题
      */
-    private String Title;
+    private String title;
     /**
      * 内容
      */
-    private String Content;
+    private String content;
     /**
      * 发送者
      */
-    private String From;
+    private String from;
     /**
      * 接收者
      */
-    private String To;
+    private String to;
     /**
      * 时间
      */
-    private Date Time;
+    private Date time;
 
 
     @Override
     public String toString() {
         return "Message{" +
-                "Title='" + Title + '\'' +
-                ", Content='" + Content + '\'' +
-                ", From='" + From + '\'' +
-                ", To='" + To + '\'' +
-                ", Time=" + Time +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", time=" + time +
                 '}';
     }
 
@@ -322,12 +340,14 @@ public class Message {
      * 静态内部类 builder
      */
     public static class Builder {
-        //设置默认值
-        private String Title = "未命名";
-        private String Content = "暂无内容";
-        private String From = "unknow";
-        private String To = "unknow";
-        private Date Time = new Date();
+        /**
+         * 设置默认值
+         */
+        private String title = "未命名";
+        private String content = "暂无内容";
+        private String from = "unknow";
+        private String to = "unknow";
+        private Date time = new Date();
 
         /**
          * 设置消息标题
@@ -336,42 +356,43 @@ public class Message {
          * @return 返回Builder对象 以达到链式调用
          */
         public Builder setTitle(String title) {
-            this.Title = title;
+            this.title = title;
             return this;
         }
 
         public Builder setContent(String content) {
-            this.Content = content;
+            this.content = content;
             return this;
         }
 
         public Builder setFrom(String from) {
-            this.From = from;
+            this.from = from;
             return this;
         }
 
         public Builder setTo(String to) {
-            this.To = to;
+            this.to = to;
             return this;
         }
 
         public Builder setTime(Date time) {
-            this.Time = time;
+            this.time = time;
             return this;
         }
 
-        public Message Build() {
+        public Message build() {
             Message message = new Message();
-            message.Title = Title;
-            message.Content = Content;
-            message.From = From;
-            message.To = To;
-            message.Time = Time;
+            message.title = title;
+            message.content = content;
+            message.from = from;
+            message.to = to;
+            message.time = time;
             return message;
         }
 
     }
 }
+
 ```
 
 测试类
