@@ -12,9 +12,39 @@ date: 2018-10-12 22:00:00
 
 <!--more-->
 
-> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+> **Java设计模式系列文章目录**
+>
+> [Java设计模式(一)---单例模式](https://www.lixueduan.com/posts/53093.html)
+>
+> [Java设计模式(二)---工厂模式](https://www.lixueduan.com/posts/34710.html)
+>
+> [Java设计模式(三)---建造者模式](https://www.lixueduan.com/posts/52453.html)
+>
+> [Java设计模式(四)---原型模式](https://www.lixueduan.com/posts/24b6c0e4.html)
+>
+> [Java设计模式(五)---适配器模式](https://www.lixueduan.com/posts/f444ac9.html)
+>
+> [Java设计模式(六)---装饰者模式](https://www.lixueduan.com/posts/75903408.html)
+>
+> [Java设计模式(七)---代理模式](https://www.lixueduan.com/posts/ae2a93bd.html)
+>
+> [Java设计模式(八)---外观模式](https://www.lixueduan.com/posts/22a51705.html)
+>
+> [Java设计模式(九)---享元模式](https://www.lixueduan.com/posts/34e634e7.html)
+>
+> [Java设计模式(十)---策略模式](https://www.lixueduan.com/posts/a7982bdc.html)
+>
+> [Java设计模式(十一)---模板方法模式](https://www.lixueduan.com/posts/57ae709c.html)
+>
+> [Java设计模式(十二)---观察者模式](https://www.lixueduan.com/posts/48bcf013.html)
+>
+> [Java设计模式(十三)---组合模式](https://www.lixueduan.com/posts/a340063f.html)
+>
+> ........
 >
 > Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
+>
+> 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 ## 1. 简介
 
@@ -438,3 +468,4 @@ public class Test {
 ## 4. 参考
 
 `https://blog.csdn.net/zhuhuitao_struggle/article/details/80489572`
+
