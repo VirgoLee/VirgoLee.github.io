@@ -12,7 +12,7 @@ date: 2018-10-14 22:00:00
 
 <!--more-->
 
-> **Java设计模式系列文章目录**
+> **[Java设计模式系列文章目录](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)**
 >
 > [Java设计模式(一)---单例模式](https://www.lixueduan.com/posts/53093.html)
 >

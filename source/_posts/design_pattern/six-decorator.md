@@ -12,7 +12,7 @@ date: 2018-10-16 22:00:00
 
 <!--more-->
 
-> **Java设计模式系列文章目录**
+> **[Java设计模式系列文章目录](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)**
 >
 > [Java设计模式(一)---单例模式](https://www.lixueduan.com/posts/53093.html)
 >
@@ -46,11 +46,13 @@ date: 2018-10-16 22:00:00
 >
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
+
+
 ## 1. 简介
 
-在不必改变原类文件和使用继承的情况下，动态地扩展一个对象的功能。
-
-它是通过创建一个包装对象，也就是装饰来包裹真实的对象。是继承关系的一个替代方案。
+>  在不必改变原类文件和使用继承的情况下，动态地扩展一个对象的功能。
+>
+> 它是通过创建一个包装对象，也就是装饰来包裹真实的对象。是继承关系的一个替代方案。
 
 ![](https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/design_pattern/six-decorator.png)
 

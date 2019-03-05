@@ -12,7 +12,7 @@ date: 2018-10-26 22:00:00
 
 <!--more-->
 
-> **Java设计模式系列文章目录**
+> **[Java设计模式系列文章目录](https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/)**
 >
 > [Java设计模式(一)---单例模式](https://www.lixueduan.com/posts/53093.html)
 >
@@ -45,6 +45,8 @@ date: 2018-10-26 22:00:00
 > Demo下载--> [Github](https://github.com/illusorycloud/design-pattern)
 >
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+
+
 
 ## 1. 简介
 

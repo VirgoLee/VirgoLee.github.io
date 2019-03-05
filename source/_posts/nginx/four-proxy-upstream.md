@@ -12,7 +12,21 @@ date: 2019-03-04 22:00:00
 
 <!-- more-->
 
+> **[Nginx入门教程系列文章目录](https://www.lixueduan.com/categories/)**
+>
+> [Nginx入门教程(一)---安装与配置](https://www.lixueduan.com/posts/545ed69.html)
+>
+> [Nginx入门教程(二)---配置文件详解](https://www.lixueduan.com/posts/5a0a337e.html)
+>
+> [Nginx入门教程(三)---日志文件切割](https://www.lixueduan.com/posts/3ebafd31.html)
+>
+> [Nginx入门教程(四)---反向代理与负载均衡](https://www.lixueduan.com/posts/930200c5.html)
+>
+> ......
+>
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+
+
 
 ## 1. 反向代理(proxy)
 
