@@ -5,7 +5,7 @@ tags:
 categories:
   - Redis
 abbrlink: 876962d5
-date: 2019-03-05 22:00:00
+date: 2019-03-01 22:00:00
 ---
 
 本文主要记录了如何在Linux(CentOS 7)下安装Redis与Redis基本使用与配置。

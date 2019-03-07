@@ -1,11 +1,11 @@
 ---
-title: Redis入门教程(一)---安装与配置
+title: Redis入门教程(二)---五大基础数据类型与常用命令
 tags:
   - Redis
 categories:
   - Redis
-abbrlink: 876962d5
-date: 2019-03-05 22:00:00
+abbrlink: 8380a4fa
+date: 2019-03-03 22:00:00
 ---
 
 本文主要记录了Redis五大基础数据类型与key命令，包括了`String`、`Hash`、`List`、`Set`、`ZSet`。
@@ -494,8 +494,6 @@ Java中List的升级版。
 
 Redis中所有key都可以使用的命令。
 
-
-
 | 命令                     | 描述                                                         |
 | ------------------------ | :----------------------------------------------------------- |
 | **del** key              | 该命令用于在 key 存在时删除 key。                            |
@@ -508,7 +506,29 @@ Redis中所有key都可以使用的命令。
 | **keys** pattern         | 类似模糊查询，查找所有符合给定模式( pattern)的 key。key l 查出以l开头的 |
 | move key db              | 将当前数据库的 key 移动到给定的数据库 db(0~15) 当中。        |
 
-## 7. 参考
+## 7. 其他命令
+
+| 命令                | 描述                                   |
+| ------------------- | -------------------------------------- |
+| keys *              | 返回满足的所有键 (可以模糊匹配）       |
+| exists key[keys...] | 是否存在指定的key                      |
+| expire key secondes | 设置某个key的过期时间，                |
+| ttl key             | 与expire搭配，查看剩余时间             |
+| persist key         | 取消过期时间                           |
+| select db(0~15)     | 择数据库数据库,默认进入的是0数据库     |
+| move key db(0~15)   | 将当前数据中的key转移到其他数据库中    |
+| randomkey           | 随机返回数据库里的一个key              |
+| rename key          | 重命名key                              |
+| echo                | 打印命令                               |
+| dbsize              | 查看数据库的key数量                    |
+| info                | 获取数据库信息                         |
+| conflg get          | 实时传储收到的请求(返回相关的配置信息} |
+| config get *        | 返回所有配置                           |
+| flushdb             | 空当前数据库                           |
+| flushall            | 清空所有数据库                         |
+
+## 8. 参考
+
+`http://redisdoc.com/internal/index.html`
 
 `http://www.runoob.com/redis/redis-hashes.html`
-
