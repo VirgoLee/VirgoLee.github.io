@@ -5,13 +5,29 @@ tags:
 categories:
   - Redis
 abbrlink: 397ed67
-date: 2019-03-06 22:00:00
+date: 2019-02-27 22:00:00
 ---
 
-本文主要记录了如何在Linux(CentOS 7)下安装Redis与Redis基本使用与配置。
+本文主要记录了Redis集群搭建与使用的详细过程。
 
 <!--more-->
 
+> **[Redis系列教程目录](https://www.lixueduan.com/categories/Redis/)**
+>
+> [Redis入门教程(一)---安装与配置](https://www.lixueduan.com/posts/876962d5.html)
+>
+> [Redis入门教程(二)---五大基础数据类型与常用命令](https://www.lixueduan.com/posts/8380a4fa.html)
+>
+> [Redis入门教程(三)---安全性、事务、发布订阅](https://www.lixueduan.com/posts/5df38113.html)
+>
+> [Redis入门教程(四)---主从复制与持久化](https://www.lixueduan.com/posts/84dd6d72.html)
+>
+> [Redis入门教程(五)---搭建Redis集群](https://www.lixueduan.com/posts/397ed67.html)
+>
+> [Redis入门教程(六)---通过JavaApi(Jedis)操作Redis](https://www.lixueduan.com/posts/e456b1e5.html)
+>
+> .......
+>
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 

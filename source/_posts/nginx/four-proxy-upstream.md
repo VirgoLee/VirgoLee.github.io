@@ -5,7 +5,7 @@ tags:
 categories:
   - Nginx
 abbrlink: 930200c5
-date: 2019-03-04 22:00:00
+date: 2019-02-17 22:00:00
 ---
 
 本章主要对Nginx服务器的常用配置文件，包括虚拟主机配置，location配置级语法等。

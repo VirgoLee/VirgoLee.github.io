@@ -5,7 +5,7 @@ tags:
 categories:
   - SpringBoot
 abbrlink: 144a69f9
-date: 2019-02-22 22:00:00
+date: 2018-11-22 22:00:00
 ---
 
 本文主要记录了如何在idea下打包SpringBoot项目并部署到云服务器，包括jar包和war包两种方式。

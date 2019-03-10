@@ -5,7 +5,7 @@ tags:
 categories:
   - Nginx
 abbrlink: 3ebafd31
-date: 2019-03-03 22:00:00
+date: 2019-02-16 22:00:00
 ---
 
 本章主要对Nginx服务器的日志文件分析，包括`日志文件切割`与`cron定时任务`语法详解。

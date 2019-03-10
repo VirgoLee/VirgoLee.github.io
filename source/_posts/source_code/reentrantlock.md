@@ -5,7 +5,7 @@ tags:
 categories:
   - 源码分析
 abbrlink: ef6a0c58
-date: 2019-02-24 16:00:00
+date: 2019-02-09 16:00:00
 ---
 
 本文主要对`ReentrantLock`的源码进行了简单的分析，具体包括`ReentrantLock`的初始化(公平锁和非公平锁)，加锁过程和解锁过程等。

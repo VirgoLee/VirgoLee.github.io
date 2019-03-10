@@ -5,7 +5,7 @@ tags:
 categories:
   - Nginx
 abbrlink: 545ed69
-date: 2019-03-01 22:00:00
+date: 2019-02-13 22:00:00
 ---
 
 本章主要对Nginx服务器进行了介绍，同时对Nginx与Apache之间做出了对比，最后记录了如何在Linux下通过解压方式安装Nginx，也对Nginx基本使用做出了说明。
@@ -118,7 +118,7 @@ make[1]: Leaving directory `/usr/local/nginx-1.15.9'
 
 ```
 
-编译安装后多了一个``Nginx`文件夹,在`/usr/local/nginx` 内部又分为四个目录
+编译安装后多了一个`Nginx`文件夹,在`/usr/local/nginx` 内部又分为四个目录
 
 ```nginx
 /usr/local/nginx
@@ -136,7 +136,7 @@ nginx version: nginx/1.15.9
 //这里是Nginx 1.15.9
 ```
 
-到这里``Nginx`安装就结束了。
+到这里`Nginx`安装就结束了。
 
 ## 3. 基本操作
 
