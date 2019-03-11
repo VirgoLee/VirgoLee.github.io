@@ -145,6 +145,8 @@ pid-file=/usr/local/mysql/data/mysqld.pid
 # chkconfig --add mysqld
 ```
 
+进入客户端
+
 登录修改密码 
 
 ```xml
