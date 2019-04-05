@@ -1,5 +1,5 @@
 ---
-title: idea下打包SpringBoot项目并部署到Linux服务器
+title: SpringBoot入门系列(四)---Spring Boot 项目打包运行
 tags:
   - SpringBoot
 categories:
