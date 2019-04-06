@@ -42,7 +42,7 @@ Druid 是目前最好的数据库连接池，在功能、性能、扩展性方�
 </dependency>
 ```
 
-### 1.2 配置 `application.yml`
+### 1.2 配置 application.yml
 
 在 `application.yml` 中配置数据库连接
 
@@ -74,11 +74,11 @@ spring:
         </dependency>
 ```
 
-### 2.2 application.yml中配置
+### 2.2 配置 application.yml
 
 ```yml
 mybatis:
-  type-aliases-package: com.illusory.hello..spring.boot.domain
+  type-aliases-package: com.illusory.hello.spring.boot.domain
   mapper-locations: classpath:mapper/*.xml
 ```
 
