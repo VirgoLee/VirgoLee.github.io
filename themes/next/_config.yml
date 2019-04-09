@@ -209,7 +209,9 @@ links_title: 推荐阅读
 links_layout: block
 #links_layout: inline
 links:
-  幻境云图: http://www.lixueduan.com
+   设计模式: https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/
+   SpringBoot: https://www.lixueduan.com/categories/SpringBoot/
+   SpringCloud: https://www.lixueduan.com/categories/SpringCloud/
 
 # Sidebar Avatar 头像
 avatar:
@@ -691,7 +693,7 @@ rating:
 # You can visit https://leancloud.cn get AppID and AppKey.
 #leancloud 阅读次数统计
 leancloud_visitors:
-  enable: true
+  enable: false
   app_id: syp1rgTolLpo5KQ8nDc2bWVB-gzGzoHsz
   app_key: z2W7XwOgnfpJYiWm1dX8mevj
   # Dependencies: https://github.com/theme-next/hexo-leancloud-counter-security

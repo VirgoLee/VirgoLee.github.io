@@ -8,15 +8,21 @@ abbrlink: 8735f06d
 date: 2019-03-16 22:00:00
 ---
 
-本文主要介绍了SpringCloud中的服务注册于发现中心`Eureka`,包含了简单的代码示例。
+本文主要介绍了`SpringCloud-Netflix`系列微服务解决方案之服务注册于发现中心`Eureka`。
 
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> **[SpringCloud入门系列文章目录](https://www.lixueduan.com/categories/SpringCloud/)**
+>
+> 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
+
+## 1. 简介
 
 在这里，我们需要用的组件是 Spring Cloud Netflix 的 Eureka，Eureka 是一个服务注册和发现模块
 
-## 1. pom.xml
+## 2. pom.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -69,7 +75,7 @@ date: 2019-03-16 22:00:00
 </project>
 ```
 
-## 2. Application
+## 3. Application
 
 启动一个服务注册中心，只需要一个注解 `@EnableEurekaServer`
 
@@ -83,7 +89,7 @@ public class EurekaApplication {
 }
 ```
 
-## 3. application.yml
+## 4. application.yml
 
 Eureka 是一个高可用的组件，它没有后端缓存，每一个实例注册之后需要向注册中心发送心跳（因此可以在内存中完成），在默认情况下 Erureka Server 也是一个 Eureka Client ,必须要指定一个 Server。
 
@@ -110,7 +116,7 @@ eureka:
 
 通过 `eureka.client.registerWithEureka:false` 和 `fetchRegistry:false` 来表明自己是一个 Eureka Server.
 
-## 4. 浏览器访问
+## 5. 浏览器访问
 
 Eureka Server 是有界面的，启动工程，打开浏览器访问：
 

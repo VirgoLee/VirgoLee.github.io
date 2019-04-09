@@ -1,5 +1,5 @@
 ---
-title: SpringCloud入门系列(一)
+title: SpringCloud入门系列(一)---统一依赖管理 Dependencies
 tags:
   - SpringCloud
 categories:
@@ -8,11 +8,17 @@ abbrlink: c41e9ac1
 date: 2019-03-15 22:00:00
 ---
 
-本文主要记录了SpringCloud入门系列之创建一个依赖统一管理项目。
+本文主要介绍了`SpringCloud-Netflix`系列微服务解决方案之创建一个依赖统一管理项目。
 
 <!--more-->
 
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
+>
+> **[SpringCloud入门系列文章目录](https://www.lixueduan.com/categories/SpringCloud/)**
+>
+> 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
+
+## 1. 简介
 
 Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Maven 做项目管理工具。在实际开发中，我们一般都会创建一个依赖管理项目作为 Maven 的 Parent 项目使用，这样做可以极大的方便我们对 Jar 包版本的统一管理。
 
@@ -24,7 +30,7 @@ Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Ma
 - build：配置了项目所需的各种插件
 - repositories：配置项目下载依赖时的第三方库
 
-## pom.xml
+## 2. pom.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -269,4 +275,6 @@ Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Ma
 ```
 
 一个简单的项目，只有一个`pom.xml`文件，用来管理项目中所需的依赖。
+
+接下来创建服务注册与发现项目即注册中心。
 
