@@ -18,7 +18,7 @@ date: 2019-03-18 22:00:00
 >
 > 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
 
-## 1. 简介
+## 1. 概述
 
 在微服务架构中，业务都会被拆分成一个独立的服务，服务与服务的通讯是基于 `HTTP Restful`的。`Spring Cloud` 有两种服务调用方式，一种是 ` ribbon` + `restTemplate`，另一种是 `feign`。
 
@@ -26,7 +26,9 @@ date: 2019-03-18 22:00:00
 
 `Ribbon` 是一个`负载均衡客户端`，可以很好的控制 `http` 和 `tcp` 的一些行为。
 
-### pom.mxl
+创建使用`Ribbon`的项目`hello-spring-cloud-web-admin-ribbon`作为服务消费者。
+
+### 2.1 pom.mxl
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -35,7 +37,7 @@ date: 2019-03-18 22:00:00
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.illusory</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -45,7 +47,7 @@ date: 2019-03-18 22:00:00
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-web-admin-ribbon</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2018-Now</inceptionYear>
 
     <dependencies>
@@ -114,7 +116,7 @@ date: 2019-03-18 22:00:00
 </dependency>
 ```
 
-### Application
+### 2.2 Application
 
 通过 `@EnableDiscoveryClient` 注解注册到服务中心
 
@@ -134,7 +136,7 @@ public class WebAdminRibbonApplication {
 }
 ```
 
-### application.yml
+### 2.3 application.yml
 
 设置程序端口号为：`8764`
 
@@ -158,7 +160,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 ```
 
-### Configuration
+### 2.4 Configuration
 
 配置注入 `RestTemplate` 的 Bean，并通过 `@LoadBalanced` 注解表明开启负载均衡功能
 
@@ -181,7 +183,7 @@ public class RestTemplateConfiguration {
 }
 ```
 
-### Service
+### 2.5 Service
 
 这里直接用的`程序名`替代了具体的` URL` 地址，在 Ribbon 中它会根据服务名来选择具体的服务实例，根据服务实例在请求的时候会用具体的 URL 替换掉服务名，代码如下：
 
@@ -206,7 +208,7 @@ public class AdminService {
 }
 ```
 
-### Controller
+### 2.6 Controller
 
 ```java
 package com.illusory.hello.spring.cloud.web.admin.ribbon.controller;
@@ -231,7 +233,7 @@ public class AdminController {
 }
 ```
 
-### 测试访问
+### 2.7 测试访问
 
 在浏览器上多次访问 `http://localhost:8764/hi?message=HelloRibbon`
 
@@ -242,7 +244,9 @@ Feign 是一个声明式的伪 Http 客户端，它使得写 Http 客户端变�
 - Feign 采用的是基于接口的注解
 - Feign 整合了 ribbon
 
-### pom.xml
+创建使用`Feign`的项目`hello-spring-cloud-web-admin-feign`作为服务消费者。
+
+### 3.1 pom.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -251,7 +255,7 @@ Feign 是一个声明式的伪 Http 客户端，它使得写 Http 客户端变�
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.funtl</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -261,7 +265,7 @@ Feign 是一个声明式的伪 Http 客户端，它使得写 Http 客户端变�
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-web-admin-feign</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>
@@ -330,7 +334,7 @@ Feign 是一个声明式的伪 Http 客户端，它使得写 Http 客户端变�
 </dependency>
 ```
 
-### Application
+### 3.2 Application
 
 通过 `@EnableFeignClients` 注解开启 Feign 功能
 
@@ -352,7 +356,7 @@ public class WebAdminFeignApplication {
 }
 ```
 
-### application.yml
+### 3.3 application.yml
 
 设置程序端口号为：`8765`
 
@@ -376,7 +380,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 ```
 
-### 创建 Feign 接口
+### 3.4 创建 Feign 接口
 
 通过 `@FeignClient(value = "服务名")` 注解来指定调用哪个服务。代码如下：
 
@@ -396,7 +400,7 @@ public interface AdminService {
 }
 ```
 
-### Controller
+### 3.5 Controller
 
 ```java
 package com.illusory.hello.spring.cloud.web.admin.feign.controller;
@@ -421,10 +425,10 @@ public class AdminController {
 }
 ```
 
-### 测试访问
+### 3.6 测试访问
 
 在浏览器上多次访问 `http://localhost:8765/hi?message=HelloFeign`
 
+## 4. 小结
 
-
-到这里服务提供者和服务消费者就已经搭建成功了。
+本章节我们分别使用`Ribbon`和`Feign`搭建了一个服务消费者项目。

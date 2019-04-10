@@ -18,7 +18,7 @@ date: 2019-03-15 22:00:00
 >
 > 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
 
-## 1. 简介
+## 1. 概述
 
 Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Maven 做项目管理工具。在实际开发中，我们一般都会创建一个依赖管理项目作为 Maven 的 Parent 项目使用，这样做可以极大的方便我们对 Jar 包版本的统一管理。
 
@@ -30,7 +30,9 @@ Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Ma
 - build：配置了项目所需的各种插件
 - repositories：配置项目下载依赖时的第三方库
 
-## 2. pom.xml
+## 2. 创建依赖统一管理项目
+
+`pom.xml` 文件如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -44,13 +46,13 @@ Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Ma
         <version>2.0.2.RELEASE</version>
     </parent>
 
-    <groupId>com.funtl</groupId>
+    <groupId>com.illusory</groupId>
     <artifactId>hello-spring-cloud-dependencies</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>hello-spring-cloud-dependencies</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <properties>

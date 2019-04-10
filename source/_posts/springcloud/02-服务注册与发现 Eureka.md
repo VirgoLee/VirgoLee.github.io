@@ -18,11 +18,15 @@ date: 2019-03-16 22:00:00
 >
 > 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
 
-## 1. 简介
+## 1. 概述
 
-在这里，我们需要用的组件是 Spring Cloud Netflix 的 Eureka，Eureka 是一个服务注册和发现模块
+在这里，我们需要用的组件是 `Spring Cloud Netflix` 的 `Eureka`，`Eureka` 是一个服务注册和发现模块。
 
-## 2. pom.xml
+## 2. 创建服务注册于发现项目
+
+创建一个项目`hello-spring-cloud-eureka`作为注册中心。
+
+### 2.1 pom.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -31,7 +35,7 @@ date: 2019-03-16 22:00:00
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.illusory</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -41,7 +45,7 @@ date: 2019-03-16 22:00:00
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-eureka</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>
@@ -75,7 +79,7 @@ date: 2019-03-16 22:00:00
 </project>
 ```
 
-## 3. Application
+### 2.2 Application
 
 启动一个服务注册中心，只需要一个注解 `@EnableEurekaServer`
 
@@ -89,7 +93,7 @@ public class EurekaApplication {
 }
 ```
 
-## 4. application.yml
+### 2.3 application.yml
 
 Eureka 是一个高可用的组件，它没有后端缓存，每一个实例注册之后需要向注册中心发送心跳（因此可以在内存中完成），在默认情况下 Erureka Server 也是一个 Eureka Client ,必须要指定一个 Server。
 
@@ -116,9 +120,12 @@ eureka:
 
 通过 `eureka.client.registerWithEureka:false` 和 `fetchRegistry:false` 来表明自己是一个 Eureka Server.
 
-## 5. 浏览器访问
+## 3. 测试
 
 Eureka Server 是有界面的，启动工程，打开浏览器访问：
 
 `http://localhost:8761`
 
+## 4. 小结
+
+本章我们主要使用`Eureka`组件建立了我们的注册中心。

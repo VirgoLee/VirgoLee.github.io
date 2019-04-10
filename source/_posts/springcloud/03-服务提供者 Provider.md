@@ -18,11 +18,15 @@ date: 2019-03-17 22:00:00
 >
 > 源码下载：[GItHub](https://github.com/illusorycloud/springboot-learning)
 
-## 1. 简介
+## 1. 概述
 
 当 Eureka Client 向 Eureka Server 注册时，它会提供一些元数据，例如主机和端口，URL，主页等。Eureka Server 从每个 Client 实例接收心跳消息。 如果心跳超时，则通常将该实例从注册 Server 中删除。这与ZooKeeper注册中心很像。
 
-## 2. pom.xml
+## 2. 创建服务提供者项目
+
+创建一个项目`hello-spring-cloud-service-admin`作为服务提供者。
+
+### 2.1 pom.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -31,7 +35,7 @@ date: 2019-03-17 22:00:00
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.funtl</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -41,7 +45,7 @@ date: 2019-03-17 22:00:00
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-service-admin</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>
@@ -75,7 +79,7 @@ date: 2019-03-17 22:00:00
 </project>
 ```
 
-## 3. Application
+### 2.2 Application
 
 通过注解 `@EnableEurekaClient` 表明自己是一个 Eureka Client.
 
@@ -95,7 +99,7 @@ public class ServiceAdminApplication {
 }
 ```
 
-## 4. application.yml
+### 2.3 application.yml
 
 ```yml
 spring:
@@ -113,7 +117,7 @@ eureka:
 
 **注意**： 需要指明 `spring.application.name`，这个很重要，这在以后的服务与服务之间相互调用一般都是根据这个` name`。
 
-## 5. Controller
+### 2.4 Controller
 
 对外提供服务
 
@@ -139,6 +143,6 @@ public class AdminController {
 }
 ```
 
-
+## 3. 小结
 
 到这里一个简单的服务提供者就搭建成功了，接下来搭建一个服务消费者。
