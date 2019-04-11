@@ -59,7 +59,7 @@ ZipKin 是一个开放源代码的分布式跟踪系统，由 Twitter 公司开�
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.illusory</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -69,7 +69,7 @@ ZipKin 是一个开放源代码的分布式跟踪系统，由 Twitter 公司开�
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-zipkin</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>

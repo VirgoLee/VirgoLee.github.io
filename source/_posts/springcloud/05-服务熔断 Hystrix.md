@@ -197,7 +197,7 @@ Hi，your message is :"HelloFeign" but request error.
 
 分别对对`hello-spring-cloud-web-admin-feign`和对`hello-spring-cloud-web-admin-ribbon`项目进行修改，增加熔断仪表盘功能。
 
-### 4.1pom.xml
+### 4.1 pom.xml
 
 在 `pom.xml` 中增加依赖
 

@@ -48,7 +48,7 @@ Zuul 的主要功能是路由转发和过滤器。路由功能是微服务的一
 
 ### 2.1 创建路由网关项目
 
-#### 1. `pom.xml` 文件如下：
+#### 1. pom.xml 文件如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,7 +57,7 @@ Zuul 的主要功能是路由转发和过滤器。路由功能是微服务的一
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.funtl</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>

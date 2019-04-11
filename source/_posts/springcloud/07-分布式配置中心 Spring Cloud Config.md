@@ -55,7 +55,7 @@ date: 2019-03-21 22:00:00
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.illusory</groupId>
+        <groupId>com.lixueduan</groupId>
         <artifactId>hello-spring-cloud-dependencies</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../hello-spring-cloud-dependencies/pom.xml</relativePath>
@@ -65,7 +65,7 @@ date: 2019-03-21 22:00:00
     <packaging>jar</packaging>
 
     <name>hello-spring-cloud-config</name>
-    <url>http://www.illusory.com</url>
+    <url>http://www.lixueduan.com</url>
     <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>

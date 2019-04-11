@@ -66,7 +66,7 @@ Spring Cloud 项目都是基于 Spring Boot 进行开发，并且都是使用 Ma
         <version>2.0.2.RELEASE</version>
     </parent>
 
-    <groupId>com.illusory</groupId>
+    <groupId>com.lixueduan</groupId>
     <artifactId>hello-spring-cloud-dependencies</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
