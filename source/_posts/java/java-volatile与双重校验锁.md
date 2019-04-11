@@ -94,9 +94,9 @@ public class Singleton {
 
 该语句非原子操作，实际是三个步骤。
 
-* 1.给singleton分配内存；
+* 1.给 singleton 分配内存；
 * 2.调用 Singleton 的构造函数来初始化成员变量；
-* 3.将给singleton对象指向分配的内存空间（此时singleton才不为null）；
+* 3.将给 singleton 对象指向分配的内存空间（此时 singleton 才不为 null ）；
 
 虚拟机的`指令重排序`-->
 
@@ -104,7 +104,7 @@ public class Singleton {
 
 当`线程A`进入同步方法执行`singleton = new Singleton();`代码时，恰好这三个步骤重排序后为`1 3 2`，
 
-那么`步骤3`执行后`singleton`已经不为`null`,但是未执行`步骤2`，`singleton`对象初始化不完全，此时`线程B`执行`getInstance()`方法，第一步判断时`singleton`不为null,则直接将未完全初始化的`singleton`对象返回了。
+那么`步骤3`执行后 `singleton` 已经不为 `null` ,但是未执行`步骤2`，`singleton `对象初始化不完全，此时`线程B`执行 `getInstance()` 方法，第一步判断时 `singleton` 不为null,则直接将未完全初始化的`singleton`对象返回了。
 
 ## 5. 解决
 
