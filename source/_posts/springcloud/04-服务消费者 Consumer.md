@@ -68,7 +68,7 @@ date: 2019-03-18 22:00:00
 
     <name>hello-spring-cloud-web-admin-ribbon</name>
     <url>http://www.lixueduan.com</url>
-    <inceptionYear>2018-Now</inceptionYear>
+    <inceptionYear>2019-Now</inceptionYear>
 
     <dependencies>
         <!-- Spring Boot Begin -->
@@ -141,7 +141,7 @@ date: 2019-03-18 22:00:00
 通过 `@EnableDiscoveryClient` 注解注册到服务中心
 
 ```java
-package com.funtl.hello.spring.cloud.web.admin.ribbon;
+package com.illusory.hello.spring.cloud.web.admin.ribbon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
