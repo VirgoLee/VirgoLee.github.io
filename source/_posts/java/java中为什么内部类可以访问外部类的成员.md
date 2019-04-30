@@ -236,9 +236,9 @@ aload_1：
 putfield      #1           // Field this$0:Ljvm/innerclass/Outer;
 ```
 
-使用操作数栈顶端的引用变量为指定的成员变量赋值。 这里的意思是将外面传入的`Outer`类型的参数赋给成员变量``this$0` 。 
+使用操作数栈顶端的引用变量为指定的成员变量赋值。 这里的意思是将外面传入的`Outer`类型的参数赋给成员变量`this$0` 。 
 
-这一句``putfield`字节码就揭示了， 指向外部类对象的这个引用变量是如何赋值的。
+这一句`putfield`字节码就揭示了， 指向外部类对象的这个引用变量是如何赋值的。
 
 后面几句如下：
 
@@ -282,7 +282,7 @@ putfield      #1           // Field this$0:Ljvm/innerclass/Outer;
 getfield      #1         // Field this$0:Ljvm/innerclass/Outer;
 ```
 
-将成员变量this$0加载到操作数栈上来 
+将成员变量`this$0`加载到操作数栈上来 
 
 ```java
 getfield      #3         // Field jvm/innerclass/Outer.outerField:I
@@ -294,7 +294,7 @@ getfield      #3         // Field jvm/innerclass/Outer.outerField:I
 istore_1
 ```
 
-将操作数栈顶端的int类型的值保存到局部变量表中的第二个变量上（注意， 第一个局部变量被this占用， 第二个局部变量是i）。操作数栈顶端的int型变量就是上一步加载的 outerField 变量。 
+将操作数栈顶端的int类型的值保存到局部变量表中的第二个变量上（注意， 第一个局部变量被 this 占用， 第二个局部变量是 i）。操作数栈顶端的 int 型变量就是上一步加载的 outerField 变量。 
 
 **所以， 这句字节码的含义就是： 使用`outerField`为i赋值**。 
 
