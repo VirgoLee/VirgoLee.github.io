@@ -1,4 +1,4 @@
-hexo clean 清理编译生成的各种文件
+hexo clean  清理编译生成的各种文件 public文件夹下的文件
 hexo g  编译
 gulp    压缩
 hexo s 开启服务
