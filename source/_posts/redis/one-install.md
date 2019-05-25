@@ -8,7 +8,7 @@ abbrlink: 876962d5
 date: 2019-02-20 22:00:00
 ---
 
-本文主要记录了如何在Linux(CentOS 7)下安装Redis与Redis基本使用与配置。
+本文主要记录了如何在 Linux(CentOS 7) 下安装 Redis 与 Redis 基本使用与配置。
 
 <!--more-->
 
@@ -25,6 +25,8 @@ date: 2019-02-20 22:00:00
 > [Redis入门教程(五)---搭建Redis集群](https://www.lixueduan.com/posts/397ed67.html)
 >
 > [Redis入门教程(六)---通过JavaApi(Jedis)操作Redis](https://www.lixueduan.com/posts/e456b1e5.html)
+>
+> [Redis入门教程(七)---通过 Docker 安装 Redis](https://www.lixueduan.com/posts/96375af.html)
 >
 > .......
 >

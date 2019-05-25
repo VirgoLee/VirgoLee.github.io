@@ -26,6 +26,8 @@ date: 2019-02-23 22:00:00
 >
 > [Redis入门教程(六)---通过JavaApi(Jedis)操作Redis](https://www.lixueduan.com/posts/e456b1e5.html)
 >
+> [Redis入门教程(七)---通过 Docker 安装 Redis](https://www.lixueduan.com/posts/96375af.html)
+>
 > .......
 >
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
