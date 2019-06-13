@@ -1,4 +1,1190 @@
-<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/myimages/favicon-32x32-me.png?v=6.6.0"><link rel="icon" type="image/png" sizes="32x32" href="/images/myfavicon-32x32-me.png?v=6.6.0"><link rel="icon" type="image/png" sizes="16x16" href="/images/myfavicon-16x16-me.png?v=6.6.0"><script id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"6.6.0",sidebar:{position:"right",display:"post",offset:12,b2t:!1,scrollpercent:!0,onmobile:!1},fancybox:!1,fastclick:!1,lazyload:!1,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script><link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet"><style>.pace .pace-progress{background:#1e92fb;height:3px}.pace .pace-progress-inner{box-shadow:0 0 10px #1e92fb,0 0 5px #1e92fb}.pace .pace-activity{border-top-color:#1e92fb;border-left-color:#1e92fb}</style><meta name="description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。"><meta name="keywords" content="Java"><meta property="og:type" content="article"><meta property="og:title" content="Java中为什么方法内定义的内部类可以访问方法中的局部变量"><meta property="og:url" content="https://www.lixueduan.com/posts/7d00948d.html"><meta property="og:site_name" content="幻境云图"><meta property="og:description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png"><meta property="og:updated_time" content="2019-04-30T09:02:21.434Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Java中为什么方法内定义的内部类可以访问方法中的局部变量"><meta name="twitter:description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。"><meta name="twitter:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png"><link rel="alternate" href="/atom.xml" title="幻境云图" type="application/atom+xml"><link rel="canonical" href="https://www.lixueduan.com/posts/7d00948d.html"><script id="page.configurations">CONFIG.page={sidebar:""}</script><title>Java中为什么方法内定义的内部类可以访问方法中的局部变量 | 幻境云图</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-131397277-1"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-131397277-1")</script><script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-title,.use-motion .comments,.use-motion .menu-item,.use-motion .motion-element,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .logo,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN"><div class="container sidebar-position-right page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">幻境云图</span><span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">有道无术，术尚可求，有术无道，止于术</h1></div><div class="site-nav-toggle"> <button aria-label="切换导航栏"><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"> <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="https://www.lixueduan.com/posts/7d00948d.html"><span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="name" content="illusoryCloud"><meta itemprop="description" content="幻境云图是一个专注于Java技术分享的博客,记录了一个菜鸟从0开始的Java进阶之路。主要涉及Java知识共享、实践教程、前沿技术共同学习等。包括但不限于Java基础,数据库优化,Spring框架,源码分析,分布式,微服务,并发编程等"><meta itemprop="image" content="/images/avatar.gif"></span><span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="幻境云图"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">Java中为什么方法内定义的内部类可以访问方法中的局部变量</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-04-28 22:00:00" itemprop="dateCreated datePublished" datetime="2019-04-28T22:00:00+08:00">2019-04-28</time> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2019-04-30 17:02:21" itemprop="dateModified" datetime="2019-04-30T17:02:21+08:00">2019-04-30</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span></span><div class="post-symbolscount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span title="本文字数">22k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">20 分钟</span></div></div></header><div class="post-body" itemprop="articleBody"><p>本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。</p><a id="more"></a><blockquote><p>更多文章欢迎访问我的个人博客–&gt;<a href="https://www.lixueduan.com/">幻境云图</a></p></blockquote><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>匿名内部类和非匿名内部类。</p><p>在平时写代码的过程中， 我们经常会写类似下面的代码段：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> <span class="keyword">var</span> = count;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这段代码在 main 方法中定义了一个匿名内部类， 并且创建了匿名内部类的一个对象， 使用这个对象调用了匿名内部类中的方法。 所有这些操作都在<code>new Thread(){}.start()</code> 这一句代码中完成， 这不禁让人感叹 Java 的表达能力还是很强的。 上面的代码和以下代码等价：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//在方法中定义一个内部类</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> <span class="keyword">var</span> = count;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> MyThread().start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这里我们不关心方法中匿名内部类和非匿名内部类的区别， 我们只需要知道， 这两种方式都是定义在方法中的内部类， 他们的工作原理是相同的。 在本文中主要根据非匿名内部类讲解。</p><p>让我们仔细观察上面的代码都有哪些“奇怪”的行为：</p><ul><li>1.在外部类的 main 方法中有一个局部变量 count， 并且在内部类的 run 方法中访问了这个 count 变量。 也就是说， 方法中定义的内部类， 可以访问方法中的局部变量（方法的参数也是局部变量）；</li><li>2.count 变量使用 final 关键字修饰， 如果去掉 final， 则编译失败。 也就是说被方法中的内部类访问的局部变量必须是final的。</li></ul><p>由于我们经常这样做， 这样写代码， 久而久之养成了习惯， 就成了司空见惯的做法了。 但是如果要问为什么Java支持这样的做法， 恐怕很少有人能说的出来。 在下面， 我们就会分析为什么Java支持这种做法， 让我们不仅知其然， 还要知其所以然。</p><p>为什么定义在方法中的内部类可以访问方法中的局部变量？</p><h2 id="2-原理分析"><a href="#2-原理分析" class="headerlink" title="2. 原理分析"></a>2. 原理分析</h2><h3 id="2-1-当被访问的局部变量是编译时可确定的字面常量时"><a href="#2-1-当被访问的局部变量是编译时可确定的字面常量时" class="headerlink" title="2.1 当被访问的局部变量是编译时可确定的字面常量时"></a>2.1 当被访问的局部变量是编译时可确定的字面常量时</h3><p>我们首先看这样一段代码， 本文的以下部分会以这样的代码进行讲解。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span>  String localVar = <span class="string">"abc"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">                String a = localVar;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>在外部类的方法 outerMethod 中定义了成员变量 String localVar， 并且用一个编译时字面量 “abc” 给他赋值。在 outerMethod 方法中定义了内部类 Inner， 并且在内部类的方法 innerMethod 中访问了 localVar 变量。 接下来我们就根据这个例子来讲解为什么可以这样做。</p><p>首先看编译后的文件， 和普通的内部类一样， 定义在方法中的内部类在编译之后， 也有自己独立的 class 文件：</p><p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png" alt="inner"></p><h4 id="1-反编译"><a href="#1-反编译" class="headerlink" title="1. 反编译"></a>1. 反编译</h4><p>执行以下命令反编译该文件</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -classpath . -v Outer$<span class="number">1</span>Inner</span><br></pre></td></tr></table></figure><blockquote><p><code>-classpath .</code> : 说明在当前目录下寻找要反编译的class文件<br><code>-v</code> : 加上这个参数输出的信息比较全面。包括常量池和方法内的局部变量表， 行号， 访问标志等等。</p></blockquote><h4 id="2-结果分析"><a href="#2-结果分析" class="headerlink" title="2. 结果分析"></a>2. 结果分析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line"></span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">643</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">12</span>cea9ab1340856585960146078de1b3</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line">   &lt;!--版本号等信息--&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">  &lt;!--常量池--&gt;</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #4.#27         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Methodref          #5.#28         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #3 = String             #29            // abc</span><br><span class="line">   #4 = Class              #30            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #5 = Class              #31            // java/lang/Object</span><br><span class="line">   #6 = Utf8               this$0</span><br><span class="line">   #7 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">   #8 = Utf8               &lt;init&gt;</span><br><span class="line">   #9 = Utf8               (Ljvm/localfiled/Outer;)V</span><br><span class="line">  #10 = Utf8               Code</span><br><span class="line">  #11 = Utf8               LineNumberTable</span><br><span class="line">  #12 = Utf8               LocalVariableTable</span><br><span class="line">  #13 = Utf8               this</span><br><span class="line">  #14 = Utf8               Inner</span><br><span class="line">  #15 = Utf8               InnerClasses</span><br><span class="line">  #16 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #17 = Utf8               MethodParameters</span><br><span class="line">  #18 = Utf8               innerMethod</span><br><span class="line">  #19 = Utf8               ()V</span><br><span class="line">  #20 = Utf8               a</span><br><span class="line">  #21 = Utf8               Ljava/lang/String;</span><br><span class="line">  #22 = Utf8               SourceFile</span><br><span class="line">  #23 = Utf8               Outer.java</span><br><span class="line">  #24 = Utf8               EnclosingMethod</span><br><span class="line">  #25 = Class              #32            // jvm/localfiled/Outer</span><br><span class="line">  #26 = NameAndType        #33:#19        // outerMethod:()V</span><br><span class="line">  #27 = NameAndType        #6:#7          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #28 = NameAndType        #8:#19         // "&lt;init&gt;":()V</span><br><span class="line">  #29 = Utf8               abc</span><br><span class="line">  #30 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #31 = Utf8               java/lang/Object</span><br><span class="line">  #32 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #33 = Utf8               outerMethod</span><br><span class="line"> &lt;!--从这里开始看--&gt;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner(jvm.localfiled.Outer);</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         6: invokespecial #2                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         9: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 11: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      10     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      10     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: ldc           #3                  // String abc</span></span><br><span class="line"><span class="string">         2: astore_1</span></span><br><span class="line"><span class="string">         3: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 13: 0</span></span><br><span class="line"><span class="string">        line 14: 3</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       4     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            3       1     1     a   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #25.#26                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #14= #4; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure><p>其中 InnerMethod 相关如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">  descriptor: ()V</span><br><span class="line">  flags:</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">       0: ldc           #3                  // String abc</span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">13</span>: <span class="number">0</span></span><br><span class="line">      line <span class="number">14</span>: <span class="number">3</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">4</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">          <span class="number">3</span>       <span class="number">1</span>     <span class="number">1</span>     a   Ljava/lang/String;</span><br></pre></td></tr></table></figure><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldc           #3                  // String abc</span><br></pre></td></tr></table></figure><p>Idc 指令的意思是将索引指向的常量池中的项压入操作数栈。 这里的索引为3 ， 引用的常量池中的项为字符串“abc” 。 这句话就揭示了内部类访问方法局部变量的原理。 让我们从常量池第3项看起。</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#3 = String             #29            // abc</span><br></pre></td></tr></table></figure><p> 但是这个字符串 “abc” 明明是定义在外部类 Outer 中的， 因为出现在外部类的 outerMethod 方法中。 为了查看这个 “abc” 是否在外部类中， 我们继续反编译外部类 Outer.class 。</p><h4 id="3-反编译外部类"><a href="#3-反编译外部类" class="headerlink" title="3. 反编译外部类"></a>3. 反编译外部类</h4><p>反编译外部类结果如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer.class</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">471</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">4442f</span>d25b31a0563253f16e275643d11</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #4.#20         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #2 = String             #21            // abc</span><br><span class="line">   #3 = Class              #22            // jvm/localfiled/Outer</span><br><span class="line">   #4 = Class              #23            // java/lang/Object</span><br><span class="line">   #5 = Class              #24            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #6 = Utf8               Inner</span><br><span class="line">   #7 = Utf8               InnerClasses</span><br><span class="line">   #8 = Utf8               &lt;init&gt;</span><br><span class="line">   #9 = Utf8               ()V</span><br><span class="line">  #10 = Utf8               Code</span><br><span class="line">  #11 = Utf8               LineNumberTable</span><br><span class="line">  #12 = Utf8               LocalVariableTable</span><br><span class="line">  #13 = Utf8               this</span><br><span class="line">  #14 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">  #15 = Utf8               outerMethod</span><br><span class="line">  #16 = Utf8               localVar</span><br><span class="line">  #17 = Utf8               Ljava/lang/String;</span><br><span class="line">  #18 = Utf8               SourceFile</span><br><span class="line">  #19 = Utf8               Outer.java</span><br><span class="line">  #20 = NameAndType        #8:#9          // "&lt;init&gt;":()V</span><br><span class="line">  #21 = Utf8               abc</span><br><span class="line">  #22 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #23 = Utf8               java/lang/Object</span><br><span class="line">  #24 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> jvm.localfiled.Outer();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         4: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 6: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       5     0  this   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void outerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: ldc           #2                  // String abc</span></span><br><span class="line"><span class="string">         2: astore_1</span></span><br><span class="line"><span class="string">         3: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 8: 0</span></span><br><span class="line"><span class="string">        line 16: 3</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       4     0  this   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">            3       1     1 localVar   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #6= #5; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#2 = String             #21            // abc</span><br></pre></td></tr></table></figure><p>我们可以看到， “abc” 这个字符串确实出现在 Outer.class 常量池的第15项。 这就奇怪了， 明明是定义在外部类的字面量， 为什么会出现在 内部类的常量池中呢？ 其实这正是编译器在编译方法中定义的内部类时， 所做的额外工作。</p><h4 id="4-修改局部变量类型"><a href="#4-修改局部变量类型" class="headerlink" title="4. 修改局部变量类型"></a>4. 修改局部变量类型</h4><p>下面我们将这个被内部类访问的局部变量改成整形的。 看看在字节码层面上会有什么变化。 修改后的源码如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">final</span>  <span class="keyword">int</span> localVar = <span class="number">1</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">			<span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">				<span class="keyword">int</span> a = localVar;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>反编译内部类</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line">警告: 二进制文件Outer$<span class="number">1</span>Inner包含jvm.localfiled.Outer$<span class="number">1</span>Inner</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">616</span> bytes</span><br><span class="line">  MD5 checksum f3e4d21797e0fe422029c3894699dbf6</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #3.#26         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Methodref          #4.#27         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #3 = Class              #28            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #4 = Class              #29            // java/lang/Object</span><br><span class="line">   #5 = Utf8               this$0</span><br><span class="line">   #6 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               (Ljvm/localfiled/Outer;)V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               LocalVariableTable</span><br><span class="line">  #12 = Utf8               this</span><br><span class="line">  #13 = Utf8               Inner</span><br><span class="line">  #14 = Utf8               InnerClasses</span><br><span class="line">  #15 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #16 = Utf8               MethodParameters</span><br><span class="line">  #17 = Utf8               innerMethod</span><br><span class="line">  #18 = Utf8               ()V</span><br><span class="line">  #19 = Utf8               a</span><br><span class="line">  #20 = Utf8               I</span><br><span class="line">  #21 = Utf8               SourceFile</span><br><span class="line">  #22 = Utf8               Outer.java</span><br><span class="line">  #23 = Utf8               EnclosingMethod</span><br><span class="line">  #24 = Class              #30            // jvm/localfiled/Outer</span><br><span class="line">  #25 = NameAndType        #31:#18        // outerMethod:()V</span><br><span class="line">  #26 = NameAndType        #5:#6          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #27 = NameAndType        #7:#18         // "&lt;init&gt;":()V</span><br><span class="line">  #28 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #29 = Utf8               java/lang/Object</span><br><span class="line">  #30 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #31 = Utf8               outerMethod</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner(jvm.localfiled.Outer);</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         6: invokespecial #2                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         9: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 12: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      10     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      10     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: iconst_1</span></span><br><span class="line"><span class="string">         1: istore_1</span></span><br><span class="line"><span class="string">         2: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 14: 0</span></span><br><span class="line"><span class="string">        line 15: 2</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       3     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            2       1     1     a   I</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #24.#25                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #13= #3; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure><p>其中 InnerMethod 如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: iconst_1</span><br><span class="line">         <span class="number">1</span>: istore_1</span><br><span class="line">         <span class="number">2</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">14</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">2</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">3</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">            <span class="number">2</span>       <span class="number">1</span>     <span class="number">1</span>     a   I</span><br></pre></td></tr></table></figure><p>第一句变成了</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iconst_1</span><br></pre></td></tr></table></figure><p>这句字节码的意义是：将int类型的常量 1 压入操作数栈。</p><p>这就是在内部类中访问外部类方法中的局部变量 int localVar = 1 的原理。</p><h4 id="5-小结"><a href="#5-小结" class="headerlink" title="5. 小结"></a>5. 小结</h4><p> 由此可见， <strong>当内部类中访问的局部变量是int型的字面量时， 编译器直接将对该变量的访问嵌入到内部类的字节码中</strong>， 也就是说， 在运行时， 方法中的内部类和外部类， 和外部类方法中的局部变量就没有任何关系了。 这也是编译器所做的额外工作。</p><p>上面两种情况有一个共同点， 那就是， 被内部类访问的外部了方法中的局部变量， 都是在编译时可以确定的字面常量。 像下面这样的形式都是编译时可确定的字面常量：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span>  String localVar = <span class="string">"abc"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span>  <span class="keyword">int</span> localVar = <span class="number">1</span>;</span><br></pre></td></tr></table></figure><p>他们之所以被称为字面常量， 是因为他们被 final 修饰， 运行时不可改变， 当编译器在编译源文件时， 可以确定他们的值， 也可以确定他们在运行时不会被修改， 所以可以实现类似C语言宏替换的功能。也就是说虽然在编写源代码时， 在内部类中访问的是外部类定义的这个变量， 但是在编译成字节码时， 却把这个变量的值放入了访问这个变量的内部类的常量池中， 或直接将这个变量的值嵌入内部类的字节码指令中。 运行时这两个类各不相干， 各自访问各自的常量池， 各自执行各自的字节码指令。在编译方法中定义的内部类时， 编译器的行为就是这样的。</p><h3 id="2-2-当被访问的局部变量的值在编译时不可确定时"><a href="#2-2-当被访问的局部变量的值在编译时不可确定时" class="headerlink" title="2.2 当被访问的局部变量的值在编译时不可确定时"></a>2.2 当被访问的局部变量的值在编译时不可确定时</h3><p>那么当方法中定义的内部类访问的局部变量不是编译时可确定的字面常量， 又会怎么样呢？想要让这个局部变量变成编译时不可确定的， 只需要将源码修改如下：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">final</span>  String localVar = getString();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">			<span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">				String a = localVar;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">new</span> Inner();</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function">String <span class="title">getString</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"illusory"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>由于使用 getString 方法的返回值为 localVar 赋值， 所以在编译时期， 编译器不可确定 localVar 的值， 必须在运行时执行了 getString 方法之后才能确定它的值。 既然编译时不不可确定， 那么像上面那样的处理就行不通了。</p><h4 id="1-反编译-1"><a href="#1-反编译-1" class="headerlink" title="1. 反编译"></a>1. 反编译</h4><p>执行以下命令反编译该文件</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -classpath . -v Outer$<span class="number">1</span>Inner</span><br></pre></td></tr></table></figure><blockquote><p><code>-classpath .</code> : 说明在当前目录下寻找要反编译的class文件<br><code>-v</code> : 加上这个参数输出的信息比较全面。包括常量池和方法内的局部变量表， 行号， 访问标志等等。</p></blockquote><p> 那么在这种情况下， 内部类是通过什么机制访问方法中的局部变量的呢？ 让我们继续反编译内部类的字节码：</p><h4 id="2-结果分析-1"><a href="#2-结果分析-1" class="headerlink" title="2. 结果分析"></a>2. 结果分析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line">警告: 二进制文件Outer$<span class="number">1</span>Inner包含jvm.localfiled.Outer$<span class="number">1</span>Inner</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">716</span> bytes</span><br><span class="line">  MD5 checksum e63d82ebc8752469f0d30edde17e88a5</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #4.#29         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Fieldref           #4.#30         // jvm/localfiled/Outer$1Inner.val$loc</span><br><span class="line">alVar:Ljava/lang/String;</span><br><span class="line">   #3 = Methodref          #5.#31         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #4 = Class              #32            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #5 = Class              #33            // java/lang/Object</span><br><span class="line">   #6 = Utf8               val$localVar</span><br><span class="line">   #7 = Utf8               Ljava/lang/String;</span><br><span class="line">   #8 = Utf8               this$0</span><br><span class="line">   #9 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">  #10 = Utf8               &lt;init&gt;</span><br><span class="line">  #11 = Utf8               (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">  #12 = Utf8               Code</span><br><span class="line">  #13 = Utf8               LineNumberTable</span><br><span class="line">  #14 = Utf8               LocalVariableTable</span><br><span class="line">  #15 = Utf8               this</span><br><span class="line">  #16 = Utf8               Inner</span><br><span class="line">  #17 = Utf8               InnerClasses</span><br><span class="line">  #18 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #19 = Utf8               MethodParameters</span><br><span class="line">  #20 = Utf8               Signature</span><br><span class="line">  #21 = Utf8               ()V</span><br><span class="line">  #22 = Utf8               innerMethod</span><br><span class="line">  #23 = Utf8               a</span><br><span class="line">  #24 = Utf8               SourceFile</span><br><span class="line">  #25 = Utf8               Outer.java</span><br><span class="line">  #26 = Utf8               EnclosingMethod</span><br><span class="line">  #27 = Class              #34            // jvm/localfiled/Outer</span><br><span class="line">  #28 = NameAndType        #35:#21        // outerMethod:()V</span><br><span class="line">  #29 = NameAndType        #8:#9          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #30 = NameAndType        #6:#7          // val$localVar:Ljava/lang/String;</span><br><span class="line">  #31 = NameAndType        #10:#21        // "&lt;init&gt;":()V</span><br><span class="line">  #32 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #33 = Utf8               java/lang/Object</span><br><span class="line">  #34 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #35 = Utf8               outerMethod</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> java.lang.String val$localVar;</span><br><span class="line">    descriptor: Ljava/lang/String;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner();</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">3</span>, args_size=<span class="number">3</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         <span class="number">6</span>: aload_2</span><br><span class="line">         7: putfield      #2                  // Field val$localVar:Ljava/lang/S</span><br><span class="line">tring;</span><br><span class="line">        <span class="number">10</span>: aload_0</span><br><span class="line">        11: invokespecial #3                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">        14: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 12: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      15     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      15     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string">      val$localVar                   final synthetic</span></span><br><span class="line"><span class="string">    Signature: #21                          // ()V</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: aload_0</span></span><br><span class="line"><span class="string">         1: getfield      #2                  // Field val$localVar:Ljava/lang/S</span></span><br><span class="line"><span class="string">tring;</span></span><br><span class="line"><span class="string">         4: astore_1</span></span><br><span class="line"><span class="string">         5: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 14: 0</span></span><br><span class="line"><span class="string">        line 15: 5</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       6     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            5       1     1     a   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #27.#28                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #16= #4; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure><p>首先来看它的构造方法。 方法的签名为：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jvm.localfiled.Outer$<span class="number">1</span>Inner();</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br></pre></td></tr></table></figure><p>我们知道， 如果不定义构造方法， 那么编译器会为这个类自动生成一个无参数的构造方法。 这个说法在这里就行不通了， 因为我们看到， 这个内部类的构造方法又两个参数。 至于第一个参数， 是指向外部类对象的引用， 在前面一篇博客中已经详细的介绍过了， 不明白的可以先看上一篇博客， 这里就不再重复叙述。这也说明了方法中的内部类和类中定义的内部类有相同的地方， 既然他们都是内部类， 就都持有指向外部类对象的引用。 我们来分析第二个参数， 他是 String 类型的， 和在内部类中访问的局部变量 localVar 的类型相同。 再看构造方法中编号为6和7的字节码指令：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">6</span>: aload_2</span><br><span class="line">7: putfield      #2              // Field val$localVar:Ljava/lang/String;</span><br></pre></td></tr></table></figure><p>这句话的意思是， 使用构造方法的第二个参数， 为当前这个内部类对象的成员变量赋值， 这个被赋值的成员变量的名字是 val$localVar 。 由此可见， 编译器自动为内部类增加了一个成员变量， 其实这个成员变量就是被访问的外部类方法中的局部变量。 这个局部变量在创建内部类对象时， 通过构造方法注入。 在调用构造方法时， 编译器会默认为这个参数传入外部类方法中的局部变量的值。</p><p>再看内部类中的方法 innerMethod 中是如何访问这个所谓的“局部变量的”。 看 innerMethod 中的前两条字节码：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: getfield      #2         // Field val$localVar:Ljava/lang/String;</span><br><span class="line">         <span class="number">4</span>: astore_1</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">14</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">            <span class="number">5</span>       <span class="number">1</span>     <span class="number">1</span>     a   Ljava/lang/String;</span><br></pre></td></tr></table></figure><p>其中</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: aload_0</span><br><span class="line">1: getfield      #2         // Field val$localVar:Ljava/lang/String;</span><br></pre></td></tr></table></figure><p>这两条指令的意思是， 访问成员变量<code>val$localVar</code>的值。 而源代码中是访问外部类方法中局部变量的值。 所以， 在这里将编译时对外部类方法中的局部变量的访问， 转化成运行时对当前内部类对象中成员变量的访问。</p><h4 id="3-小结"><a href="#3-小结" class="headerlink" title="3. 小结"></a>3. 小结</h4><p>总结一下就是：</p><p>当方法中定义的内部类访问的方法局部变量的值， 不是在编译时能确定的字面常量时， 编译器会为内部类增加一个成员变量， 在运行时， 将对外部类方法中局部变量的访问转换成对这个内部类成员变量的方法。</p><p>这就要求内部类中的这个新增的成员变量和外部类方法中的局部变量具有相同的值。</p><p> 编译器通过为内部类的构造方法增加参数， 并在调用构造器初始化内部类对象时传入这个参数， 来初始化内部类中的这个成员变量的值。</p><p><strong>所以， 虽然在源文件中看起来是访问的外部类方法的局部变量， 其实运行时访问的是内部类对象自己的成员变量</strong>。</p><h2 id="3-为什么局部变量必须是final的"><a href="#3-为什么局部变量必须是final的" class="headerlink" title="3. 为什么局部变量必须是final的"></a>3. 为什么局部变量必须是final的</h2><p>上面我们讲解了， 方法中的内部类访问方法局部变量是怎么实现的。 那么为什么这个局部变量必须是 final 的呢？ 我认为有以下两个原因：</p><h3 id="1-原因一"><a href="#1-原因一" class="headerlink" title="1. 原因一"></a>1. 原因一</h3><p>当局部变量的值为编译时可确定的字面常量时（ 如字符串 “abc” 或整数1 ）， 通过 final 修饰， 可以实现类似 C 语言的编译时宏替换功能。</p><p> 这样的话， 外部类和内部类各自访问自己的常量池， 各自执行各自的字节码指令， 看起来就像共同访问外部类方法中的局部变量， 这样就可以达到<strong>语义上的一致性</strong>。 由于存在内部类和外部类中的常量值是一样的， 并且是不可改变的，这样就可以达到<strong>数值访问的一致性</strong>。</p><h3 id="2-原因二"><a href="#2-原因二" class="headerlink" title="2. 原因二"></a>2. 原因二</h3><p>当局部变量的值不是可在编译时确定的字面常量时（比如通过方法调用为它赋值）， 这种情况下， 编译器给内部类增加相同类型的成员变量， 并通过构造函数将外部类方法中的局部变量的值赋给这个新增的内部类成员量。</p><h3 id="3-基本数据类型"><a href="#3-基本数据类型" class="headerlink" title="3. 基本数据类型"></a>3. 基本数据类型</h3><p>如果这个局部变量是基本数据类型时， 直接拷贝数值给内部类成员变量。这样的话， 内部类和外部类各自访问自己的基本数据类型的变量， 他们的变量值一样， 并且不可修改， 这样就保证了语义上和数值访问上的一致性。</p><h3 id="4-引用类型"><a href="#4-引用类型" class="headerlink" title="4. 引用类型"></a>4. 引用类型</h3><p>如果这个局部变量是引用数据类型时， 拷贝外部类方法中的引用值给内部类对象的成员变量， 这样的话， 他们就指向了同一个对象。 由于这两个引用变量指向同一个对象， 所以通过引用访问的对象的数据是一样的， 由于他们都不能再指向其他对象（被 final 修饰）， 所以可以保证内部类和外部类数据访问的一致性。</p><h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><p><code>https://blog.csdn.net/zhangjg_blog/article/details/19996629</code></p></div><div><div><div style="text-align:center;color:#a2cd5a;font-size:18px">------------------本文到此结束<i class="fa fa-paw"></i>感谢您的阅读------------------</div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> illusoryCloud</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.lixueduan.com/posts/7d00948d.html" title="Java中为什么方法内定义的内部类可以访问方法中的局部变量">https://www.lixueduan.com/posts/7d00948d.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/posts/8d9c98e3.html" rel="next" title="Java中为什么内部类可以访问外部类的成员"><i class="fa fa-chevron-left"></i> Java中为什么内部类可以访问外部类的成员</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"></div></div></footer></div></article></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> 文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap"> 站点概览</li></ul><div class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="illusoryCloud"><p class="site-author-name" itemprop="name">illusoryCloud</p><p class="site-description motion-element" itemprop="description">有道无术，术尚可求，有术无道，止于术</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">81</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">21</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">23</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/illusorycloud" title="GitHub &rarr; https://github.com/illusorycloud" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:xueduan.li@gmail.com" title="E-Mail &rarr; mailto:xueduan.li@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-block"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-link"></i> 推荐阅读</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/SpringBoot/" title="https://www.lixueduan.com/categories/SpringBoot/">SpringBoot</a></li><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/SpringCloud/" title="https://www.lixueduan.com/categories/SpringCloud/">SpringCloud</a></li></ul></div></div></div><div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-概述"><span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-原理分析"><span class="nav-text">2. 原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-当被访问的局部变量是编译时可确定的字面常量时"><span class="nav-text">2.1 当被访问的局部变量是编译时可确定的字面常量时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-反编译"><span class="nav-text">1. 反编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-结果分析"><span class="nav-text">2. 结果分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-反编译外部类"><span class="nav-text">3. 反编译外部类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-修改局部变量类型"><span class="nav-text">4. 修改局部变量类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-小结"><span class="nav-text">5. 小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-当被访问的局部变量的值在编译时不可确定时"><span class="nav-text">2.2 当被访问的局部变量的值在编译时不可确定时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-反编译-1"><span class="nav-text">1. 反编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-结果分析-1"><span class="nav-text">2. 结果分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-小结"><span class="nav-text">3. 小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-为什么局部变量必须是final的"><span class="nav-text">3. 为什么局部变量必须是final的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-原因一"><span class="nav-text">1. 原因一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原因二"><span class="nav-text">2. 原因二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-基本数据类型"><span class="nav-text">3. 基本数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-引用类型"><span class="nav-text">4. 引用类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-参考"><span class="nav-text">4. 参考</span></a></li></ol></div></div></div></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span><span class="with-love" id="animate"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">illusoryCloud</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">610k</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span id="scrollpercent"><span>0</span>%</span></div></div><script>"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script><script src="/lib/jquery/index.js?v=2.1.3"></script><script src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script src="/js/src/utils.js?v=6.6.0"></script><script src="/js/src/motion.js?v=6.6.0"></script><script src="/js/src/scrollspy.js?v=6.6.0"></script><script src="/js/src/post-details.js?v=6.6.0"></script><script src="/js/src/bootstrap.js?v=6.6.0"></script><script>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/myimages/favicon-32x32-me.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/myfavicon-32x32-me.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/myfavicon-16x16-me.png?v=6.6.0">
+
+
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '6.6.0',
+    sidebar: {"position":"right","display":"post","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+<!--顶部滚动进度条begin-->
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+<!--顶部滚动进度条end-->
+  <meta name="description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中为什么方法内定义的内部类可以访问方法中的局部变量">
+<meta property="og:url" content="https://www.lixueduan.com/posts/7d00948d.html">
+<meta property="og:site_name" content="幻境云图">
+<meta property="og:description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png">
+<meta property="og:updated_time" content="2019-04-30T09:02:21.434Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中为什么方法内定义的内部类可以访问方法中的局部变量">
+<meta name="twitter:description" content="本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。">
+<meta name="twitter:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="幻境云图" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://www.lixueduan.com/posts/7d00948d.html">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java中为什么方法内定义的内部类可以访问方法中的局部变量 | 幻境云图</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-131397277-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-131397277-1');
+</script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion .logo-line-before i { left: initial; }
+    .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">幻境云图</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">勿在浮沙筑高台</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.lixueduan.com/posts/7d00948d.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="illusoryCloud">
+      <meta itemprop="description" content="幻境云图是一个专注于后端技术分享的博客,记录了一个菜鸟从0开始的进阶之路。主要涉及后端、服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于数据库,源码分析,分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="幻境云图">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java中为什么方法内定义的内部类可以访问方法中的局部变量
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-28 22:00:00" itemprop="dateCreated datePublished" datetime="2019-04-28T22:00:00+08:00">2019-04-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-04-30 17:02:21" itemprop="dateModified" datetime="2019-04-30T17:02:21+08:00">2019-04-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">22k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">20 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要通过实例代码分析了 Java 中为什么方法内定义的内部类可以访问方法中的局部变量。</p>
+<a id="more"></a>
+<blockquote>
+<p>更多文章欢迎访问我的个人博客–&gt;<a href="https://www.lixueduan.com/">幻境云图</a></p>
+</blockquote>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p>匿名内部类和非匿名内部类。</p>
+<p>在平时写代码的过程中， 我们经常会写类似下面的代码段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> <span class="keyword">var</span> = count;</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码在 main 方法中定义了一个匿名内部类， 并且创建了匿名内部类的一个对象， 使用这个对象调用了匿名内部类中的方法。 所有这些操作都在<code>new Thread(){}.start()</code> 这一句代码中完成， 这不禁让人感叹 Java 的表达能力还是很强的。 上面的代码和以下代码等价：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//在方法中定义一个内部类</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> <span class="keyword">var</span> = count;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> MyThread().start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们不关心方法中匿名内部类和非匿名内部类的区别， 我们只需要知道， 这两种方式都是定义在方法中的内部类， 他们的工作原理是相同的。 在本文中主要根据非匿名内部类讲解。 </p>
+<p>让我们仔细观察上面的代码都有哪些“奇怪”的行为：</p>
+<ul>
+<li>1.在外部类的 main 方法中有一个局部变量 count， 并且在内部类的 run 方法中访问了这个 count 变量。 也就是说， 方法中定义的内部类， 可以访问方法中的局部变量（方法的参数也是局部变量）；</li>
+<li>2.count 变量使用 final  关键字修饰， 如果去掉 final， 则编译失败。 也就是说被方法中的内部类访问的局部变量必须是final的。</li>
+</ul>
+<p>由于我们经常这样做， 这样写代码， 久而久之养成了习惯， 就成了司空见惯的做法了。 但是如果要问为什么Java支持这样的做法， 恐怕很少有人能说的出来。 在下面， 我们就会分析为什么Java支持这种做法， 让我们不仅知其然， 还要知其所以然。</p>
+<p>为什么定义在方法中的内部类可以访问方法中的局部变量？</p>
+<h2 id="2-原理分析"><a href="#2-原理分析" class="headerlink" title="2. 原理分析"></a>2. 原理分析</h2><h3 id="2-1-当被访问的局部变量是编译时可确定的字面常量时"><a href="#2-1-当被访问的局部变量是编译时可确定的字面常量时" class="headerlink" title="2.1 当被访问的局部变量是编译时可确定的字面常量时"></a>2.1 当被访问的局部变量是编译时可确定的字面常量时</h3><p>我们首先看这样一段代码， 本文的以下部分会以这样的代码进行讲解。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span>  String localVar = <span class="string">"abc"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">            <span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">                String a = localVar;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在外部类的方法 outerMethod 中定义了成员变量 String localVar， 并且用一个编译时字面量 “abc” 给他赋值。在 outerMethod 方法中定义了内部类 Inner， 并且在内部类的方法 innerMethod 中访问了 localVar 变量。 接下来我们就根据这个例子来讲解为什么可以这样做。</p>
+<p>首先看编译后的文件， 和普通的内部类一样， 定义在方法中的内部类在编译之后， 也有自己独立的 class 文件：</p>
+<p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/java/%E5%86%85%E9%83%A8%E7%B1%BB-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F-class.png" alt="inner"></p>
+<h4 id="1-反编译"><a href="#1-反编译" class="headerlink" title="1. 反编译"></a>1. 反编译</h4><p>执行以下命令反编译该文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -classpath . -v Outer$<span class="number">1</span>Inner</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>-classpath .</code>  :  说明在当前目录下寻找要反编译的class文件<br><code>-v</code>   : 加上这个参数输出的信息比较全面。包括常量池和方法内的局部变量表， 行号， 访问标志等等。</p>
+</blockquote>
+<h4 id="2-结果分析"><a href="#2-结果分析" class="headerlink" title="2. 结果分析"></a>2. 结果分析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line"></span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">643</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">12</span>cea9ab1340856585960146078de1b3</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line">   &lt;!--版本号等信息--&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">  &lt;!--常量池--&gt;</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #4.#27         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Methodref          #5.#28         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #3 = String             #29            // abc</span><br><span class="line">   #4 = Class              #30            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #5 = Class              #31            // java/lang/Object</span><br><span class="line">   #6 = Utf8               this$0</span><br><span class="line">   #7 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">   #8 = Utf8               &lt;init&gt;</span><br><span class="line">   #9 = Utf8               (Ljvm/localfiled/Outer;)V</span><br><span class="line">  #10 = Utf8               Code</span><br><span class="line">  #11 = Utf8               LineNumberTable</span><br><span class="line">  #12 = Utf8               LocalVariableTable</span><br><span class="line">  #13 = Utf8               this</span><br><span class="line">  #14 = Utf8               Inner</span><br><span class="line">  #15 = Utf8               InnerClasses</span><br><span class="line">  #16 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #17 = Utf8               MethodParameters</span><br><span class="line">  #18 = Utf8               innerMethod</span><br><span class="line">  #19 = Utf8               ()V</span><br><span class="line">  #20 = Utf8               a</span><br><span class="line">  #21 = Utf8               Ljava/lang/String;</span><br><span class="line">  #22 = Utf8               SourceFile</span><br><span class="line">  #23 = Utf8               Outer.java</span><br><span class="line">  #24 = Utf8               EnclosingMethod</span><br><span class="line">  #25 = Class              #32            // jvm/localfiled/Outer</span><br><span class="line">  #26 = NameAndType        #33:#19        // outerMethod:()V</span><br><span class="line">  #27 = NameAndType        #6:#7          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #28 = NameAndType        #8:#19         // "&lt;init&gt;":()V</span><br><span class="line">  #29 = Utf8               abc</span><br><span class="line">  #30 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #31 = Utf8               java/lang/Object</span><br><span class="line">  #32 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #33 = Utf8               outerMethod</span><br><span class="line"> &lt;!--从这里开始看--&gt;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner(jvm.localfiled.Outer);</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         6: invokespecial #2                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         9: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 11: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      10     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      10     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: ldc           #3                  // String abc</span></span><br><span class="line"><span class="string">         2: astore_1</span></span><br><span class="line"><span class="string">         3: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 13: 0</span></span><br><span class="line"><span class="string">        line 14: 3</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       4     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            3       1     1     a   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #25.#26                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #14= #4; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure>
+<p>其中 InnerMethod 相关如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">  descriptor: ()V</span><br><span class="line">  flags:</span><br><span class="line">  Code:</span><br><span class="line">    stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">       0: ldc           #3                  // String abc</span><br><span class="line">       <span class="number">2</span>: astore_1</span><br><span class="line">       <span class="number">3</span>: <span class="keyword">return</span></span><br><span class="line">    LineNumberTable:</span><br><span class="line">      line <span class="number">13</span>: <span class="number">0</span></span><br><span class="line">      line <span class="number">14</span>: <span class="number">3</span></span><br><span class="line">    LocalVariableTable:</span><br><span class="line">      Start  Length  Slot  Name   Signature</span><br><span class="line">          <span class="number">0</span>       <span class="number">4</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">          <span class="number">3</span>       <span class="number">1</span>     <span class="number">1</span>     a   Ljava/lang/String;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldc           #3                  // String abc</span><br></pre></td></tr></table></figure>
+<p>Idc 指令的意思是将索引指向的常量池中的项压入操作数栈。 这里的索引为3 ， 引用的常量池中的项为字符串“abc” 。 这句话就揭示了内部类访问方法局部变量的原理。 让我们从常量池第3项看起。 </p>
+ <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#3 = String             #29            // abc</span><br></pre></td></tr></table></figure>
+<p> 但是这个字符串  “abc”  明明是定义在外部类 Outer 中的， 因为出现在外部类的 outerMethod 方法中。 为了查看这个 “abc” 是否在外部类中， 我们继续反编译外部类 Outer.class 。</p>
+<h4 id="3-反编译外部类"><a href="#3-反编译外部类" class="headerlink" title="3. 反编译外部类"></a>3. 反编译外部类</h4><p>反编译外部类结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer.class</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">471</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">4442f</span>d25b31a0563253f16e275643d11</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #4.#20         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #2 = String             #21            // abc</span><br><span class="line">   #3 = Class              #22            // jvm/localfiled/Outer</span><br><span class="line">   #4 = Class              #23            // java/lang/Object</span><br><span class="line">   #5 = Class              #24            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #6 = Utf8               Inner</span><br><span class="line">   #7 = Utf8               InnerClasses</span><br><span class="line">   #8 = Utf8               &lt;init&gt;</span><br><span class="line">   #9 = Utf8               ()V</span><br><span class="line">  #10 = Utf8               Code</span><br><span class="line">  #11 = Utf8               LineNumberTable</span><br><span class="line">  #12 = Utf8               LocalVariableTable</span><br><span class="line">  #13 = Utf8               this</span><br><span class="line">  #14 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">  #15 = Utf8               outerMethod</span><br><span class="line">  #16 = Utf8               localVar</span><br><span class="line">  #17 = Utf8               Ljava/lang/String;</span><br><span class="line">  #18 = Utf8               SourceFile</span><br><span class="line">  #19 = Utf8               Outer.java</span><br><span class="line">  #20 = NameAndType        #8:#9          // "&lt;init&gt;":()V</span><br><span class="line">  #21 = Utf8               abc</span><br><span class="line">  #22 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #23 = Utf8               java/lang/Object</span><br><span class="line">  #24 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> jvm.localfiled.Outer();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         4: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 6: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       5     0  this   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void outerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: ldc           #2                  // String abc</span></span><br><span class="line"><span class="string">         2: astore_1</span></span><br><span class="line"><span class="string">         3: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 8: 0</span></span><br><span class="line"><span class="string">        line 16: 3</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       4     0  this   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">            3       1     1 localVar   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #6= #5; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#2 = String             #21            // abc</span><br></pre></td></tr></table></figure>
+<p>我们可以看到， “abc” 这个字符串确实出现在 Outer.class 常量池的第15项。 这就奇怪了， 明明是定义在外部类的字面量， 为什么会出现在 内部类的常量池中呢？ 其实这正是编译器在编译方法中定义的内部类时， 所做的额外工作。 </p>
+<h4 id="4-修改局部变量类型"><a href="#4-修改局部变量类型" class="headerlink" title="4. 修改局部变量类型"></a>4. 修改局部变量类型</h4><p>下面我们将这个被内部类访问的局部变量改成整形的。 看看在字节码层面上会有什么变化。 修改后的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">final</span>  <span class="keyword">int</span> localVar = <span class="number">1</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">			<span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">				<span class="keyword">int</span> a = localVar;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反编译内部类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line">警告: 二进制文件Outer$<span class="number">1</span>Inner包含jvm.localfiled.Outer$<span class="number">1</span>Inner</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">616</span> bytes</span><br><span class="line">  MD5 checksum f3e4d21797e0fe422029c3894699dbf6</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #3.#26         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Methodref          #4.#27         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #3 = Class              #28            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #4 = Class              #29            // java/lang/Object</span><br><span class="line">   #5 = Utf8               this$0</span><br><span class="line">   #6 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               (Ljvm/localfiled/Outer;)V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               LocalVariableTable</span><br><span class="line">  #12 = Utf8               this</span><br><span class="line">  #13 = Utf8               Inner</span><br><span class="line">  #14 = Utf8               InnerClasses</span><br><span class="line">  #15 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #16 = Utf8               MethodParameters</span><br><span class="line">  #17 = Utf8               innerMethod</span><br><span class="line">  #18 = Utf8               ()V</span><br><span class="line">  #19 = Utf8               a</span><br><span class="line">  #20 = Utf8               I</span><br><span class="line">  #21 = Utf8               SourceFile</span><br><span class="line">  #22 = Utf8               Outer.java</span><br><span class="line">  #23 = Utf8               EnclosingMethod</span><br><span class="line">  #24 = Class              #30            // jvm/localfiled/Outer</span><br><span class="line">  #25 = NameAndType        #31:#18        // outerMethod:()V</span><br><span class="line">  #26 = NameAndType        #5:#6          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #27 = NameAndType        #7:#18         // "&lt;init&gt;":()V</span><br><span class="line">  #28 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #29 = Utf8               java/lang/Object</span><br><span class="line">  #30 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #31 = Utf8               outerMethod</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner(jvm.localfiled.Outer);</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         6: invokespecial #2                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">         9: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 12: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      10     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      10     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: iconst_1</span></span><br><span class="line"><span class="string">         1: istore_1</span></span><br><span class="line"><span class="string">         2: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 14: 0</span></span><br><span class="line"><span class="string">        line 15: 2</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       3     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            2       1     1     a   I</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #24.#25                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #13= #3; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure>
+<p>其中 InnerMethod 如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: iconst_1</span><br><span class="line">         <span class="number">1</span>: istore_1</span><br><span class="line">         <span class="number">2</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">14</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">2</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">3</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">            <span class="number">2</span>       <span class="number">1</span>     <span class="number">1</span>     a   I</span><br></pre></td></tr></table></figure>
+<p>第一句变成了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iconst_1</span><br></pre></td></tr></table></figure>
+<p>这句字节码的意义是：将int类型的常量 1 压入操作数栈。</p>
+<p>这就是在内部类中访问外部类方法中的局部变量 int localVar = 1 的原理。</p>
+<h4 id="5-小结"><a href="#5-小结" class="headerlink" title="5. 小结"></a>5. 小结</h4><p> 由此可见， <strong>当内部类中访问的局部变量是int型的字面量时， 编译器直接将对该变量的访问嵌入到内部类的字节码中</strong>， 也就是说， 在运行时， 方法中的内部类和外部类， 和外部类方法中的局部变量就没有任何关系了。 这也是编译器所做的额外工作。</p>
+<p>上面两种情况有一个共同点， 那就是， 被内部类访问的外部了方法中的局部变量， 都是在编译时可以确定的字面常量。 像下面这样的形式都是编译时可确定的字面常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span>  String localVar = <span class="string">"abc"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span>  <span class="keyword">int</span> localVar = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>他们之所以被称为字面常量， 是因为他们被 final 修饰， 运行时不可改变， 当编译器在编译源文件时， 可以确定他们的值， 也可以确定他们在运行时不会被修改， 所以可以实现类似C语言宏替换的功能。也就是说虽然在编写源代码时， 在内部类中访问的是外部类定义的这个变量， 但是在编译成字节码时， 却把这个变量的值放入了访问这个变量的内部类的常量池中， 或直接将这个变量的值嵌入内部类的字节码指令中。 运行时这两个类各不相干， 各自访问各自的常量池， 各自执行各自的字节码指令。在编译方法中定义的内部类时， 编译器的行为就是这样的。 </p>
+<h3 id="2-2-当被访问的局部变量的值在编译时不可确定时"><a href="#2-2-当被访问的局部变量的值在编译时不可确定时" class="headerlink" title="2.2 当被访问的局部变量的值在编译时不可确定时"></a>2.2 当被访问的局部变量的值在编译时不可确定时</h3><p>那么当方法中定义的内部类访问的局部变量不是编译时可确定的字面常量， 又会怎么样呢？想要让这个局部变量变成编译时不可确定的， 只需要将源码修改如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">outerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">final</span>  String localVar = getString();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">/*定义在方法中的内部类*/</span></span><br><span class="line">		<span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">			<span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">				String a = localVar;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">new</span> Inner();</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function">String <span class="title">getString</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"illusory"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于使用 getString 方法的返回值为 localVar 赋值， 所以在编译时期， 编译器不可确定 localVar 的值， 必须在运行时执行了 getString 方法之后才能确定它的值。 既然编译时不不可确定， 那么像上面那样的处理就行不通了。</p>
+<h4 id="1-反编译-1"><a href="#1-反编译-1" class="headerlink" title="1. 反编译"></a>1. 反编译</h4><p>执行以下命令反编译该文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -classpath . -v Outer$<span class="number">1</span>Inner</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>-classpath .</code>  :  说明在当前目录下寻找要反编译的class文件<br><code>-v</code>   : 加上这个参数输出的信息比较全面。包括常量池和方法内的局部变量表， 行号， 访问标志等等。</p>
+</blockquote>
+<p> 那么在这种情况下， 内部类是通过什么机制访问方法中的局部变量的呢？ 让我们继续反编译内部类的字节码：</p>
+<h4 id="2-结果分析-1"><a href="#2-结果分析-1" class="headerlink" title="2. 结果分析"></a>2. 结果分析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line">D:\lillusory\Java\work_idea\java-learning\target\classes\jvm\localfiled&gt;javap -c</span><br><span class="line">lasspath . -v Outer$<span class="number">1</span>Inner</span><br><span class="line">警告: 二进制文件Outer$<span class="number">1</span>Inner包含jvm.localfiled.Outer$<span class="number">1</span>Inner</span><br><span class="line">Classfile /D:/lillusory/Java/work_idea/java-learning/target/classes/jvm/localfil</span><br><span class="line">ed/Outer$<span class="number">1</span>Inner.class</span><br><span class="line">  Last modified <span class="number">2019</span>-<span class="number">4</span>-<span class="number">29</span>; size <span class="number">716</span> bytes</span><br><span class="line">  MD5 checksum e63d82ebc8752469f0d30edde17e88a5</span><br><span class="line">  Compiled from <span class="string">"Outer.java"</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">jvm</span>.<span class="title">localfiled</span>.<span class="title">Outer</span>$1<span class="title">Inner</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #4.#29         // jvm/localfiled/Outer$1Inner.this$0:</span><br><span class="line">Ljvm/localfiled/Outer;</span><br><span class="line">   #2 = Fieldref           #4.#30         // jvm/localfiled/Outer$1Inner.val$loc</span><br><span class="line">alVar:Ljava/lang/String;</span><br><span class="line">   #3 = Methodref          #5.#31         // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">   #4 = Class              #32            // jvm/localfiled/Outer$1Inner</span><br><span class="line">   #5 = Class              #33            // java/lang/Object</span><br><span class="line">   #6 = Utf8               val$localVar</span><br><span class="line">   #7 = Utf8               Ljava/lang/String;</span><br><span class="line">   #8 = Utf8               this$0</span><br><span class="line">   #9 = Utf8               Ljvm/localfiled/Outer;</span><br><span class="line">  #10 = Utf8               &lt;init&gt;</span><br><span class="line">  #11 = Utf8               (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">  #12 = Utf8               Code</span><br><span class="line">  #13 = Utf8               LineNumberTable</span><br><span class="line">  #14 = Utf8               LocalVariableTable</span><br><span class="line">  #15 = Utf8               this</span><br><span class="line">  #16 = Utf8               Inner</span><br><span class="line">  #17 = Utf8               InnerClasses</span><br><span class="line">  #18 = Utf8               Ljvm/localfiled/Outer$1Inner;</span><br><span class="line">  #19 = Utf8               MethodParameters</span><br><span class="line">  #20 = Utf8               Signature</span><br><span class="line">  #21 = Utf8               ()V</span><br><span class="line">  #22 = Utf8               innerMethod</span><br><span class="line">  #23 = Utf8               a</span><br><span class="line">  #24 = Utf8               SourceFile</span><br><span class="line">  #25 = Utf8               Outer.java</span><br><span class="line">  #26 = Utf8               EnclosingMethod</span><br><span class="line">  #27 = Class              #34            // jvm/localfiled/Outer</span><br><span class="line">  #28 = NameAndType        #35:#21        // outerMethod:()V</span><br><span class="line">  #29 = NameAndType        #8:#9          // this$0:Ljvm/localfiled/Outer;</span><br><span class="line">  #30 = NameAndType        #6:#7          // val$localVar:Ljava/lang/String;</span><br><span class="line">  #31 = NameAndType        #10:#21        // "&lt;init&gt;":()V</span><br><span class="line">  #32 = Utf8               jvm/localfiled/Outer$1Inner</span><br><span class="line">  #33 = Utf8               java/lang/Object</span><br><span class="line">  #34 = Utf8               jvm/localfiled/Outer</span><br><span class="line">  #35 = Utf8               outerMethod</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">final</span> java.lang.String val$localVar;</span><br><span class="line">    descriptor: Ljava/lang/String;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  <span class="keyword">final</span> jvm.localfiled.Outer <span class="keyword">this</span>$<span class="number">0</span>;</span><br><span class="line">    descriptor: Ljvm/localfiled/Outer;</span><br><span class="line">    flags: ACC_FINAL, ACC_SYNTHETIC</span><br><span class="line"></span><br><span class="line">  jvm.localfiled.Outer$<span class="number">1</span>Inner();</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">3</span>, args_size=<span class="number">3</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: aload_1</span><br><span class="line">         2: putfield      #1                  // Field this$0:Ljvm/localfiled/Ou</span><br><span class="line">ter;</span><br><span class="line">         <span class="number">5</span>: aload_0</span><br><span class="line">         <span class="number">6</span>: aload_2</span><br><span class="line">         7: putfield      #2                  // Field val$localVar:Ljava/lang/S</span><br><span class="line">tring;</span><br><span class="line">        <span class="number">10</span>: aload_0</span><br><span class="line">        11: invokespecial #3                  // Method java/lang/Object."&lt;init&gt;</span><br><span class="line"><span class="string">":()V</span></span><br><span class="line"><span class="string">        14: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 12: 0</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0      15     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            0      15     1 this$0   Ljvm/localfiled/Outer;</span></span><br><span class="line"><span class="string">    MethodParameters:</span></span><br><span class="line"><span class="string">      Name                           Flags</span></span><br><span class="line"><span class="string">      this$0                         final mandated</span></span><br><span class="line"><span class="string">      val$localVar                   final synthetic</span></span><br><span class="line"><span class="string">    Signature: #21                          // ()V</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  void innerMethod();</span></span><br><span class="line"><span class="string">    descriptor: ()V</span></span><br><span class="line"><span class="string">    flags:</span></span><br><span class="line"><span class="string">    Code:</span></span><br><span class="line"><span class="string">      stack=1, locals=2, args_size=1</span></span><br><span class="line"><span class="string">         0: aload_0</span></span><br><span class="line"><span class="string">         1: getfield      #2                  // Field val$localVar:Ljava/lang/S</span></span><br><span class="line"><span class="string">tring;</span></span><br><span class="line"><span class="string">         4: astore_1</span></span><br><span class="line"><span class="string">         5: return</span></span><br><span class="line"><span class="string">      LineNumberTable:</span></span><br><span class="line"><span class="string">        line 14: 0</span></span><br><span class="line"><span class="string">        line 15: 5</span></span><br><span class="line"><span class="string">      LocalVariableTable:</span></span><br><span class="line"><span class="string">        Start  Length  Slot  Name   Signature</span></span><br><span class="line"><span class="string">            0       6     0  this   Ljvm/localfiled/Outer$1Inner;</span></span><br><span class="line"><span class="string">            5       1     1     a   Ljava/lang/String;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">SourceFile: "</span>Outer.java<span class="string">"</span></span><br><span class="line"><span class="string">EnclosingMethod: #27.#28                // jvm.localfiled.Outer.outerMethod</span></span><br><span class="line"><span class="string">InnerClasses:</span></span><br><span class="line"><span class="string">     #16= #4; //Inner=class jvm/localfiled/Outer$1Inner</span></span><br></pre></td></tr></table></figure>
+<p>首先来看它的构造方法。 方法的签名为： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jvm.localfiled.Outer$<span class="number">1</span>Inner();</span><br><span class="line">    descriptor: (Ljvm/localfiled/Outer;Ljava/lang/String;)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br></pre></td></tr></table></figure>
+<p>我们知道， 如果不定义构造方法， 那么编译器会为这个类自动生成一个无参数的构造方法。 这个说法在这里就行不通了， 因为我们看到， 这个内部类的构造方法又两个参数。 至于第一个参数， 是指向外部类对象的引用， 在前面一篇博客中已经详细的介绍过了， 不明白的可以先看上一篇博客， 这里就不再重复叙述。这也说明了方法中的内部类和类中定义的内部类有相同的地方， 既然他们都是内部类， 就都持有指向外部类对象的引用。  我们来分析第二个参数， 他是 String 类型的， 和在内部类中访问的局部变量 localVar 的类型相同。 再看构造方法中编号为6和7的字节码指令：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">6</span>: aload_2</span><br><span class="line">7: putfield      #2              // Field val$localVar:Ljava/lang/String;</span><br></pre></td></tr></table></figure>
+<p>这句话的意思是， 使用构造方法的第二个参数， 为当前这个内部类对象的成员变量赋值， 这个被赋值的成员变量的名字是 val$localVar 。 由此可见， 编译器自动为内部类增加了一个成员变量， 其实这个成员变量就是被访问的外部类方法中的局部变量。 这个局部变量在创建内部类对象时， 通过构造方法注入。 在调用构造方法时， 编译器会默认为这个参数传入外部类方法中的局部变量的值。 </p>
+<p>再看内部类中的方法 innerMethod 中是如何访问这个所谓的“局部变量的”。 看 innerMethod 中的前两条字节码： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">innerMethod</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">2</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: getfield      #2         // Field val$localVar:Ljava/lang/String;</span><br><span class="line">         <span class="number">4</span>: astore_1</span><br><span class="line">         <span class="number">5</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">14</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">5</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">6</span>     <span class="number">0</span>  <span class="keyword">this</span>   Ljvm/localfiled/Outer$<span class="number">1</span>Inner;</span><br><span class="line">            <span class="number">5</span>       <span class="number">1</span>     <span class="number">1</span>     a   Ljava/lang/String;</span><br></pre></td></tr></table></figure>
+<p>其中</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: aload_0</span><br><span class="line">1: getfield      #2         // Field val$localVar:Ljava/lang/String;</span><br></pre></td></tr></table></figure>
+<p>这两条指令的意思是， 访问成员变量<code>val$localVar</code>的值。 而源代码中是访问外部类方法中局部变量的值。 所以， 在这里将编译时对外部类方法中的局部变量的访问， 转化成运行时对当前内部类对象中成员变量的访问。  </p>
+<h4 id="3-小结"><a href="#3-小结" class="headerlink" title="3. 小结"></a>3. 小结</h4><p>总结一下就是： </p>
+<p>当方法中定义的内部类访问的方法局部变量的值， 不是在编译时能确定的字面常量时， 编译器会为内部类增加一个成员变量， 在运行时， 将对外部类方法中局部变量的访问转换成对这个内部类成员变量的方法。 </p>
+<p>这就要求内部类中的这个新增的成员变量和外部类方法中的局部变量具有相同的值。</p>
+<p> 编译器通过为内部类的构造方法增加参数， 并在调用构造器初始化内部类对象时传入这个参数， 来初始化内部类中的这个成员变量的值。 </p>
+<p><strong>所以， 虽然在源文件中看起来是访问的外部类方法的局部变量， 其实运行时访问的是内部类对象自己的成员变量</strong>。 </p>
+<h2 id="3-为什么局部变量必须是final的"><a href="#3-为什么局部变量必须是final的" class="headerlink" title="3. 为什么局部变量必须是final的"></a>3. 为什么局部变量必须是final的</h2><p>上面我们讲解了， 方法中的内部类访问方法局部变量是怎么实现的。 那么为什么这个局部变量必须是 final 的呢？ 我认为有以下两个原因：</p>
+<h3 id="1-原因一"><a href="#1-原因一" class="headerlink" title="1. 原因一"></a>1. 原因一</h3><p>当局部变量的值为编译时可确定的字面常量时（ 如字符串 “abc” 或整数1 ）， 通过 final 修饰， 可以实现类似 C 语言的编译时宏替换功能。</p>
+<p> 这样的话， 外部类和内部类各自访问自己的常量池， 各自执行各自的字节码指令， 看起来就像共同访问外部类方法中的局部变量， 这样就可以达到<strong>语义上的一致性</strong>。 由于存在内部类和外部类中的常量值是一样的， 并且是不可改变的，这样就可以达到<strong>数值访问的一致性</strong>。</p>
+<h3 id="2-原因二"><a href="#2-原因二" class="headerlink" title="2. 原因二"></a>2. 原因二</h3><p>当局部变量的值不是可在编译时确定的字面常量时（比如通过方法调用为它赋值）， 这种情况下， 编译器给内部类增加相同类型的成员变量， 并通过构造函数将外部类方法中的局部变量的值赋给这个新增的内部类成员量。</p>
+<h3 id="3-基本数据类型"><a href="#3-基本数据类型" class="headerlink" title="3. 基本数据类型"></a>3. 基本数据类型</h3><p>如果这个局部变量是基本数据类型时， 直接拷贝数值给内部类成员变量。这样的话， 内部类和外部类各自访问自己的基本数据类型的变量， 他们的变量值一样， 并且不可修改， 这样就保证了语义上和数值访问上的一致性。</p>
+<h3 id="4-引用类型"><a href="#4-引用类型" class="headerlink" title="4. 引用类型"></a>4. 引用类型</h3><p>如果这个局部变量是引用数据类型时， 拷贝外部类方法中的引用值给内部类对象的成员变量， 这样的话， 他们就指向了同一个对象。 由于这两个引用变量指向同一个对象， 所以通过引用访问的对象的数据是一样的， 由于他们都不能再指向其他对象（被 final 修饰）， 所以可以保证内部类和外部类数据访问的一致性。</p>
+<h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><p><code>https://blog.csdn.net/zhangjg_blog/article/details/19996629</code></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<!--本文到此结束标记 begin-->
+	<div>
+	  
+		<!--文字可以自己修改-->
+<div>
+    
+        <div style="text-align:center;color: #A2CD5A;font-size:18px;">------------------本文到此结束<i class="fa fa-paw"></i>感谢您的阅读------------------</div>
+    
+</div>
+	  
+	</div>
+	<!--本文到此结束标记 end-->
+	
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>illusoryCloud</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="https://www.lixueduan.com/posts/7d00948d.html" title="Java中为什么方法内定义的内部类可以访问方法中的局部变量">https://www.lixueduan.com/posts/7d00948d.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"> <i class="fa fa-tag"></i> Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/8d9c98e3.html" rel="next" title="Java中为什么内部类可以访问外部类的成员">
+                <i class="fa fa-chevron-left"></i> Java中为什么内部类可以访问外部类的成员
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/5d09291b.html" rel="prev" title="MongoDB入门系列(一)---基于Docker安装MongoDB">
+                MongoDB入门系列(一)---基于Docker安装MongoDB <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="illusoryCloud">
+            
+              <p class="site-author-name" itemprop="name">illusoryCloud</p>
+			  
+			  <!-- 侧边栏那句话 description改为subtitle 原本显示的是网站描述，现在改成了subtitle网站副标题--> 
+            <p class="site-description motion-element" itemprop="description">勿在浮沙筑高台</p> 
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">82</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/illusorycloud" title="GitHub &rarr; https://github.com/illusorycloud" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:xueduan.li@gmail.com" title="E-Mail &rarr; mailto:xueduan.li@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                推荐阅读
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.lixueduan.com/categories/SpringBoot/" title="https://www.lixueduan.com/categories/SpringBoot/">SpringBoot</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.lixueduan.com/categories/SpringCloud/" title="https://www.lixueduan.com/categories/SpringCloud/">SpringCloud</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-概述"><span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-原理分析"><span class="nav-text">2. 原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-当被访问的局部变量是编译时可确定的字面常量时"><span class="nav-text">2.1 当被访问的局部变量是编译时可确定的字面常量时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-反编译"><span class="nav-text">1. 反编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-结果分析"><span class="nav-text">2. 结果分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-反编译外部类"><span class="nav-text">3. 反编译外部类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-修改局部变量类型"><span class="nav-text">4. 修改局部变量类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-小结"><span class="nav-text">5. 小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-当被访问的局部变量的值在编译时不可确定时"><span class="nav-text">2.2 当被访问的局部变量的值在编译时不可确定时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-反编译-1"><span class="nav-text">1. 反编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-结果分析-1"><span class="nav-text">2. 结果分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-小结"><span class="nav-text">3. 小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-为什么局部变量必须是final的"><span class="nav-text">3. 为什么局部变量必须是final的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-原因一"><span class="nav-text">1. 原因一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原因二"><span class="nav-text">2. 原因二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-基本数据类型"><span class="nav-text">3. 基本数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-引用类型"><span class="nav-text">4. 引用类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-参考"><span class="nav-text">4. 参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">illusoryCloud</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">612k</span>
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+  
+  <script src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script>
     // Popup Window;
     var isfetched = false;
     var isXml = true;
@@ -316,4 +1502,117 @@
         onPopupClose();
       }
     });
-  </script><style>.copy-btn{display:inline-block;padding:6px 12px;font-size:13px;font-weight:700;line-height:20px;color:#333;white-space:nowrap;vertical-align:middle;cursor:pointer;background-color:#eee;background-image:linear-gradient(#fcfcfc,#eee);border:1px solid #d5d5d5;border-radius:3px;user-select:none;outline:0}.highlight-wrap .copy-btn{transition:opacity .3s ease-in-out;opacity:0;padding:2px 6px;position:absolute;right:4px;top:8px}.highlight-wrap .copy-btn:focus,.highlight-wrap:hover .copy-btn{opacity:1}.highlight-wrap{position:relative}</style><script>$(".highlight").each(function(e,t){var n=$("<div>").addClass("highlight-wrap");$(t).after(n),n.append($("<button>").addClass("copy-btn").append("复制").on("click",function(e){var t=$(this).parent().find(".code").find(".line").map(function(e,t){return $(t).text()}).toArray().join("\n"),n=document.createElement("textarea"),o=document.createRange(),a=window.getSelection(),i=window.pageYOffset||document.documentElement.scrollTop;n.style.top=i+"px",n.style.position="absolute",n.style.opacity="0",n.value=t,n.textContent=t,n.contentEditable=!0,n.readOnly=!1,document.body.appendChild(n),o.selectNode(n),a.removeAllRanges(),a.addRange(o),n.setSelectionRange(0,t.length),document.execCommand("copy")?$(this).text("复制成功"):$(this).text("复制失败"),n.blur(),$(this).blur()})).on("mouseleave",function(e){var t=$(this).find(".copy-btn");setTimeout(function(){t.text("复制")},300)}).append(t)})</script></body></html><script type="text/javascript" src="/js/src/love.js"></script>
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('复制成功');
+          else $(this).text('复制失败');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function () {
+          $b.text('复制');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
+
+<!-- 页面点击小红心 begin-->
+<script type="text/javascript" src="/js/src/love.js"></script>
+<!-- 页面点击小红心 end-->
