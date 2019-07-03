@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[gRPC入门教程(一)---Protobuf安装与基本使用]]></title>
+    <url>%2Fposts%2F5ad1b62f.html</url>
+    <content type="text"><![CDATA[本文主要记录了 Windows 环境下 Protobuf 的安装与基本使用教程。 前面写摘要 更多文章欢迎访问我的个人博客–&gt;幻境云图 1. 概述Protocol buffers是一个灵活的、高效的、自动化的用于对结构化数据进行序列化的协议，与XML、json相比，Protocol buffers序列化后的码流更小、速度更快、操作更简单。 2. 安装2.1 安装protocprotoc 用来将.proto文件转化为自己使用的语言格式，我使用的是go语言，所以还要下载一个与protoc配合的插件，一会再说这个插件。 下载地址 1https://github.com/protocolbuffers/protobuf/releases 我这里是windows，所以下载的是[protoc-3.8.0-win64.zip],下载后解压,将bin目录下的protoc.exe复制到$GOPATH/bin目录中。 2.2 安装protoproto是protobuf在golang中的接口模块 1go get github.com/golang/protobuf/proto 2.3 安装插件protoc-gen-go 是用来将protobuf的的代码转换成go语言代码的一个插件 github地址：https://github.com/golang/protobuf 使用以下命令将会自动把protoc-gen-go安装到$GOPATH/bin目录下 1go get -u github.com/golang/protobuf/protoc-gen-go 3. 使用3.1 编写一个proto文件derssbook.proto 1234567891011121314151617181920212223242526syntax = &quot;proto3&quot;;package go_protoc;message Person &#123; string name = 1; int32 id = 2; string email = 3; enum PhoneType &#123; MOBILE = 0; HOME = 1; WORK = 2; &#125; message PhoneNumber &#123; string number = 1; PhoneType type = 2; &#125; repeated PhoneNumber phones = 4;&#125;message AddressBook &#123; repeated Person people = 1;&#125; 3.2 编译1protoc --go_out=. derssbook.proto 编译后会生成一个derssbook.pb.go文件。 4. 小结到此为止 主要记录了 protobuf 安装与插件支持，proto文件的编写与编译等流程。]]></content>
+      <categories>
+        <category>gRPC</category>
+      </categories>
+      <tags>
+        <tag>gRPC</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[MongoDB入门系列(一)---基于Docker安装MongoDB]]></title>
     <url>%2Fposts%2F5d09291b.html</url>
     <content type="text"><![CDATA[本文主要记录了如何通过Docker方便快捷的安装MongoDB数据库。 更多文章欢迎访问我的个人博客–&gt;幻境云图 1. 概述MongoDB 是一个基于分布式文件存储的数据库。由 C++ 语言编写。旨在为 WEB 应用提供可扩展的高性能数据存储解决方案。 MongoDB 是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。 2. 安装2.1 拉取镜像1docker pull mongo 2.2 准备环境123/usr/local/docker/mongodb/data //数据/usr/local/docker/mongodb/backup //备份/usr/local/docker/mongodb/conf //配置文件 准备3个文件夹用来存放相应数据。 2.3 配置文件mongodb.conf配置文件如下，建立好配置文件放到前面建好的目录中。 12345678# mongodb.conflogappend=true# bind_ip=127.0.0.1port=27017 fork=falsenoprealloc=true# 是否开启身份认证auth=false 2.4 启动容器1234567891011121314docker run --name mongodb -v \/usr/local/docker/mongodb/data:/data/db -v \/usr/local/docker/mongodb/backup:/data/backup -v \/usr/local/docker/mongodb/conf:/data/configdb -p \27017:27017 -d mongo \-f /data/configdb/mongodb.conf \--auth# 命令说明容器命名mongodb，数据库数据文件挂载到/usr/local/docker/mongodb/data备份文件挂载到/usr/local/docker/mongodb/backup启动的配置文件目录挂载到容器的/usr/local/docker/mongodb/conf--auth开启身份验证。-f /data/configdb/mongodb.conf 以配置文件启动 # mongod启动命令是在容器内执行的，因此使用的配置文件路径是相对于容器的内部路径。 3. 添加用户使用MongoDB之前需要先创建用户。 3.1 进入容器1docker exec -it mongodb bash 执行该命令进入到刚才启动的容器中。 3.2 进入 MongoDB1mongo 执行该命令进入到MongoDB客户端。 3.3 创建用户12345678910111213141516# 进入 admin 的数据库use admin# 创建管理员用户db.createUser( &#123; user: "admin", pwd: "123456", roles: [ &#123; role: "userAdminAnyDatabase", db: "admin" &#125; ] &#125; ) # 创建有可读写权限的用户. 对于一个特定的数据库, 比如'demo' db.createUser(&#123; user: 'test', pwd: '123456', roles: [&#123;role: "readWrite", db: "demo"&#125;] &#125;) 4. 使用到此为止MongoDB就安装完成了，可以远程连接了。连接之前先关闭Linux防火墙。 4.1 可视化工具可视化工具暂时用的Robo3T,官网：https://robomongo.org/ 4.2 连接使用前面创建的用户就可以远程连接到MongoDB了. 其中管理员用户是用来管理用户的。 每个用户只能访问指定的db。 比如上面的test账号只能访问demo这个db。 123url:192.168.1.1:27017username:testpassword:123456 5. 参考https://www.runoob.com/mongodb/mongodb-tutorial.html]]></content>
@@ -870,8 +881,8 @@
         <category>设计模式</category>
       </categories>
       <tags>
-        <tag>设计模式</tag>
         <tag>Java</tag>
+        <tag>设计模式</tag>
       </tags>
   </entry>
   <entry>
