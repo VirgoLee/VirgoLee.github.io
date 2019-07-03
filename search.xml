@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[gRPC入门教程(一)---Protobuf安装与基本使用]]></title>
     <url>%2Fposts%2F5ad1b62f.html</url>
-    <content type="text"><![CDATA[本文主要记录了 Windows 环境下 Protobuf 的安装与基本使用教程。 前面写摘要 更多文章欢迎访问我的个人博客–&gt;幻境云图 1. 概述Protocol buffers是一个灵活的、高效的、自动化的用于对结构化数据进行序列化的协议，与XML、json相比，Protocol buffers序列化后的码流更小、速度更快、操作更简单。 2. 安装2.1 安装protocprotoc 用来将.proto文件转化为自己使用的语言格式，我使用的是go语言，所以还要下载一个与protoc配合的插件，一会再说这个插件。 下载地址 1https://github.com/protocolbuffers/protobuf/releases 我这里是windows，所以下载的是[protoc-3.8.0-win64.zip],下载后解压,将bin目录下的protoc.exe复制到$GOPATH/bin目录中。 2.2 安装protoproto是protobuf在golang中的接口模块 1go get github.com/golang/protobuf/proto 2.3 安装插件protoc-gen-go 是用来将protobuf的的代码转换成go语言代码的一个插件 github地址：https://github.com/golang/protobuf 使用以下命令将会自动把protoc-gen-go安装到$GOPATH/bin目录下 1go get -u github.com/golang/protobuf/protoc-gen-go 3. 使用3.1 编写一个proto文件derssbook.proto 1234567891011121314151617181920212223242526syntax = &quot;proto3&quot;;package go_protoc;message Person &#123; string name = 1; int32 id = 2; string email = 3; enum PhoneType &#123; MOBILE = 0; HOME = 1; WORK = 2; &#125; message PhoneNumber &#123; string number = 1; PhoneType type = 2; &#125; repeated PhoneNumber phones = 4;&#125;message AddressBook &#123; repeated Person people = 1;&#125; 3.2 编译1protoc --go_out=. derssbook.proto 编译后会生成一个derssbook.pb.go文件。 4. 小结到此为止 主要记录了 protobuf 安装与插件支持，proto文件的编写与编译等流程。]]></content>
+    <content type="text"><![CDATA[本文主要记录了 Windows 环境下 Protobuf 的安装与基本使用教程。 更多文章欢迎访问我的个人博客–&gt;幻境云图 1. 概述Protocol buffers是一个灵活的、高效的、自动化的用于对结构化数据进行序列化的协议，与XML、json相比，Protocol buffers序列化后的码流更小、速度更快、操作更简单。 2. 安装2.1 安装protocprotoc 用来将.proto文件转化为自己使用的语言格式，我使用的是go语言，所以还要下载一个与protoc配合的插件，一会再说这个插件。 下载地址 1https://github.com/protocolbuffers/protobuf/releases 我这里是windows，所以下载的是[protoc-3.8.0-win64.zip],下载后解压,将bin目录下的protoc.exe复制到$GOPATH/bin目录中。 2.2 安装protoproto是protobuf在golang中的接口模块 1go get github.com/golang/protobuf/proto 2.3 安装插件protoc-gen-go 是用来将protobuf的的代码转换成go语言代码的一个插件 github地址：https://github.com/golang/protobuf 使用以下命令将会自动把protoc-gen-go安装到$GOPATH/bin目录下 1go get -u github.com/golang/protobuf/protoc-gen-go 3. 使用3.1 编写一个proto文件derssbook.proto 1234567891011121314151617181920212223242526syntax = &quot;proto3&quot;;package go_protoc;message Person &#123; string name = 1; int32 id = 2; string email = 3; enum PhoneType &#123; MOBILE = 0; HOME = 1; WORK = 2; &#125; message PhoneNumber &#123; string number = 1; PhoneType type = 2; &#125; repeated PhoneNumber phones = 4;&#125;message AddressBook &#123; repeated Person people = 1;&#125; 3.2 编译1protoc --go_out=. derssbook.proto 编译后会生成一个derssbook.pb.go文件。 4. 小结到此为止 主要记录了 protobuf 安装与插件支持，proto文件的编写与编译等流程。]]></content>
       <categories>
         <category>gRPC</category>
       </categories>
@@ -881,8 +881,8 @@
         <category>设计模式</category>
       </categories>
       <tags>
-        <tag>Java</tag>
         <tag>设计模式</tag>
+        <tag>Java</tag>
       </tags>
   </entry>
   <entry>
