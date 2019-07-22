@@ -1,10 +1,11 @@
 ---
-title: Hexo个人博客之优化（二）
+title: gRPC入门教程(二)---gRPC简单使用
 tags:
-  - Hexo
+  - gRPC
 categories:
-  - Hexo
-date: 2018-12-22 22:00:00
+  - gRPC
+abbrlink: 5ad1b62f
+date: 2019-05-12 22:00:00
 ---
 
 write here
@@ -16,3 +17,4 @@ write here
 > 更多文章欢迎访问我的个人博客-->[幻境云图](https://www.lixueduan.com/)
 
 后面写剩下的内容
+
