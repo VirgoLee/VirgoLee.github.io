@@ -32,15 +32,7 @@ https://github.com/protocolbuffers/protobuf/releases
 
 我这里是windows，所以下载的是`[protoc-3.8.0-win64.zip]`,下载后解压,将`bin`目录下的`protoc.exe`复制到`$GOPATH/bin`目录中。
 
-### 2.2 安装proto
-
-proto是protobuf在golang中的接口模块
-
-```go
-go get github.com/golang/protobuf/proto
-```
-
-### 2.3 安装插件
+### 2.2 安装插件
 
 `protoc-gen-go` 是用来将protobuf的的代码转换成go语言代码的一个插件
 
@@ -51,6 +43,36 @@ github地址：`https://github.com/golang/protobuf`
 ```go
 go get -u github.com/golang/protobuf/protoc-gen-go
 ```
+
+goprotobuf还有另外两个插件
+
+- protoc-gen-gogo：和protoc-gen-go生成的文件差不多，性能也几乎一样(稍微快一点点)
+- protoc-gen-gofast：生成的文件更复杂，性能也更高(快5-7倍)
+
+```go
+//gogo
+go get github.com/gogo/protobuf/protoc-gen-gogo
+ 
+//gofast
+go get github.com/gogo/protobuf/protoc-gen-gofast
+```
+
+### 2.3 安装proto
+
+proto是protobuf在golang中的接口模块
+
+```go
+go get github.com/golang/protobuf/proto
+```
+
+如果是使用的另外两个插件，则可以装下面的
+
+```go
+go get github.com/gogo/protobuf/proto
+go get github.com/gogo/protobuf/gogoproto
+```
+
+
 
 ## 3. 使用
 
@@ -90,10 +112,33 @@ message AddressBook {
 ### 3.2 编译
 
 ```go
+//官方
 protoc --go_out=. derssbook.proto
+
+//gogo
+protoc --gogo_out=. derssbook.proto
+ 
+//gofast
+protoc --gofast_out=. derssbook.proto
 ```
 
 编译后会生成一个`derssbook.pb.go`文件。
+
+编译命令解释
+
+```sh
+$ protoc --proto_path=IMPORT_PATH --cpp_out=DST_DIR --java_out=DST_DIR --python_out=DST_DIR --go_out=DST_DIR --ruby_out=DST_DIR --javanano_out=DST_DIR --objc_out=DST_DIR --csharp_out=DST_DIR path/to/file.proto
+```
+
+这里详细介绍golang的编译姿势:
+
+- `-I` 参数：指定import路径，可以指定多个`-I`参数，编译时按顺序查找，不指定时默认查找当前目录
+- `--go_out` ：golang编译支持，支持以下参数
+  - `plugins=plugin1+plugin2` - 指定插件，目前只支持grpc，即：`plugins=grpc`
+  - `M` 参数 - 指定导入的.proto文件路径编译后对应的golang包名(不指定本参数默认就是`.proto`文件中`import`语句的路径)
+  - `import_prefix=xxx` - 为所有`import`路径添加前缀，主要用于编译子目录内的多个proto文件，这个参数按理说很有用，尤其适用替代一些情况时的`M`参数，但是实际使用时有个蛋疼的问题导致并不能达到我们预想的效果，自己尝试看看吧
+  - `import_path=foo/bar` - 用于指定未声明`package`或`go_package`的文件的包名，最右面的斜线前的字符会被忽略
+  - 末尾 `:编译文件路径  .proto文件路径(支持通配符)`
 
 ## 4. 小结
 
