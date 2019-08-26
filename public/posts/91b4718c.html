@@ -1,0 +1,319 @@
+<!DOCTYPE html><html class="theme-next mist use-motion" lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css"><link rel="apple-touch-icon" sizes="180x180" href="/myimages/favicon-32x32-me.png?v=6.6.0"><link rel="icon" type="image/png" sizes="32x32" href="/images/myfavicon-32x32-me.png?v=6.6.0"><link rel="icon" type="image/png" sizes="16x16" href="/images/myfavicon-16x16-me.png?v=6.6.0"><script id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"6.6.0",sidebar:{position:"right",display:"post",offset:12,b2t:!1,scrollpercent:!0,onmobile:!1},fancybox:!1,fastclick:!1,lazyload:!1,tabs:!0,motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script><link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet"><style>.pace .pace-progress{background:#1e92fb;height:3px}.pace .pace-progress-inner{box-shadow:0 0 10px #1e92fb,0 0 5px #1e92fb}.pace .pace-activity{border-top-color:#1e92fb;border-left-color:#1e92fb}</style><meta name="description" content="Go语言微服务系列文章，使用golang实现微服务，这里选用的是go-micro框架,本文主要是对该框架的一个架构简单介绍。"><meta name="keywords" content="Micro"><meta property="og:type" content="article"><meta property="og:title" content="Go-Micro框架入门教程(一)---框架结构"><meta property="og:url" content="https://www.lixueduan.com/posts/91b4718c.html"><meta property="og:site_name" content="幻境云图"><meta property="og:description" content="Go语言微服务系列文章，使用golang实现微服务，这里选用的是go-micro框架,本文主要是对该框架的一个架构简单介绍。"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/service-discover.png"><meta property="og:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/go-micro-8-interface.png"><meta property="og:updated_time" content="2019-08-18T08:00:01.173Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Go-Micro框架入门教程(一)---框架结构"><meta name="twitter:description" content="Go语言微服务系列文章，使用golang实现微服务，这里选用的是go-micro框架,本文主要是对该框架的一个架构简单介绍。"><meta name="twitter:image" content="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/service-discover.png"><link rel="alternate" href="/atom.xml" title="幻境云图" type="application/atom+xml"><link rel="canonical" href="https://www.lixueduan.com/posts/91b4718c.html"><script id="page.configurations">CONFIG.page={sidebar:""}</script><title>Go-Micro框架入门教程(一)---框架结构 | 幻境云图</title><script async src="https://www.googletagmanager.com/gtag/js?id=UA-131397277-1"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-131397277-1")</script><script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-title,.use-motion .comments,.use-motion .menu-item,.use-motion .motion-element,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .logo,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN"><div class="container sidebar-position-right page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">幻境云图</span><span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">勿在浮沙筑高台</h1></div><div class="site-nav-toggle"> <button aria-label="切换导航栏"><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"> <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article"><div class="post-block"><link itemprop="mainEntityOfPage" href="https://www.lixueduan.com/posts/91b4718c.html"><span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person"><meta itemprop="name" content="illusoryCloud"><meta itemprop="description" content="幻境云图是一个专注于后端技术分享的博客,记录了一个菜鸟从0开始的进阶之路。主要涉及后端、服务端相关知识共享、实践教程、前沿技术共同学习等。包括但不限于数据库,源码分析,分布式,微服务,并发编程,Docker,Kubernetes,Java,Golang等"><meta itemprop="image" content="/images/avatar.gif"></span><span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"><meta itemprop="name" content="幻境云图"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">Go-Micro框架入门教程(一)---框架结构</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-05-22 22:00:00" itemprop="dateCreated datePublished" datetime="2019-05-22T22:00:00+08:00">2019-05-22</time> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i></span> <span class="post-meta-item-text">更新于</span> <time title="修改时间：2019-08-18 16:00:01" itemprop="dateModified" datetime="2019-08-18T16:00:01+08:00">2019-08-18</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Micro/" itemprop="url" rel="index"><span itemprop="name">Micro</span></a></span></span><div class="post-symbolscount"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span> <span class="post-meta-item-text">本文字数：</span> <span title="本文字数">5.1k</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-clock-o"></i></span> <span class="post-meta-item-text">阅读时长 &asymp;</span> <span title="阅读时长">5 分钟</span></div></div></header><div class="post-body" itemprop="articleBody"><p>Go语言微服务系列文章，使用golang实现微服务，这里选用的是<code>go-micro</code>框架,本文主要是对该框架的一个架构简单介绍。</p><a id="more"></a><blockquote><p>更多文章欢迎访问我的个人博客–&gt;<a href="https://www.lixueduan.com/">幻境云图</a></p></blockquote><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p><code>go-micro</code>是<code>go语言</code>下的一个很好的微服务框架。</p><ul><li>1.服务间传输格式为<code>protobuf</code>，效率上没的说，非常的快，也很安全。</li><li>2.go-micro的<code>服务注册</code>和<code>发现</code>是多种多样的。我个人比较喜欢<code>etcdv3</code>的服务服务发现和注册。</li><li>3.主要的功能都有相应的接口，只要实现相应的接口，就可以根据自己的需要订制插件。</li></ul><h2 id="2-通信流程"><a href="#2-通信流程" class="headerlink" title="2. 通信流程"></a>2. 通信流程</h2><p> go-micro的通信流程大至如下</p><p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/service-discover.png" alt="服务注册与发现"></p><p><code>Server</code>端需要向<code>Register</code>注册自己的存在或消亡，这样Client才能知道自己的状态。</p><p>同时Server监听<code>客户端的调用</code>和<code>Brocker</code>推送过来的信息进行处理。</p><p><code>Client</code>端从<code>Register</code>中得到<code>Server</code>的信息，然后每次调用都根据算法选择一个的<code>Server</code>进行通信，当然通信是要经过编码/解码，选择传输协议等一系列过程的。</p><h2 id="3-框架结构"><a href="#3-框架结构" class="headerlink" title="3. 框架结构"></a>3. 框架结构</h2><p> go-micro 之所以可以高度订制和他的框架结构是分不开的，go-micro 由<code>8个</code>关键的 <code>interface</code>组成，每一个interface 都可以根据自己的需求重新实现，这8个主要的inteface也构成了go-micro的框架结构。</p><p><img src="https://github.com/illusorycloud/illusorycloud.github.io/raw/hexo/myImages/go-micro/go-micro-8-interface.png" alt="整体架构"></p><h3 id="1-Transort"><a href="#1-Transort" class="headerlink" title="1.Transort"></a>1.Transort</h3><p><strong>服务之间通信的接口</strong>。</p><p>也就是服务发送和接收的最终实现方式，是由这些接口定制的</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Socket <span class="keyword">interface</span> &#123;</span><br><span class="line">    Recv(*Message) error</span><br><span class="line">    Send(*Message) error</span><br><span class="line">    Close() error</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">type</span> Client <span class="keyword">interface</span> &#123;</span><br><span class="line">    Socket</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">type</span> Listener <span class="keyword">interface</span> &#123;</span><br><span class="line">    Addr() <span class="keyword">string</span></span><br><span class="line">    Close() error</span><br><span class="line">    Accept(<span class="function"><span class="keyword">func</span><span class="params">(Socket)</span>) <span class="title">error</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"> </span></span><br><span class="line"><span class="function"><span class="title">type</span> <span class="title">Transport</span> <span class="title">interface</span></span> &#123;</span><br><span class="line">    Dial(addr <span class="keyword">string</span>, opts ...DialOption) (Client, error)</span><br><span class="line">    Listen(addr <span class="keyword">string</span>, opts ...ListenOption) (Listener, error)</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Transport 的Listen方法是一般是Server端进行调用的，他监听一个端口，等待客户端调用。</p><p>Transport 的Dial就是客户端进行连接服务的方法。他返回一个Client接口，这个接口返回一个Client接口，这个Client嵌入了Socket接口，这个接口的方法就是具体发送和接收通信的信息。</p><p>是go-micro默认的同步通信机制是<code>http传输</code>。当然还有很多其他的插件：<code>grpc</code>,nats,tcp,udp,rabbitmq,都是目前已经实现了的方式。</p><h3 id="2-Codec"><a href="#2-Codec" class="headerlink" title="2. Codec"></a>2. Codec</h3><p>有了传输方式，下面要解决的就是传输编码和解码问题，go-micro有很多种编码解码方式，默认的实现方式是<code>protobuf</code>,当然也有其他的实现方式，json、protobuf、jsonrpc、mercury等等。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Codec <span class="keyword">interface</span> &#123;</span><br><span class="line">    ReadHeader(*Message, MessageType) error</span><br><span class="line">    ReadBody(<span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">    Write(*Message, <span class="keyword">interface</span>&#123;&#125;) error</span><br><span class="line">    Close() error</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">    Id     <span class="keyword">uint64</span></span><br><span class="line">    Type   MessageType</span><br><span class="line">    Target <span class="keyword">string</span></span><br><span class="line">    Method <span class="keyword">string</span></span><br><span class="line">    Error  <span class="keyword">string</span></span><br><span class="line">    Header <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p> Codec接口的Write方法就是编码过程，两个Read是解码过程。</p><h3 id="3-Registry"><a href="#3-Registry" class="headerlink" title="3. Registry"></a>3. Registry</h3><p>服务的注册和发现，目前实现的consul,mdns, etcd,<code>etcdv3</code>,zookeeper,kubernetes.等</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Registry <span class="keyword">interface</span> &#123;</span><br><span class="line">    Register(*Service, ...RegisterOption) error</span><br><span class="line">    Deregister(*Service) error</span><br><span class="line">    GetService(<span class="keyword">string</span>) ([]*Service, error)</span><br><span class="line">    ListServices() ([]*Service, error)</span><br><span class="line">    Watch(...WatchOption) (Watcher, error)</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">    Options() Options</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>简单来说<code>就是Service 进行Register，来进行注册，Client 使用watch方法进行监控，当有服务加入或者删除时这个方法会被触发，以提醒客户端更新Service信息</code>。</p><p> 默认的是服务注册和发现是<code>consul</code>， 我个人比较喜欢<code>etcdv3集群</code>。大家可以根据自己的喜好选择。</p><h3 id="4-Selector"><a href="#4-Selector" class="headerlink" title="4. Selector"></a>4. Selector</h3><p> 以Registry为基础，Selector 是<strong>客户端级别的负载均衡</strong>，当有客户端向服务发送请求时， selector根据不同的算法从Registery中的主机列表，得到可用的Service节点，进行通信。目前实现的有<code>循环算法</code>和<code>随机算法</code>，默认的是随机算法</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Selector <span class="keyword">interface</span> &#123;</span><br><span class="line">    Init(opts ...Option) error</span><br><span class="line">    Options() Options</span><br><span class="line">    <span class="comment">// Select returns a function which should return the next node</span></span><br><span class="line">    Select(service <span class="keyword">string</span>, opts ...SelectOption) (Next, error)</span><br><span class="line">    <span class="comment">// Mark sets the success/error against a node</span></span><br><span class="line">    Mark(service <span class="keyword">string</span>, node *registry.Node, err error)</span><br><span class="line">    <span class="comment">// Reset returns state back to zero for a service</span></span><br><span class="line">    Reset(service <span class="keyword">string</span>)</span><br><span class="line">    <span class="comment">// Close renders the selector unusable</span></span><br><span class="line">    Close() error</span><br><span class="line">    <span class="comment">// Name of the selector</span></span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p> 默认的是实现是本地缓存，当前实现的有blacklist,label,named等方式。</p><h3 id="5-Broker"><a href="#5-Broker" class="headerlink" title="5. Broker"></a>5. Broker</h3><p>Broker是消息发布和订阅的接口。很简单的一个例子，因为服务的节点是不固定的，如果有需要修改所有服务行为的需求，可以使服务订阅某个主题，当有信息发布时，所有的监听服务都会收到信息，根据你的需要做相应的行为。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Broker <span class="keyword">interface</span> &#123;</span><br><span class="line">    Options() Options</span><br><span class="line">    Address() <span class="keyword">string</span></span><br><span class="line">    Connect() error</span><br><span class="line">    Disconnect() error</span><br><span class="line">    Init(...Option) error</span><br><span class="line">    Publish(<span class="keyword">string</span>, *Message, ...PublishOption) error</span><br><span class="line">    Subscribe(<span class="keyword">string</span>, Handler, ...SubscribeOption) (Subscriber, error)</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>Broker默认的实现方式是<code>http方式</code>，但是这种方式不要在生产环境用。go-plugins里有很多成熟的消息队列实现方式，有kafka、nsq、rabbitmq、redis等等。</p><h3 id="6-Client"><a href="#6-Client" class="headerlink" title="6. Client"></a>6. Client</h3><p> Client是<strong>请求服务的接口</strong>。</p><p>他封装 Transport 和 Codec 进行rpc调用，也封装了Brocker进行信息的发布。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Client <span class="keyword">interface</span> &#123;</span><br><span class="line">    Init(...Option) error</span><br><span class="line">    Options() Options</span><br><span class="line">    NewMessage(topic <span class="keyword">string</span>, msg <span class="keyword">interface</span>&#123;&#125;, opts ...MessageOption) Message</span><br><span class="line">    NewRequest(service, method <span class="keyword">string</span>, req <span class="keyword">interface</span>&#123;&#125;, reqOpts ...RequestOption) Request</span><br><span class="line">    Call(ctx context.Context, req Request, rsp <span class="keyword">interface</span>&#123;&#125;, opts ...CallOption) error</span><br><span class="line">    Stream(ctx context.Context, req Request, opts ...CallOption) (Stream, error)</span><br><span class="line">    Publish(ctx context.Context, msg Message, opts ...PublishOption) error</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>当然他也支持双工通信 Stream 这些具体的实现方式和使用方式，默认的是<code>rp</code>c实现方式，他还有<code>grpc</code>和http方式，在go-plugins里可以找到</p><h3 id="7-Server"><a href="#7-Server" class="headerlink" title="7. Server"></a>7. Server</h3><p> Server看名字大家也知道是做什么的了。监听等待rpc请求。监听broker的订阅信息，等待信息队列的推送等。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">interface</span> &#123;</span><br><span class="line">    Options() Options</span><br><span class="line">    Init(...Option) error</span><br><span class="line">    Handle(Handler) error</span><br><span class="line">    NewHandler(<span class="keyword">interface</span>&#123;&#125;, ...HandlerOption) Handler</span><br><span class="line">    NewSubscriber(<span class="keyword">string</span>, <span class="keyword">interface</span>&#123;&#125;, ...SubscriberOption) Subscriber</span><br><span class="line">    Subscribe(Subscriber) error</span><br><span class="line">    Register() error</span><br><span class="line">    Deregister() error</span><br><span class="line">    Start() error</span><br><span class="line">    Stop() error</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>默认的是rpc实现方式，他还有grpc和http方式，在go-plugins里可以找到</p><h3 id="8-Service"><a href="#8-Service" class="headerlink" title="8. Service"></a>8. Service</h3><p><strong>Service是Client和Server的封装</strong>，他包含了一系列的方法使用初始值去初始化Service和Client，使我们可以很简单的创建一个rpc服务。</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Service <span class="keyword">interface</span> &#123;</span><br><span class="line">    Init(...Option)</span><br><span class="line">    Options() Options</span><br><span class="line">    Client() client.Client</span><br><span class="line">    Server() server.Server</span><br><span class="line">    Run() error</span><br><span class="line">    String() <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="4-参考"><a href="#4-参考" class="headerlink" title="4. 参考"></a>4. 参考</h2><p><code>https://blog.csdn.net/mi_duo/article/details/82701732</code></p></div><div><div><div style="text-align:center;color:#a2cd5a;font-size:18px">------------------本文到此结束<i class="fa fa-paw"></i>感谢您的阅读------------------</div></div></div><div><ul class="post-copyright"><li class="post-copyright-author"> <strong>本文作者：</strong> illusoryCloud</li><li class="post-copyright-link"> <strong>本文链接：</strong> <a href="https://www.lixueduan.com/posts/91b4718c.html" title="Go-Micro框架入门教程(一)---框架结构">https://www.lixueduan.com/posts/91b4718c.html</a></li><li class="post-copyright-license"> <strong>版权声明：</strong> 本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i> BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/Micro/" rel="tag"><i class="fa fa-tag"></i> Micro</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/posts/ff853faf.html" rel="next" title="gRPC入门教程(零)---使用gRPC时遇到的问题"><i class="fa fa-chevron-left"></i> gRPC入门教程(零)---使用gRPC时遇到的问题</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"> <a href="/posts/6dc53ef7.html" rel="prev" title="Go语言之Context">Go语言之Context<i class="fa fa-chevron-right"></i></a></div></div></footer></div></article></div></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> 文章目录</li><li class="sidebar-nav-overview" data-target="site-overview-wrap"> 站点概览</li></ul><div class="site-overview-wrap sidebar-panel"><div class="site-overview"><div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="illusoryCloud"><p class="site-author-name" itemprop="name">illusoryCloud</p><p class="site-description motion-element" itemprop="description">勿在浮沙筑高台</p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives/"><span class="site-state-item-count">87</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">25</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">27</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/illusorycloud" title="GitHub &rarr; https://github.com/illusorycloud" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="mailto:xueduan.li@gmail.com" title="E-Mail &rarr; mailto:xueduan.li@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i> E-Mail</a></span></div><div class="links-of-blogroll motion-element links-of-blogroll-block"><div class="links-of-blogroll-title"><i class="fa fa-fw fa-link"></i> 推荐阅读</div><ul class="links-of-blogroll-list"><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="https://www.lixueduan.com/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></li><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/SpringBoot/" title="https://www.lixueduan.com/categories/SpringBoot/">SpringBoot</a></li><li class="links-of-blogroll-item"> <a href="https://www.lixueduan.com/categories/SpringCloud/" title="https://www.lixueduan.com/categories/SpringCloud/">SpringCloud</a></li></ul></div></div></div><div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-概述"><span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-通信流程"><span class="nav-text">2. 通信流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-框架结构"><span class="nav-text">3. 框架结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Transort"><span class="nav-text">1.Transort</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Codec"><span class="nav-text">2. Codec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Registry"><span class="nav-text">3. Registry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Selector"><span class="nav-text">4. Selector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Broker"><span class="nav-text">5. Broker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Client"><span class="nav-text">6. Client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Server"><span class="nav-text">7. Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Service"><span class="nav-text">8. Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-参考"><span class="nav-text">4. 参考</span></a></li></ol></div></div></div></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; 2017 – <span itemprop="copyrightYear">2019</span><span class="with-love" id="animate"><i class="fa fa-user"></i></span> <span class="author" itemprop="copyrightHolder">illusoryCloud</span> <span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-area-chart"></i></span> <span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">634k</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i> <span id="scrollpercent"><span>0</span>%</span></div></div><script>"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script><script src="/lib/jquery/index.js?v=2.1.3"></script><script src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script src="/js/src/utils.js?v=6.6.0"></script><script src="/js/src/motion.js?v=6.6.0"></script><script src="/js/src/scrollspy.js?v=6.6.0"></script><script src="/js/src/post-details.js?v=6.6.0"></script><script src="/js/src/bootstrap.js?v=6.6.0"></script><script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script><style>.copy-btn{display:inline-block;padding:6px 12px;font-size:13px;font-weight:700;line-height:20px;color:#333;white-space:nowrap;vertical-align:middle;cursor:pointer;background-color:#eee;background-image:linear-gradient(#fcfcfc,#eee);border:1px solid #d5d5d5;border-radius:3px;user-select:none;outline:0}.highlight-wrap .copy-btn{transition:opacity .3s ease-in-out;opacity:0;padding:2px 6px;position:absolute;right:4px;top:8px}.highlight-wrap .copy-btn:focus,.highlight-wrap:hover .copy-btn{opacity:1}.highlight-wrap{position:relative}</style><script>$(".highlight").each(function(e,t){var n=$("<div>").addClass("highlight-wrap");$(t).after(n),n.append($("<button>").addClass("copy-btn").append("复制").on("click",function(e){var t=$(this).parent().find(".code").find(".line").map(function(e,t){return $(t).text()}).toArray().join("\n"),n=document.createElement("textarea"),o=document.createRange(),a=window.getSelection(),i=window.pageYOffset||document.documentElement.scrollTop;n.style.top=i+"px",n.style.position="absolute",n.style.opacity="0",n.value=t,n.textContent=t,n.contentEditable=!0,n.readOnly=!1,document.body.appendChild(n),o.selectNode(n),a.removeAllRanges(),a.addRange(o),n.setSelectionRange(0,t.length),document.execCommand("copy")?$(this).text("复制成功"):$(this).text("复制失败"),n.blur(),$(this).blur()})).on("mouseleave",function(e){var t=$(this).find(".copy-btn");setTimeout(function(){t.text("复制")},300)}).append(t)})</script></body></html><script type="text/javascript" src="/js/src/love.js"></script>
