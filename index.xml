@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>幻境云图</title>
+    <link>https://www.lixueduan.com/</link>
+    <description>Recent content on 幻境云图</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 17 Dec 2019 22:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.lixueduan.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ELK(一)---基于docker-compose搭建elasticsearch集群</title>
+      <link>https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Tue, 17 Dec 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</guid>
+      <description>&lt;p&gt;本文主要记录了如何在单机下通过&lt;code&gt;docker-compsoe&lt;/code&gt;搭建&lt;code&gt;Elasticsearch&lt;/code&gt;集群和相关插件。包含了：&lt;code&gt;es集群(6.7.0)&lt;/code&gt;+&lt;code&gt;ik分词器&lt;/code&gt;+&lt;code&gt;kibana可视化工具&lt;/code&gt;+&lt;code&gt;head插件&lt;/code&gt;。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Go语言之Context</title>
+      <link>https://www.lixueduan.com/post/go/context/</link>
+      <pubDate>Tue, 28 May 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/go/context/</guid>
+      <description>&lt;p&gt;本文主要简单介绍了Go语言(golang)中的&lt;code&gt;context&lt;/code&gt;。通过对底层结构的分析和实例讲述了context的基本用法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>gRPC入门教程(零)---使用gRPC时遇到的问题</title>
+      <link>https://www.lixueduan.com/post/grpc/00-gRPC%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 16 May 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/grpc/00-gRPC%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;本文章主要记录在使用&lt;code&gt;gRPC&lt;/code&gt;时遇到的一些问题及其解决方案。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>gRPC入门教程(二)---gRPC简单使用</title>
+      <link>https://www.lixueduan.com/post/grpc/02-gRPC%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sun, 12 May 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/grpc/02-gRPC%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;本文主要对 gRPC 框架做了简单的介绍，同时记录了具体安装方法与基本使用教程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>gRPC入门教程(一)---Protobuf安装与基本使用</title>
+      <link>https://www.lixueduan.com/post/grpc/01-Protobuf%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Wed, 08 May 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/grpc/01-Protobuf%E5%AE%89%E8%A3%85/</guid>
+      <description>&lt;p&gt;本文主要记录了 Windows 环境下 Protobuf 的安装与基本使用教程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Android平台自动发送邮件demo</title>
+      <link>https://www.lixueduan.com/post/android/email-sender/</link>
+      <pubDate>Tue, 25 Dec 2018 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/android/email-sender/</guid>
+      <description>&lt;p&gt;一个Android平台自动发送邮件的小demo，记录了一下实现的过程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Android事件分发机制详解</title>
+      <link>https://www.lixueduan.com/post/android/view-click-event/</link>
+      <pubDate>Sun, 12 Aug 2018 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/android/view-click-event/</guid>
+      <description>&lt;p&gt;本文主要记录了Android中的事件分发机制。通过对源码进行分析和实例测试，对Android事件分发机制有了更深的了解。主要为学习Android时的笔记。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Git入门教程</title>
+      <link>https://www.lixueduan.com/post/git/git-use-guide/</link>
+      <pubDate>Mon, 16 Jul 2018 12:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/git/git-use-guide/</guid>
+      <description>&lt;p&gt;​	本文主要记录了Git常用的一些命令，和Git基本使用教学，包括了版本库的创建、代码提交、推送、拉取、版本回退、撤销等操作。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://www.lixueduan.com/about/</link>
+      <pubDate>Sun, 01 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/about/</guid>
+      <description>1.关于我 18年毕业的小菜鸟一只。 在校期间自学Java，从此踏上了编程这条不归之路。 博客主要记录自己的学习记录or总结，当然也希望能帮到有需要的人。 强迫症，不喜欢看到杂乱的代码。 2.博客记录 2017：单机版 2018：GitHub Pages+Jekyll 2019：GitHub Pages+Hexo 2020：GitHub Pages+Hugo</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://www.lixueduan.com/about/</link>
+      <pubDate>Sun, 01 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/about/</guid>
+      <description>1.关于我 18年毕业的小菜鸟一只。 在校期间自学Java，从此踏上了编程这条不归之路。 博客主要记录自己的学习记录or总结，当然也希望能帮到有需要的人。 强迫症，不喜欢看到杂乱的代码。 2.博客记录 2017：单机版 2018：GitHub Pages+Jekyll 2019：GitHub Pages+Hexo 2020：GitHub Pages+Hugo</description>
+    </item>
+    
+    <item>
+      <title>Git 配置及SSH key</title>
+      <link>https://www.lixueduan.com/post/git/git-ssh-key-set/</link>
+      <pubDate>Sat, 01 Jul 2017 12:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/git/git-ssh-key-set/</guid>
+      <description>&lt;p&gt;​	本地 Git 仓库和 GitHub 仓库之间的传输是通过 SSH 加密的，所以配置SSH key之后，上传代码到&lt;code&gt;Github&lt;/code&gt;远程仓库时就不用输入密码了。一般是在C盘用户目录下有一个 &lt;code&gt;something&lt;/code&gt; 和 &lt;code&gt;something.pub&lt;/code&gt; 来命名的一对文件，这个 &lt;code&gt;something&lt;/code&gt; 通常就是 &lt;code&gt;id_dsa&lt;/code&gt; 或 &lt;code&gt;id_rsa&lt;/code&gt;。有 &lt;code&gt;.pub&lt;/code&gt; 后缀的文件就是公钥，另一个文件则是密钥。连接时必须提供一个公钥用于授权，没有的话就要生成一个。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>归档</title>
+      <link>https://www.lixueduan.com/archives/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/archives/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>搜索</title>
+      <link>https://www.lixueduan.com/search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/search/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
