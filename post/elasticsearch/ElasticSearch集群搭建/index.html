@@ -1,0 +1,1117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ELK(一)---基于docker-compose搭建elasticsearch集群 | 幻境云图</title>
+    <meta property="og:title" content="ELK(一)---基于docker-compose搭建elasticsearch集群 - 幻境云图">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2019-12-17T22:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2019-12-17T22:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,幻境云图,java,博客">
+    <meta name="description" content="通过docker-compose快速搭建elasticsearch集群">
+        
+    <meta name="author" content="意琦行">
+    <meta property="og:url" content="https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7693630257897132",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.lixueduan.com">
+                        幻境云图
+                    </a>
+                
+                <p class="description">勿在浮沙筑高台</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.lixueduan.com">首页</a>
+                    
+                    <a  href="https://www.lixueduan.com/categories/" title="分类">分类</a>
+                    
+                    <a  href="https://www.lixueduan.com/tags/" title="标签">标签</a>
+                    
+                    <a  href="https://www.lixueduan.com/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://www.lixueduan.com/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -220px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        margin: 0 10px;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-">1. 概述</a></li>
+    <li><a href="#2-">2. 环境准备</a>
+      <ul>
+        <li><a href="#1-jdk">1. jdk</a></li>
+        <li><a href="#2-docker-compose">2. docker-compose</a></li>
+        <li><a href="#3-">3. 创建目录</a></li>
+        <li><a href="#4-">4. 系统变量调整</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-docker-composeyml">3. docker-compose.yml</a>
+      <ul>
+        <li><a href="#1-docker-composeyml">1. docker-compose.yml</a></li>
+        <li><a href="#2--1">2. 配置说明</a></li>
+        <li><a href="#3--1">3. 启动</a></li>
+        <li><a href="#4--1">4. 访问地址</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-faq">4. FAQ</a>
+      <ul>
+        <li><a href="#1--1">1. 权限问题</a></li>
+        <li><a href="#2--2">2. 插件问题</a></li>
+        <li><a href="#3-kibana">3. Kibana连不上</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-">5. 参考</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">ELK(一)---基于docker-compose搭建elasticsearch集群</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='https://www.lixueduan.com/categories/elasticsearch'>elasticsearch</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>本文主要记录了如何在单机下通过<code>docker-compsoe</code>搭建<code>Elasticsearch</code>集群和相关插件。包含了：<code>es集群(6.7.0)</code>+<code>ik分词器</code>+<code>kibana可视化工具</code>+<code>head插件</code>。</p>
+<blockquote>
+<p>更多文章欢迎访问我的个人博客&ndash;&gt;<a href="https://www.lixueduan.com/">幻境云图</a></p>
+</blockquote>
+<h2 id="1-">1. 概述</h2>
+<p>Elasticsearch是一个开源的高扩展的分布式全文检索引擎，它可以近乎实时的存储、检索数据；本身扩展性很好，可以扩展到上百台服务器，处理PB级别的数据。 
+Elasticsearch也使用Java开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。</p>
+<p>同时它也是<code>ELK</code>系统中的一员，<code>ELK </code>是三个开源项目的首字母缩写，这三个项目分别是：<code>Elasticsearch</code>、<code>Logstash</code> 和 <code>Kibana</code>。</p>
+<h2 id="2-">2. 环境准备</h2>
+<h3 id="1-jdk">1. jdk</h3>
+<p>需要jdk1.8及以上。</p>
+<h3 id="2-docker-compose">2. docker-compose</h3>
+<p>基于<code>docker-compsoe</code>编排，所以需要<code>docker</code>+<code>docker-compose</code></p>
+<h3 id="3-">3. 创建目录</h3>
+<p><strong>一定要先创建目录</strong></p>
+<p><strong>一定要先创建目录</strong></p>
+<p><strong>一定要先创建目录</strong></p>
+<p><strong>虽然在没有目录的情况下启动会自动创建对应目录但是真正写入数据时会出现权限问题</strong>。</p>
+<p>目录结构如下</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">/usr/local/docker
+├── es
+│ 	├── /data <span style="color:#998;font-style:italic"># 数据文件</span>
+│	│	  ├─/node1 
+│	│	  ├─/node2
+│	│     ├─/node3 
+│	├── /logs <span style="color:#998;font-style:italic"># 日志文件</span>
+│	│	  ├─/node1 
+│	│	  ├─/node2
+│	│	  ├─/node3 
+│	├── /conf <span style="color:#998;font-style:italic"># 配置文件  暂时没用到 大多数都是用的默认配置</span>
+│	│	  ├─/node1 
+│	│	  ├─/node2
+│	│	  ├─/node3
+│   ├── /plugins <span style="color:#998;font-style:italic"># 插件 这个就不用分节点存了。。</span>
+│	│	├─/elasticsearch-analysis-ik-6.7.0 <span style="color:#998;font-style:italic">#暂时只用到了分词器</span>
+└── docker-compose.yml <span style="color:#998;font-style:italic"># docker-compose配置文件</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>对应目录创建命令</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir -p es/<span style="color:#000;font-weight:bold">{</span>data,logs,conf<span style="color:#000;font-weight:bold">}</span>/<span style="color:#000;font-weight:bold">{</span>node1,node2,node3<span style="color:#000;font-weight:bold">}</span> es/plugins
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="4-">4. 系统变量调整</h3>
+<p>调整用户内存</p>
+<blockquote>
+<p>否则启动时可能会出现用户拥有的内存权限太小,至少需要262144的问题</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ sysctl -w vm.max_map_count<span style="color:#000;font-weight:bold">=</span>262144
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="3-docker-composeyml">3. docker-compose.yml</h2>
+<h3 id="1-docker-composeyml">1. docker-compose.yml</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">version:<span style="color:#bbb"> </span><span style="color:#d14">&#39;2&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>services:<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>elasticsearch1:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>image:<span style="color:#bbb"> </span>elasticsearch:<span style="color:#099">6.7</span><span style="color:#099">.0</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>container_name:<span style="color:#bbb"> </span>es1<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>environment:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>cluster.name=docker-cluster<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>node.name=es1<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>bootstrap.memory_lock=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.enabled=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.allow-origin=*<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#34;ES_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ulimits:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>memlock:<span style="color:#bbb">
+</span><span style="color:#bbb">       </span>soft:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">       </span>hard:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>volumes:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./data/node1:/usr/share/elasticsearch/data<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./logs/node1:/user/share/elasticsearch/logs<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./plugins:/usr/share/elasticsearch/plugins<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#099">9200</span>:<span style="color:#099">9200</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#099">9300</span>:<span style="color:#099">9300</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>elasticsearch2:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>image:<span style="color:#bbb"> </span>elasticsearch:<span style="color:#099">6.7</span><span style="color:#099">.0</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>container_name:<span style="color:#bbb"> </span>es2<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>environment:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>cluster.name=docker-cluster<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>node.name=es2<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>bootstrap.memory_lock=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.enabled=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.allow-origin=*<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#34;ES_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#34;discovery.zen.ping.unicast.hosts=es1&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ulimits:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>memlock:<span style="color:#bbb">
+</span><span style="color:#bbb">       </span>soft:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">       </span>hard:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>volumes:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./data/node2:/usr/share/elasticsearch/data<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./logs/node2:/user/share/elasticsearch/logs<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./plugins:/usr/share/elasticsearch/plugins<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9201</span>:<span style="color:#099">9200</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9301</span>:<span style="color:#099">9300</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>elasticsearch3:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>image:<span style="color:#bbb"> </span>elasticsearch:<span style="color:#099">6.7</span><span style="color:#099">.0</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>container_name:<span style="color:#bbb"> </span>es3<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>environment:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>cluster.name=docker-cluster<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>node.name=es3<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>bootstrap.memory_lock=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.enabled=<span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>http.cors.allow-origin=*<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#34;ES_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#34;discovery.zen.ping.unicast.hosts=es1&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ulimits:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>memlock:<span style="color:#bbb">
+</span><span style="color:#bbb">       </span>soft:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">       </span>hard:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>volumes:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./data/node3:/usr/share/elasticsearch/data<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./logs/node3:/user/share/elasticsearch/logs<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./plugins:/usr/share/elasticsearch/plugins<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9202</span>:<span style="color:#099">9200</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9302</span>:<span style="color:#099">9300</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"> </span>kibana:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>image:<span style="color:#bbb"> </span><span style="color:#d14">&#39;kibana:6.7.0&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>container_name:<span style="color:#bbb"> </span>kibana<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>environment:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>SERVER_NAME:<span style="color:#bbb"> </span>kibana.local<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>ELASTICSEARCH_URL:<span style="color:#bbb"> </span>http://es1:<span style="color:#099">9200</span><span style="color:#bbb">
+</span><span style="color:#bbb">     </span>I18N_LOCALE:<span style="color:#bbb"> </span>zh-CN<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#39;5601:5601&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"> </span>headPlugin:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>image:<span style="color:#bbb"> </span><span style="color:#d14">&#39;mobz/elasticsearch-head:5&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>container_name:<span style="color:#bbb"> </span>head<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span><span style="color:#d14">&#39;9100:9100&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>volumes:<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>esdata1:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>driver:<span style="color:#bbb"> </span>local<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>esdata2:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>driver:<span style="color:#bbb"> </span>local<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>esdata3:<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>driver:<span style="color:#bbb"> </span>local<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>esnet:<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2--1">2. 配置说明</h3>
+<p><code>docker-compose.yml</code>文件的一些简单说明。</p>
+<blockquote>
+<p>网上查到大部分都是直接给一个<code>docker-compose.yml</code>文件 什么说明都没有 关键还有很多错的 emmm 萌新表示瑟瑟发抖</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">version:<span style="color:#bbb"> </span><span style="color:#d14">&#39;2&#39;</span><span style="color:#bbb"> 
+</span></code></pre></td></tr></table>
+</div>
+</div><p><code>docker-compose</code>的版本</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">services:<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>elasticsearch1:<span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>其中的<code>elasticsearch1</code>就是启动的服务的名字 可以随意填写 主要是方便自己看，知道这段代码启动的是一个什么东西。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb"> </span>image:<span style="color:#bbb"> </span>elasticsearch:<span style="color:#099">6.7</span><span style="color:#099">.0</span><span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>指定使用哪个镜像</p>
+<blockquote>
+<p>ES不同版本间还是有一定差距的 最后明确指定版本号</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">container_name:<span style="color:#bbb"> </span>es1<span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>容器名字,同时在同一个<code>docker-network</code>中可以使用容器名字当做<code>ip</code>用</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">  environment:
+     - cluster.name<span style="color:#000;font-weight:bold">=</span>docker-cluster
+     - node.name<span style="color:#000;font-weight:bold">=</span>es1
+     - bootstrap.memory_lock<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span>
+     - http.cors.enabled<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span>
+     - http.cors.allow-origin<span style="color:#000;font-weight:bold">=</span>*
+     - <span style="color:#d14">&#34;ES_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>  environment 用于指定环境参数 这里没有用配置文件 就把要修改的几个值写这儿了</code></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">- cluster.name<span style="color:#000;font-weight:bold">=</span>docker-cluster
+</code></pre></td></tr></table>
+</div>
+</div><p>指定ES集群名字,不指定时系统默认为<code>elasticsearch</code>。启动ES时,集群名字相同的会自动加入组成一个集群。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">- node.name<span style="color:#000;font-weight:bold">=</span>es1
+</code></pre></td></tr></table>
+</div>
+</div><p>es节点名字</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">- bootstrap.memory_lock<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>启动后是否锁定内存，提高ES的性能。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">     - http.cors.enabled<span style="color:#000;font-weight:bold">=</span><span style="color:#0086b3">true</span>
+     - http.cors.allow-origin<span style="color:#000;font-weight:bold">=</span>*
+</code></pre></td></tr></table>
+</div>
+</div><p>设置运行跨域,主要用户head插件访问,否则head插件访问不了</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">-<span style="color:#bbb"> </span><span style="color:#d14">&#34;ES_JAVA_OPTS=-Xms512m -Xmx512m&#34;</span><span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>指定JVM参数。机器配置低就稍微调小一点,一般512够用了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">- <span style="color:#d14">&#34;discovery.zen.ping.unicast.hosts=es1&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>设置集群内节点的主机,设置一台的话这台默认成为master节点，写多个的话自动选取。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">- <span style="color:#d14">&#34;discovery.zen.ping.unicast.hosts=es1,es2,es3&#34;</span>
+<span style="color:#998;font-style:italic"># es1,es2,es3为容器名,同一docker网络内可以使用container_name代替 也可以写成ip:port</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">   </span>ulimits:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>memlock:<span style="color:#bbb">
+</span><span style="color:#bbb">       </span>soft:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">       </span>hard:<span style="color:#bbb"> </span>-<span style="color:#099">1</span><span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>解除内存限制相关设置，不设置可能会出现以下问题</p>
+<blockquote>
+<p>[unknown] Unable to lock JVM Memory: error=12, reason=Cannot allocate memory
+[unknown] This can result in part of the JVM being swapped out.
+[unknown] Increase RLIMIT_MEMLOCK, soft limit: 65536, hard limit: 65536
+[unknown] These can be adjusted by modifying /etc/security/limits.conf, for example: allow user &lsquo;elasticsearch&rsquo; mlockall</p>
+<p>elasticsearch soft memlock unlimited
+elasticsearch hard memlock unlimited
+[[unknown] If you are logged in interactively, you will have to re-login for the new limits to take effect.</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">   </span>volumes:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./data/node1:/usr/share/elasticsearch/data<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./logs/node1:/user/share/elasticsearch/logs<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span>./plugins:/usr/share/elasticsearch/plugins<span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>挂载数据卷。暂时使用了<code>data</code>、<code>logs</code>、<code>plugins</code>这几个,需要的话可以把<code>config</code>加上</p>
+<p><code>- ./config/node1/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml</code></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">   </span>ports:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9202</span>:<span style="color:#099">9200</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>-<span style="color:#bbb"> </span><span style="color:#099">9302</span>:<span style="color:#099">9300</span><span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>指定端口号,由于是在一台机器上跑的，所以把端口号改一下，es的<code>9200</code>分别映射到宿主机的<code>9200、9201、9202</code>,</p>
+<p><code>9300</code>则分别映射到<code>9300、9301、9302</code>。</p>
+<blockquote>
+<p>其中9200是es的http访问端口</p>
+<p>9300是用于同步数据的tcp端口</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">   </span>networks:<span style="color:#bbb">
+</span><span style="color:#bbb">     </span>-<span style="color:#bbb"> </span>esnet<span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>配置docker网络</p>
+<h3 id="3--1">3. 启动</h3>
+<p>在<code>docker-compose.yml</code>文件所在目录执行</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker-compose up
+</code></pre></td></tr></table>
+</div>
+</div><p>不出意外的话应该可以直接启动。</p>
+<p>需要后台运行则增加<code>-d</code>参数</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">docker-compose up -d
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="4--1">4. 访问地址</h3>
+<p>ES:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">192.168.0.2:9200
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="https://github.com/lixd/blog/raw/master/images/elasticsearch/es-welcome.png" alt="es"></p>
+<p>kibana:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">192.168.0.2:5601
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="https://github.com/lixd/blog/raw/master/images/elasticsearch/kibana-es-monitoring.png" alt="kibana"></p>
+<p>head:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"> 192.168.0.2:9100
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="https://github.com/lixd/blog/raw/master/images/elasticsearch/es-head.png" alt="es-head"></p>
+<p>查看集群状态:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">http://192.168.0.2:9200/_cat/health?v
+
+epoch      timestamp cluster        status node.total node.data shards pri relo init unassign pending_tasks max_task_wait_time active_shards_percent
+<span style="color:#099">1576584823</span> 12:13:43  docker-cluster green           <span style="color:#099">3</span>         <span style="color:#099">3</span>      <span style="color:#099">9</span>   <span style="color:#099">6</span>    <span style="color:#099">0</span>    <span style="color:#099">0</span>        <span style="color:#099">0</span>             <span style="color:#099">0</span>                  -                100.0%
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>记得改成对应的IP</p>
+</blockquote>
+<p>查看是否启动成功</p>
+<h2 id="4-faq">4. FAQ</h2>
+<h3 id="1--1">1. 权限问题</h3>
+<h4 id="1">问题1</h4>
+<p>启动前没有创建对应文件夹导致。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"> <span style="color:#000;font-weight:bold">[</span>0.001s<span style="color:#000;font-weight:bold">]</span><span style="color:#000;font-weight:bold">[</span>error<span style="color:#000;font-weight:bold">]</span><span style="color:#000;font-weight:bold">[</span>logging<span style="color:#000;font-weight:bold">]</span> Error opening log file <span style="color:#d14">&#39;logs/gc.log&#39;</span>: Permission denied 
+</code></pre></td></tr></table>
+</div>
+</div><p>添加权限即可</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#998;font-style:italic"># 给data和logs目录775权限</span>
+sudo chmod -R <span style="color:#099">775</span> /data
+<span style="color:#998;font-style:italic"># 修改文件归属者</span>
+sudo chown -R 1000:1000 /data
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="2">问题2</h4>
+<p>创建节点环境失败</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">Caused by: java.lang.IllegalStateException: Failed to create node environment
+</code></pre></td></tr></table>
+</div>
+</div><p>也是挂载目录权限问题</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">chmod <span style="color:#099">777</span> 挂载目录路径
+
+例如:chmod <span style="color:#099">777</span> es/data/
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="2--2">2. 插件问题</h3>
+<p>最开始添加ik分词器的时候数据卷是这样写的</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb"> </span>-<span style="color:#bbb"> </span>./plugins/elasticsearch-analysis-ik<span style="color:#099">-6.7</span><span style="color:#099">.0</span>:/usr/share/elasticsearch/plugins<span style="color:#bbb">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>启动时报错如下</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">es3   Caused by: java.nio.file.FileSystemException: /usr/share/elasticsearch/plugins/plugin-descriptor.properties/plugin-descriptor.properties: Not a directory
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>解决办法</strong></p>
+<p>最后发现是目录位置写错了,只需要指定plugins目录就行了</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"> - ./plugins:/usr/share/elasticsearch/plugins
+</code></pre></td></tr></table>
+</div>
+</div><p>改成这样即可，ES启动时会自动加载<code>plugins</code>目录下的插件,应该是把里面的每一个文件夹都当做一个插件的。</p>
+<h3 id="3-kibana">3. Kibana连不上</h3>
+<p>Kibana的设置es地址的字段好像有两个。<code>ELASTICSEARCH_URL</code>和<code>ELASTICSEARCH_HOSTS</code>。</p>
+<p>如果连不上es就换另外一个。</p>
+<h2 id="5-">5. 参考</h2>
+<p><code>https://www.jianshu.com/p/fdfead5acc23</code></p>
+<p><code>https://blog.csdn.net/weixin_45140326/article/details/98185314</code></p>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://www.lixueduan.com">意琦行</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/go/context/">Go语言之Context</a></li>
+        
+        <li><a href="/post/grpc/00-gRPC%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">gRPC入门教程(零)---使用gRPC时遇到的问题</a></li>
+        
+        <li><a href="/post/grpc/02-gRPC%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/">gRPC入门教程(二)---gRPC简单使用</a></li>
+        
+        <li><a href="/post/grpc/01-Protobuf%E5%AE%89%E8%A3%85/">gRPC入门教程(一)---Protobuf安装与基本使用</a></li>
+        
+        <li><a href="/post/android/email-sender/">Android平台自动发送邮件demo</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='https://www.lixueduan.com/tags/elasticsearch'>elasticsearch</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "illusorycloud/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://www.lixueduan.com/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://www.lixueduan.com">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/elasticsearch/ElasticSearch%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" title="ELK(一)---基于docker-compose搭建elasticsearch集群">ELK(一)---基于docker-compose搭建elasticsearch集群</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/go/context/" title="Go语言之Context">Go语言之Context</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/grpc/00-gRPC%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/" title="gRPC入门教程(零)---使用gRPC时遇到的问题">gRPC入门教程(零)---使用gRPC时遇到的问题</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/grpc/02-gRPC%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8/" title="gRPC入门教程(二)---gRPC简单使用">gRPC入门教程(二)---gRPC简单使用</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/grpc/01-Protobuf%E5%AE%89%E8%A3%85/" title="gRPC入门教程(一)---Protobuf安装与基本使用">gRPC入门教程(一)---Protobuf安装与基本使用</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/android/email-sender/" title="Android平台自动发送邮件demo">Android平台自动发送邮件demo</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/android/view-click-event/" title="Android事件分发机制详解">Android事件分发机制详解</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/git/git-use-guide/" title="Git入门教程">Git入门教程</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/git/git-ssh-key-set/" title="Git 配置及SSH key">Git 配置及SSH key</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://www.lixueduan.com/categories/Android/">Android (2)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/Git/">Git (2)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/Golang/">Golang (1)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/elasticsearch/">elasticsearch (1)</a></li>
+    
+    <li><a href="https://www.lixueduan.com/categories/gRPC/">gRPC (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://www.lixueduan.com/tags/Android/">Android</a>
+    
+    <a href="https://www.lixueduan.com/tags/Git/">Git</a>
+    
+    <a href="https://www.lixueduan.com/tags/Golang/">Golang</a>
+    
+    <a href="https://www.lixueduan.com/tags/elasticsearch/">elasticsearch</a>
+    
+    <a href="https://www.lixueduan.com/tags/gRPC/">gRPC</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.vaptcha.com/" title="VAPTCHA">智能手势验证码</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://www.lixueduan.com/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="https://www.lixueduan.com">幻境云图 By 意琦行</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131397277-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+
+</html>

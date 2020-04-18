@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on 幻境云图</title>
+    <link>https://www.lixueduan.com/categories/Golang/</link>
+    <description>Recent content in Golang on 幻境云图</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 28 May 2019 22:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.lixueduan.com/categories/Golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go语言之Context</title>
+      <link>https://www.lixueduan.com/post/go/context/</link>
+      <pubDate>Tue, 28 May 2019 22:00:00 +0000</pubDate>
+      
+      <guid>https://www.lixueduan.com/post/go/context/</guid>
+      <description>&lt;p&gt;本文主要简单介绍了Go语言(golang)中的&lt;code&gt;context&lt;/code&gt;。通过对底层结构的分析和实例讲述了context的基本用法。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
