@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Redis内存淘汰机制 | 幻境云图</title>
+    <meta property="og:title" content="Redis内存淘汰机制 - 幻境云图">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-03-11T00:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-03-11T00:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,幻境云图,java,博客">
+    <meta name="description" content="Redis内存淘汰机制">
+        
+    <meta name="author" content="意琦行">
+    <meta property="og:url" content="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7693630257897132",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.lixueduan.com">
+                        幻境云图
+                    </a>
+                
+                <p class="description">勿在浮沙筑高台</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.lixueduan.com">首页</a>
+                    
+                    <a  href="https://www.lixueduan.com/categories/" title="分类">分类</a>
+                    
+                    <a  href="https://www.lixueduan.com/tags/" title="标签">标签</a>
+                    
+                    <a  href="https://www.lixueduan.com/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://www.lixueduan.com/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -220px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        margin: 0 10px;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-">1. 过期策略</a></li>
+    <li><a href="#2-">2. 内存淘汰机制</a>
+      <ul>
+        <li><a href="#redislru">Redis中LRU策略的实现</a></li>
+        <li><a href="#redislfu">Redis中的LFU策略</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Redis内存淘汰机制</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年3月11日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='https://www.lixueduan.com/categories/Redis'>Redis</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h1 id="redis-">Redis <strong>内存淘汰机制</strong></h1>
+<h2 id="1-">1. 过期策略</h2>
+<p>内存淘汰机制前需要先了解一下Redis的<code>过期策略</code>。</p>
+<p><strong>Redis</strong>的过期策略，是有<strong>定期删除+惰性删除</strong>两种。</p>
+<p>定期好理解，默认100ms就随机抽一些设置了过期时间的key，去检查是否过期，过期了就删了。</p>
+<p>**为啥不扫描全部设置了过期时间的key呢？ **</p>
+<p>假如Redis里面所有的key都有过期时间，都扫描一遍？那太恐怖了，而且我们线上基本上也都是会设置一定的过期时间的。全扫描跟你去查数据库不带where条件不走索引全表扫描一样，100ms一次，Redis累都累死了。</p>
+<p>**如果一直没随机到很多key，里面不就存在大量的无效key了？ **</p>
+<p>好问题，<strong>惰性删除</strong>，见名知意，惰性嘛，我不主动删，我懒，我等你来查询了我看看你过期没，过期就删了还不给你返回，没过期该怎么样就怎么样。</p>
+<p><strong>最后就是如果的如果，定期没删，我也没查询，那可咋整？</strong></p>
+<p>所以就需要内存淘汰机制了</p>
+<h2 id="2-">2. 内存淘汰机制</h2>
+<p><strong>noeviction</strong>:返回错误当内存限制达到并且客户端尝试执行会让更多内存被使用的命令（大部分的写入指令，但DEL和几个例外）</p>
+<p><strong>allkeys-lru</strong>: 尝试回收最少使用的键（LRU），使得新添加的数据有空间存放。</p>
+<p><strong>volatile-lru</strong>: 尝试回收最少使用的键（LRU），但仅限于在过期集合的键,使得新添加的数据有空间存放。</p>
+<p><strong>allkeys-random</strong>: 回收随机的键使得新添加的数据有空间存放。</p>
+<p><strong>volatile-random</strong>: 回收随机的键使得新添加的数据有空间存放，但仅限于在过期集合的键。</p>
+<p><strong>volatile-ttl</strong>: 回收在过期集合的键，并且优先回收存活时间（TTL）较短的键,使得新添加的数据有空间存放。</p>
+<p>如果没有键满足回收的前提条件的话，策略<strong>volatile-lru</strong>, <strong>volatile-random</strong>以及<strong>volatile-ttl</strong>就和noeviction 差不多了。</p>
+<p>在我看来按选择时考虑三个因素：随机、Key最近被访问的时间 、Key的过期时间(TTL)</p>
+<h3 id="redislru">Redis中LRU策略的实现</h3>
+<h4 id="heading">方案一</h4>
+<p>LRU啊，记录下每个key 最近一次的访问时间（比如unix timestamp），unix timestamp最小的Key，就是最近未使用的，把这个Key移除。看下来一个HashMap就能搞定啊。是的，但是首先需要存储每个Key和它的timestamp。其次，还要比较timestamp得出最小值。代价很大，不现实啊。</p>
+<h4 id="heading-1">方案二</h4>
+<p>第二种方法：换个角度，不记录具体的访问时间点(unix timestamp)，而是记录idle time：idle time越小，意味着是最近被访问的。</p>
+<p>用一个双向链表(linkedlist)把所有的Key链表起来，如果一个Key被访问了，将就这个Key移到链表的表头，而要移除Key时，直接从表尾移除。</p>
+<h4 id="redis">redis方案一</h4>
+<p>但是在redis中，并没有采用这种方式实现，它嫌<code>LinkedList占用的空间太大了</code>。Redis并不是直接基于字符串、链表、字典等数据结构来实现KV数据库，而是在这些数据结构上创建了一个对象系统Redis Object。</p>
+<p>在redisObject结构体中定义了一个长度24bit的<code>unsigned</code>类型的字段，用来存储对象<code>最后一次被命令程序访问的时间</code>：</p>
+<p>毕竟，并不需要一个完全准确的LRU算法，就算移除了一个最近访问过的Key，影响也不太。</p>
+<p>最初Redis是这样实现的：</p>
+<p>随机选三个Key，把idle time最大的那个Key移除。后来，把3改成可配置的一个参数，默认为N=5：<code>maxmemory-samples 5</code></p>
+<p>就是这么简单，简单得让人不敢相信了，而且十分有效。但它还是有缺点的：每次随机选择的时候，并没有利用<strong>历史信息</strong>。在每一轮移除(evict)一个Key时，随机从N个里面选一个Key，移除idle time最大的那个Key；下一轮又是随机从N个里面选一个Key&hellip;有没有想过：在上一轮移除Key的过程中，其实是知道了N个Key的idle time的情况的，那我能不能在下一轮移除Key时，利用好上一轮知晓的一些信息？</p>
+<h4 id="redis-1">redis方案二</h4>
+<p>于是Redis又做出了<code>改进</code>：采用缓冲池(pooling)</p>
+<p>当每一轮移除Key时，拿到了这个N个Key的idle time，如果它的idle time比 pool 里面的 Key的idle time还要大，就把它添加到pool里面去。这样一来，每次移除的Key并不仅仅是随机选择的N个Key里面最大的，而且还是pool里面idle time最大的，并且：pool 里面的Key是经过多轮比较筛选的，它的idle time 在概率上比随机获取的Key的idle time要大，可以这么理解：pool 里面的Key 保留了&quot;历史经验信息&rdquo;。</p>
+<p>采用&quot;pool&rdquo;，把一个全局排序问题 转化成为了 局部的比较问题。(尽管排序本质上也是比较，囧)。要想知道idle time 最大的key，精确的LRU需要对全局的key的idle time排序，然后就能找出idle time最大的key了。但是可以采用一种近似的思想，即随机采样(samping)若干个key，这若干个key就代表着全局的key，把samping得到的key放到pool里面，每次采样之后更新pool，使得pool里面总是保存着随机选择过的key的idle time最大的那些key。需要evict key时，直接从pool里面取出idle time最大的key，将之evict掉。这种思想是很值得借鉴的。</p>
+<h3 id="redislfu">Redis中的LFU策略</h3>
+<p>redis4.0中新增了LFU策略。</p>
+<p>LFU算法的思路是： 我们记录下来每个（被缓存的/出现过的）数据的请求频次信息，如果一个请求的请求次数多，那么它就很可能接着被请求。</p>
+<p>在数据请求模式比较稳定（没有对于某个数据突发的高频访问这样的不稳定模式）的情况下，LFU的表现还是很不错的。在数据的请求模式大多不稳定的情况下，LFU一般会有这样一些问题：</p>
+<ul>
+<li>1）微博热点数据一般只是几天内有较高的访问频次，过了这段时间就没那么大意义去缓存了。但是因为在热点期间他的频次被刷上去了，之后很长一段时间内很难被淘汰；</li>
+<li>2）如果采用只记录缓存中的数据的访问信息，新加入的高频访问数据在刚加入的时候由于没有累积优势，很容易被淘汰掉；</li>
+<li>3）如果记录全部出现过的数据的访问信息，会占用更多的内存空间。</li>
+</ul>
+<h4 id="heading-2">近似计数算法</h4>
+<p>Redis记录访问次数使用了一种近似计数算法——<code>Morris算法</code>。Morris算法利用随机算法来增加计数，在Morris算法中，计数不是真实的计数，它代表的是实际计数的量级。</p>
+<p>算法的思想是这样的：算法在需要增加计数的时候通过随机数的方式计算一个值来判断是否要增加，算法控制 <strong>在计数越大的时候，得到结果“是”的几率越小</strong></p>
+<p>这个算法的特点是能够用一个较小的数表示一个很大的量级，所以对于Redis来说统计频次不需要太多空间和内容，只需要一个不那么大的数就行（这个特性解决了前面说的LFU的常见问题3）。</p>
+<p>。正好，Redis的LRU算法实现里，用了一个24位的<code>redisObject-&gt;lru</code>字段，拿到LFU中正好合用。Redis没有全部用掉这24位，只拿了其中8位用来做计数，剩下的16位另作别用。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"> *          <span style="color:#099">16</span> bits      <span style="color:#099">8</span> bits
+ *     +----------------+--------+
+ *     + Last decr <span style="color:#0086b3">time</span> | LOG_C  |
+ *     +----------------+--------+
+</code></pre></td></tr></table>
+</div>
+</div><p>8个bit位最大为255，从Redis文档中贴出来的数据（如下表）可以看到，不同的factor的值能够控制计数代表的量级的范围，当factor为100时，能够最大代表10M，也就是千万级别的命中数。</p>
+<table>
+<thead>
+<tr>
+<th>factor</th>
+<th>100hits</th>
+<th>1000 hits</th>
+<th>100k hits</th>
+<th>1M hit</th>
+<th>10M hits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>104</td>
+<td>255</td>
+<td>255</td>
+<td>255</td>
+<td>255</td>
+</tr>
+<tr>
+<td>1</td>
+<td>18</td>
+<td>49</td>
+<td>255</td>
+<td>255</td>
+<td>255</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10</td>
+<td>18</td>
+<td>142</td>
+<td>255</td>
+<td>255</td>
+</tr>
+<tr>
+<td>100</td>
+<td>8</td>
+<td>11</td>
+<td>49</td>
+<td>143</td>
+<td>255</td>
+</tr>
+</tbody>
+</table>
+<p>redis中访问计数并不是只增不减的，对于长时间未访问的数据,会逐步降低其访问计数,这样就解决了问题一。</p>
+<p>同时对于新插入的数据默认访问计数是从5开始的，这样就保证了不会刚加进来访问计数还是0，然后下一秒就被移除了，问题二也解决了。</p>
+<h4 id="heading-3">具体实现</h4>
+<p>Redis中关于缓存淘汰的核心源码都在evict.c文件中，其中实现LFU的主要方法是：LFUGetTimeInMinutes、LFUTimeElapsed、LFULogIncr、LFUDecrAndReturn。下面具体来说：</p>
+<p>Redis中实现LFU算法的时候，有这个两个重要的可配置参数：</p>
+<p>server.lfu_log_factor : 能够影响计数的量级范围，即上表中的factor参数；
+server.lfu_decay_time: 控制LFU计数衰减的参数。</p>
+<h5 id="heading-4">访问计数</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#998;font-style:italic">/* Logarithmically increment a counter. The greater is the current counter value
+</span><span style="color:#998;font-style:italic"> * the less likely is that it gets really implemented. Saturate it at 255. */</span>
+uint8_t <span style="color:#900;font-weight:bold">LFULogIncr</span>(uint8_t counter) {
+    <span style="color:#000;font-weight:bold">if</span> (counter <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#099">255</span>) <span style="color:#000;font-weight:bold">return</span> <span style="color:#099">255</span>;
+    <span style="color:#458;font-weight:bold">double</span> r <span style="color:#000;font-weight:bold">=</span> (<span style="color:#458;font-weight:bold">double</span>)rand()<span style="color:#000;font-weight:bold">/</span>RAND_MAX;
+    <span style="color:#458;font-weight:bold">double</span> baseval <span style="color:#000;font-weight:bold">=</span> counter <span style="color:#000;font-weight:bold">-</span> LFU_INIT_VAL;
+    <span style="color:#000;font-weight:bold">if</span> (baseval <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>) baseval <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>;
+    <span style="color:#458;font-weight:bold">double</span> p <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1.0</span><span style="color:#000;font-weight:bold">/</span>(baseval<span style="color:#000;font-weight:bold">*</span>server.lfu_log_factor<span style="color:#000;font-weight:bold">+</span><span style="color:#099">1</span>);
+    <span style="color:#000;font-weight:bold">if</span> (r <span style="color:#000;font-weight:bold">&lt;</span> p) counter<span style="color:#000;font-weight:bold">+</span><span style="color:#000;font-weight:bold">+</span>;
+    <span style="color:#000;font-weight:bold">return</span> counter;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>其中比较重要的两个数分别是<code>r</code>和<code>p</code>，他们的大小关系决定本次counter是否增加</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#000;font-weight:bold">if</span> (r <span style="color:#000;font-weight:bold">&lt;</span> p) counter<span style="color:#000;font-weight:bold">+</span><span style="color:#000;font-weight:bold">+</span>;
+</code></pre></td></tr></table>
+</div>
+</div><p>首先是判断到255了就不加了</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"> <span style="color:#000;font-weight:bold">if</span> (counter <span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#099">255</span>) <span style="color:#000;font-weight:bold">return</span> <span style="color:#099">255</span>;
+</code></pre></td></tr></table>
+</div>
+</div><p>然后随机得到r,可以看出取值是在0~1之间</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#458;font-weight:bold">double</span> r <span style="color:#000;font-weight:bold">=</span> (<span style="color:#458;font-weight:bold">double</span>)rand()<span style="color:#000;font-weight:bold">/</span>RAND_MAX;
+</code></pre></td></tr></table>
+</div>
+</div><p>接着计算p</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">    <span style="color:#458;font-weight:bold">double</span> baseval <span style="color:#000;font-weight:bold">=</span> counter <span style="color:#000;font-weight:bold">-</span> LFU_INIT_VAL;
+    <span style="color:#000;font-weight:bold">if</span> (baseval <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>) baseval <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>;
+    <span style="color:#458;font-weight:bold">double</span> p <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1.0</span><span style="color:#000;font-weight:bold">/</span>(baseval<span style="color:#000;font-weight:bold">*</span>server.lfu_log_factor<span style="color:#000;font-weight:bold">+</span><span style="color:#099">1</span>);
+</code></pre></td></tr></table>
+</div>
+</div><p><code>LFU_INIT_VAL</code>就是前面说的新插入数据的初识counter，默认为5.</p>
+<p>可以看出当counter衰减之后(即小于初始值5)再次访问时counter是必定会增加的。</p>
+<p>然后设置的<code>lfu_log_facto</code>越大p就越小，counter增加得就越慢。</p>
+<h5 id="heading-5">计数初值</h5>
+<p>Redis中在创建新对象的时候，它的LFU计数值不是从0开始的，这个在<code>createObject</code>（<code>object.c</code>文件中）方法中能看到。当使用LFU的时候，它的lru值是这样初始化的：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">        o<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">&gt;</span>lru <span style="color:#000;font-weight:bold">=</span> (LFUGetTimeInMinutes()<span style="color:#000;font-weight:bold">&lt;</span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#099">8</span>) <span style="color:#000;font-weight:bold">|</span> LFU_INIT_VAL;
+</code></pre></td></tr></table>
+</div>
+</div><p>初始计数值会直接就是LFU_INIT_VAL，也就是5，这点就是为了解决前头说到的LFU算法的第常见问题2：新增的缓存可能还没开始累积优势就被淘汰了。给新增缓存一个5的计数值，那么至少能保证新增缓存比真正冷（计数值低于5）的数据要晚淘汰。</p>
+<p>可是初始计数值就是从5开始的，为什么会有出现计数值低于5的数据呢？这是Redis为了解决LFU解决前头说的常见问题1引入的手段 – 计数衰减。</p>
+<h5 id="heading-6">计数衰减</h5>
+<p>在缓存被访问时，会更新数据的访问计数，更新的步骤是：先在现有数据的计数上进行计数衰减，再对完成衰减后的计数进行增加。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#998;font-style:italic">/* Return the current time in minutes, just taking the least significant
+</span><span style="color:#998;font-style:italic"> * 16 bits. The returned time is suitable to be stored as LDT (last decrement
+</span><span style="color:#998;font-style:italic"> * time) for the LFU implementation. */</span>
+<span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> <span style="color:#900;font-weight:bold">LFUGetTimeInMinutes</span>(<span style="color:#458;font-weight:bold">void</span>) {
+    <span style="color:#000;font-weight:bold">return</span> (server.unixtime<span style="color:#000;font-weight:bold">/</span><span style="color:#099">60</span>) <span style="color:#000;font-weight:bold">&amp;</span> <span style="color:#099">65535</span>;
+}
+
+<span style="color:#998;font-style:italic">/* Given an object last access time, compute the minimum number of minutes
+</span><span style="color:#998;font-style:italic"> * that elapsed since the last access. Handle overflow (ldt greater than
+</span><span style="color:#998;font-style:italic"> * the current 16 bits minutes time) considering the time as wrapping
+</span><span style="color:#998;font-style:italic"> * exactly once. */</span>
+<span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> <span style="color:#900;font-weight:bold">LFUTimeElapsed</span>(<span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> ldt) {
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> now <span style="color:#000;font-weight:bold">=</span> LFUGetTimeInMinutes();
+    <span style="color:#000;font-weight:bold">if</span> (now <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">=</span> ldt) <span style="color:#000;font-weight:bold">return</span> now<span style="color:#000;font-weight:bold">-</span>ldt;
+    <span style="color:#000;font-weight:bold">return</span> <span style="color:#099">65535</span><span style="color:#000;font-weight:bold">-</span>ldt<span style="color:#000;font-weight:bold">+</span>now;
+}
+
+<span style="color:#998;font-style:italic">/* If the object decrement time is reached decrement the LFU counter but
+</span><span style="color:#998;font-style:italic"> * do not update LFU fields of the object, we update the access time
+</span><span style="color:#998;font-style:italic"> * and counter in an explicit way when the object is really accessed.
+</span><span style="color:#998;font-style:italic"> * And we will times halve the counter according to the times of
+</span><span style="color:#998;font-style:italic"> * elapsed time than server.lfu_decay_time.
+</span><span style="color:#998;font-style:italic"> * Return the object frequency counter.
+</span><span style="color:#998;font-style:italic"> *
+</span><span style="color:#998;font-style:italic"> * This function is used in order to scan the dataset for the best object
+</span><span style="color:#998;font-style:italic"> * to fit: as we check for the candidate, we incrementally decrement the
+</span><span style="color:#998;font-style:italic"> * counter of the scanned objects if needed. */</span>
+<span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> <span style="color:#900;font-weight:bold">LFUDecrAndReturn</span>(robj <span style="color:#000;font-weight:bold">*</span>o) {
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> ldt <span style="color:#000;font-weight:bold">=</span> o<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">&gt;</span>lru <span style="color:#000;font-weight:bold">&gt;</span><span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#099">8</span>;
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> counter <span style="color:#000;font-weight:bold">=</span> o<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">&gt;</span>lru <span style="color:#000;font-weight:bold">&amp;</span> <span style="color:#099">255</span>;
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> num_periods <span style="color:#000;font-weight:bold">=</span> server.lfu_decay_time <span style="color:#000;font-weight:bold">?</span> LFUTimeElapsed(ldt) <span style="color:#000;font-weight:bold">/</span> server.<span style="color:#900;font-weight:bold">lfu_decay_time</span> : <span style="color:#099">0</span>;
+    <span style="color:#000;font-weight:bold">if</span> (num_periods)
+        counter <span style="color:#000;font-weight:bold">=</span> (num_periods <span style="color:#000;font-weight:bold">&gt;</span> counter) <span style="color:#000;font-weight:bold">?</span> <span style="color:#099">0</span> <span style="color:#000;font-weight:bold">:</span> counter <span style="color:#000;font-weight:bold">-</span> num_periods;
+    <span style="color:#000;font-weight:bold">return</span> counter;
+}
+
+</code></pre></td></tr></table>
+</div>
+</div><p>前面说到过Redis是使用原来用于LRU的24位的redisObject-&gt;lru中的8位来进行计数的，剩下的16位另作它用 – 用于计数值的衰减。开头说的Redis配置项 – server.lfu_decay_time，也是用于控制计数的衰减的。</p>
+<p>server.lfu_decay_time 的代表的含义是计数衰减的周期长度，单位是分钟。当时间过去一个周期，计数值就会减1。（按照源码中注释说的，当计数值大于两倍的COUNTER_INIT_VAL时，计数值是以减半进行衰减的，小于两倍的COUNTER_INIT_VAL时每次减一。但是现在从源码看来都是直接减一的，应该这块之前这么弄有问题所以改了，注释没改）</p>
+<p>衰减周期的计算就是redisObject-&gt;lru中那16位，它记录的就是上次进行衰减的时间。衰减周期数就等于从上次衰减到现在经过的时间除以衰减周期长度 server.lfu_decay_time。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> num_periods <span style="color:#000;font-weight:bold">=</span> server.lfu_decay_time <span style="color:#000;font-weight:bold">?</span> LFUTimeElapsed(ldt) <span style="color:#000;font-weight:bold">/</span> server.<span style="color:#900;font-weight:bold">lfu_decay_time</span> : <span style="color:#099">0</span>;
+</code></pre></td></tr></table>
+</div>
+</div><h5 id="heading-7">具体执行</h5>
+<p>使用LFU方式进行缓存缓存淘汰，其实和使用LRU方式的执行过程基本完全一致，只是把idle换成了 255 - counter。</p>
+<p>也是pool那一套逻辑。</p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://www.lixueduan.com">意琦行</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/">https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">Redis命令执行流程</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/">Redis单机数据库</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AE%9E%E7%8E%B0/">Redis 持久化</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisServer/">Redis Server</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisClient/">Redis Client</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='https://www.lixueduan.com/tags/Redis'>Redis</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "illusorycloud/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://www.lixueduan.com/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://www.lixueduan.com">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6/" title="Redis文件事件">Redis文件事件</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis持久化方式">Redis持久化方式</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/" title="Redis内存淘汰机制">Redis内存淘汰机制</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" title="Redis命令执行流程">Redis命令执行流程</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/" title="Redis单机数据库">Redis单机数据库</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AE%9E%E7%8E%B0/" title="Redis 持久化">Redis 持久化</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisServer/" title="Redis Server">Redis Server</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisClient/" title="Redis Client">Redis Client</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://www.lixueduan.com/categories/Redis/">Redis (8)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://www.lixueduan.com/tags/Redis/">Redis</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.vaptcha.com/" title="VAPTCHA">智能手势验证码</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://www.lixueduan.com/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="https://www.lixueduan.com">幻境云图 By 意琦行</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131397277-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+
+</html>

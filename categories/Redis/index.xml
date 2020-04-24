@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>幻境云图</title>
-    <link>https://www.lixueduan.com/</link>
-    <description>Recent content on 幻境云图</description>
+    <title>Redis on 幻境云图</title>
+    <link>https://www.lixueduan.com/categories/Redis/</link>
+    <description>Recent content in Redis on 幻境云图</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 15 Mar 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://www.lixueduan.com/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.lixueduan.com/categories/Redis/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -81,33 +81,6 @@
       
       <guid>https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisClient/</guid>
       <description>Redis客户端 1. 概述 redis服务器中通过链表来存储所有客户端的状态 1 2 3 4 5 6 7 struct redisServer { //... //一个链表 保存了所有客户端状态 list *clients; //... }; 2. 客户端状态 客户端状态包含的属性可以分为两类： 一类是比较通用的属性， 这些属性很少与特定功能相关， 无论客户端执行的是什么工作， 它们都要用到这些属性。 另</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://www.lixueduan.com/about/</link>
-      <pubDate>Sun, 01 Oct 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.lixueduan.com/about/</guid>
-      <description>关于我 18年毕业的小菜鸟一只。 在校期间自学Java，从此踏上了编程这条不归之路。 博客主要记录自己的学习记录or总结，当然也希望能帮到有需要的人。 强迫症，不喜欢看到杂乱的代码。 阅读记录 书名 时间 备注 《并发编程的艺术》 2019 Java并发 《深入理解Java虚拟机》 2019 JVM相关 《Redis设计</description>
-    </item>
-    
-    <item>
-      <title>归档</title>
-      <link>https://www.lixueduan.com/archives/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.lixueduan.com/archives/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>搜索</title>
-      <link>https://www.lixueduan.com/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.lixueduan.com/search/</guid>
-      <description></description>
     </item>
     
   </channel>

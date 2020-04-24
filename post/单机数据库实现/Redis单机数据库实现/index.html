@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Redis单机数据库 | 幻境云图</title>
+    <meta property="og:title" content="Redis单机数据库 - 幻境云图">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-03-07T00:00:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-03-07T00:00:00&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,幻境云图,java,博客">
+    <meta name="description" content="Redis单机数据库实现">
+        
+    <meta name="author" content="意琦行">
+    <meta property="og:url" content="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-7693630257897132",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://www.lixueduan.com">
+                        幻境云图
+                    </a>
+                
+                <p class="description">勿在浮沙筑高台</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://www.lixueduan.com">首页</a>
+                    
+                    <a  href="https://www.lixueduan.com/categories/" title="分类">分类</a>
+                    
+                    <a  href="https://www.lixueduan.com/tags/" title="标签">标签</a>
+                    
+                    <a  href="https://www.lixueduan.com/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://www.lixueduan.com/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -220px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        margin: 0 10px;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-">1. 概述</a></li>
+    <li><a href="#2-key-space">2. 键空间(key space)</a></li>
+    <li><a href="#3-">3. 过期字典</a></li>
+    <li><a href="#4-">4. 过期键删除策略</a>
+      <ul>
+        <li><a href="#1--1">1. 具体策略</a></li>
+        <li><a href="#2-redis">2. Redis策略实现</a></li>
+        <li><a href="#3--1">3. 持久化和复制时的相关处理</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-">5. 小结</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Redis单机数据库</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年3月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='https://www.lixueduan.com/categories/Redis'>Redis</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h1 id="redis">Redis单机数据库实现</h1>
+<h2 id="1-">1. 概述</h2>
+<p>Redis服务器中的所有数据库都保存在服务器状态<code>redis.h/redisServer</code>结构的db数组中，服务器初始化时会根据<code>dbnum</code>创建多个数据库，默认是<code>16</code>个</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#000;font-weight:bold">struct</span> redisServer {
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">//一个数组 保存着服务器中的所有数据库
+</span><span style="color:#998;font-style:italic"></span>    redisDb <span style="color:#000;font-weight:bold">*</span>db
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 服务器数量
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">int</span> dbnum
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>db数组中每一项都是一个<code>redis.h/redisDb</code>结构,每一个redisDb代表一个数据库</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#000;font-weight:bold">typedef</span> <span style="color:#000;font-weight:bold">struct</span> redisDb {
+
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>
+    <span style="color:#998;font-style:italic">// 数据库键空间，保存着数据库中的所有键值对
+</span><span style="color:#998;font-style:italic"></span>    dict <span style="color:#000;font-weight:bold">*</span>dict;
+
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>
+} redisDb;
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="2-key-space">2. 键空间(key space)</h2>
+<p>Redis数据库中包含两个<code>字典</code>。其中<code>dict</code>字典保存了数据库中的所有键值对， 我们将这个字典称为键空间（key space)。</p>
+<p>键空间和用户所见的数据库是直接对应的：</p>
+<ul>
+<li>键空间的键也就是数据库的键， 每个键都是一个字符串对象。</li>
+<li>键空间的值也就是数据库的值， 每个值可以是字符串对象、列表对象、哈希表对象、集合对象和有序集合对象在内的任意一种 Redis 对象。</li>
+</ul>
+<p>举个例子， 如果我们在空白的数据库中执行以下命令：</p>
+<pre><code>redis&gt; SET message &quot;hello world&quot;
+OK
+
+redis&gt; RPUSH alphabet &quot;a&quot; &quot;b&quot; &quot;c&quot;
+(integer) 3
+
+redis&gt; HSET book name &quot;Redis in Action&quot;
+(integer) 1
+
+redis&gt; HSET book author &quot;Josiah L. Carlson&quot;
+(integer) 1
+
+redis&gt; HSET book publisher &quot;Manning&quot;
+(integer) 1
+</code></pre><p>那么在这些命令执行之后， 数据库的键空间将会是图 IMAGE_DB_EXAMPLE 所展示的样子：</p>
+<ul>
+<li><code>alphabet</code> 是一个列表键， 键的名字是一个包含字符串 <code>&quot;alphabet&quot;</code> 的字符串对象， 键的值则是一个包含三个元素的列表对象。</li>
+<li><code>book</code> 是一个哈希表键， 键的名字是一个包含字符串 <code>&quot;book&quot;</code> 的字符串对象， 键的值则是一个包含三个键值对的哈希表对象。</li>
+<li><code>message</code> 是一个字符串键， 键的名字是一个包含字符串 <code>&quot;message&quot;</code> 的字符串对象， 键的值则是一个包含字符串 <code>&quot;hello world&quot;</code> 的字符串对象。</li>
+</ul>
+<p><img src="./images/redis-db-keyspace.png" alt=""></p>
+<p><strong>各种操作</strong></p>
+<p>添加键:将一个键值对添加到键空间字典里</p>
+<p>删除键:从键空间字典中删除键值对</p>
+<p>更新:更新键空间字典中的键值对</p>
+<p>对键取值:先在键空间中找到key，然后查询对应的value。</p>
+<h2 id="3-">3. 过期字典</h2>
+<p>redisDb结构中的<code>expires</code>字典保存了所有的过期时间,我们称之为过期字典。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#000;font-weight:bold">typedef</span> <span style="color:#000;font-weight:bold">struct</span> redisDb {
+
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>
+    <span style="color:#998;font-style:italic">// 过期字典 保存着键的过期时间
+</span><span style="color:#998;font-style:italic"></span>    dict <span style="color:#000;font-weight:bold">*</span>expires;
+
+    <span style="color:#998;font-style:italic">// ...
+</span><span style="color:#998;font-style:italic"></span>
+} redisDb;
+</code></pre></td></tr></table>
+</div>
+</div><p>结构如下</p>
+<p><img src="./images/redis-db-expirespace.png" alt="过期字典"></p>
+<p>操作和键空间类似。</p>
+<p><strong>给定键是否过期的判定？</strong></p>
+<ul>
+<li>1.检查是否在过期字典中,在则取到过期时间</li>
+<li>2.检查当前Unix时间戳是否大于过期时间,是则过期否则未过期。</li>
+</ul>
+<h2 id="4-">4. 过期键删除策略</h2>
+<h3 id="1--1">1. 具体策略</h3>
+<p><strong>1. 定时删除</strong></p>
+<p>在设置过期时间的时候就添加一个定时器，过期时间一到就把这个键给删除掉。</p>
+<p>对内存友好但可能会占用大量cpu,在cpu紧张的时候会对吞吐量造成较大影响。</p>
+<p><strong>2. 惰性删除</strong></p>
+<p>不做任何操作，每次获取键时如果已经过期则删除，否则返回该键。</p>
+<p>对cpu友好但是对内存不友好，如果一个键过期之后不执行查询操作或手动删除就会一直保留在数据库中,内存得不到释放。</p>
+<p><strong>3.定期删除</strong></p>
+<p>每隔一段时间程序就对服务器进行一次检查，删除里面的过期键。</p>
+<p>至于删除多少过期键，检查多少数据库则由算法决定。</p>
+<p>是前两种策略的折中，难点是设置执行时长和执行频率。</p>
+<blockquote>
+<p>执行太频繁就会退化成定时删除，执行间隔太久又会退化为惰性删除，浪费内存。</p>
+</blockquote>
+<h3 id="2-redis">2. Redis策略实现</h3>
+<p>Redis服务器当前使用的是<strong><code>惰性删除</code></strong>和<strong><code>定期删除</code></strong>两种策略，通过两种策略配合可以很好的在占用CPU时间和浪费内存空间之间取得平衡。</p>
+<h4 id="1--2">1. 惰性删除</h4>
+<p>所有读写数据库的Redis命令执行前都会调用<code>expireIfNeed</code>函数对键进行检查，如果过期则删除键，否则不执行任何操作</p>
+<p>类似过滤器，在真正执行命令前过滤掉已经过期的输入键，避免命令接触到过期键。</p>
+<h4 id="2-">2. 定期检查</h4>
+<p>Redis服务器周期性调用serverCron时会调用<code>activeExpireCycle</code>函数，</p>
+<p>它在规定时间内，分多次遍历服务器中的各个数据库，从数据库的expires字典中随机检查一部分键的过期时间，并删除其中的过期键。</p>
+<blockquote>
+<p>默认检查数据库为16个。</p>
+<p>默认检查键为20个。</p>
+<p>检查时会记录下当前正在检查的db(current_db)，如果时间到了将立即返回，下次检查则从这个db开始。如果当current_db=总db数或默认检查db数时将重置，然后开始新一轮检查。</p>
+</blockquote>
+<h3 id="3--1">3. 持久化和复制时的相关处理</h3>
+<p><strong>RDB</strong></p>
+<p>如果是RDB方式持久化，在生成快照文件时不会保存已过期的键。</p>
+<p><strong>AOF</strong></p>
+<p>如果是AOF方式则不会做任何处理,只有在定期检查或惰性删除到过期键时 会在AOF文件中追加一个显示的删除命令。</p>
+<p><strong>AOF文件重写</strong></p>
+<p>AOF文件重写时会对键进行检查,已过期的键不会写入重写后的AOF文件。</p>
+<p><strong>复制</strong></p>
+<ul>
+<li>
+<p>主服务器发现过期键时会显式给从服务器发送Del命令删除该key</p>
+</li>
+<li>
+<p>从服务器直接读操作时发现key过期也不会删除，会当做未过期key处理,只有等主服务器发来Del命令才会删除</p>
+</li>
+</ul>
+<h2 id="5-">5. 小结</h2>
+<ul>
+<li>Redis 服务器的所有数据库都保存在 <code>redisServer.db</code> 数组中， 而数据库的数量则由 <code>redisServer.dbnum</code> 属性保存。</li>
+<li>客户端通过修改目标数据库指针， 让它指向 <code>redisServer.db</code> 数组中的不同元素来切换不同的数据库。</li>
+<li>数据库主要由 <code>dict</code> 和 <code>expires</code> 两个字典构成， 其中 <code>dict</code> 字典负责保存键值对， 而 <code>expires</code> 字典则负责保存键的过期时间。</li>
+<li>因为数据库由字典构成， 所以对数据库的操作都是建立在字典操作之上的。</li>
+<li>数据库的键总是一个字符串对象， 而值则可以是任意一种 Redis 对象类型， 包括字符串对象、哈希表对象、集合对象、列表对象和有序集合对象， 分别对应字符串键、哈希表键、集合键、列表键和有序集合键。</li>
+<li><code>expires</code> 字典的键指向数据库中的某个键， 而值则记录了数据库键的过期时间， 过期时间是一个以毫秒为单位的 UNIX 时间戳。</li>
+<li>Redis 使用惰性删除和定期删除两种策略来删除过期的键： 惰性删除策略只在碰到过期键时才进行删除操作， 定期删除策略则每隔一段时间， 主动查找并删除过期键。</li>
+<li>执行 SAVE 命令或者 BGSAVE 命令所产生的新 RDB 文件不会包含已经过期的键。</li>
+<li>执行 BGREWRITEAOF 命令所产生的重写 AOF 文件不会包含已经过期的键。</li>
+<li>当一个过期键被删除之后， 服务器会追加一条 DEL 命令到现有 AOF 文件的末尾， 显式地删除过期键。</li>
+<li>当主服务器删除一个过期键之后， 它会向所有从服务器发送一条 DEL 命令， 显式地删除过期键。</li>
+<li>从服务器即使发现过期键， 也不会自作主张地删除它， 而是等待主节点发来 DEL 命令， 这种统一、中心化的过期键删除策略可以保证主从服务器数据的一致性。</li>
+<li>当 Redis 命令对数据库进行修改之后， 服务器会根据配置， 向客户端发送数据库通知。</li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://www.lixueduan.com">意琦行</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/">https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AE%9E%E7%8E%B0/">Redis 持久化</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisServer/">Redis Server</a></li>
+        
+        <li><a href="/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisClient/">Redis Client</a></li>
+        
+        <li><a href="/about/">About</a></li>
+        
+        <li><a href="/archives/">归档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='https://www.lixueduan.com/tags/Redis'>Redis</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "illusorycloud/blog-comments"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://www.lixueduan.com/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://www.lixueduan.com">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%96%87%E4%BB%B6%E4%BA%8B%E4%BB%B6/" title="Redis文件事件">Redis文件事件</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis持久化方式">Redis持久化方式</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/" title="Redis内存淘汰机制">Redis内存淘汰机制</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" title="Redis命令执行流程">Redis命令执行流程</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/" title="Redis单机数据库">Redis单机数据库</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/Redis%E6%8C%81%E4%B9%85%E5%8C%96%E5%AE%9E%E7%8E%B0/" title="Redis 持久化">Redis 持久化</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisServer/" title="Redis Server">Redis Server</a>
+    </li>
+    
+    <li>
+        <a href="https://www.lixueduan.com/post/%E5%8D%95%E6%9C%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0/RedisClient/" title="Redis Client">Redis Client</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://www.lixueduan.com/categories/Redis/">Redis (8)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://www.lixueduan.com/tags/Redis/">Redis</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.vaptcha.com/" title="VAPTCHA">智能手势验证码</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://www.lixueduan.com/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="https://www.lixueduan.com">幻境云图 By 意琦行</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-131397277-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?2765db46fe986fa867d3cb9e87afdd69";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</body>
+
+</html>
